@@ -1,15 +1,23 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:web",
-  "outputDirectory": "apps/web/dist",
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/:path*",
-      "destination": "https://palm-grace.onrender.com/api/:path*"
+      "src": "apps/web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "buildCommand": "npm run build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "destination": "https://palm-grace.onrender.com/api/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

@@ -1,0 +1,93 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TemplateType {
+  MALE
+  FEMALE
+  CHILD
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum TributeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+model Memorial {
+  id                    String            @id @default(uuid())
+  slug                  String            @unique
+  fullName              String
+  dateOfBirth           DateTime
+  dateOfPassing         DateTime
+  biography             String            @db.Text
+  lifeStory             String?           @db.Text
+  mainPhotograph        String            @db.Text
+  serviceInformation    String?           @db.Text
+  familyAcknowledgement String?           @db.Text
+  livestreamUrl         String?
+  recordingUrl          String?
+  templateType          TemplateType      @default(MALE)
+  publicationStatus     PublicationStatus @default(DRAFT)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  media                 MemorialMedia[]
+  tributes              Tribute[]
+
+  @@index([slug])
+  @@index([publicationStatus])
+  @@index([createdAt])
+  @@map("memorials")
+}
+
+model MemorialMedia {
+  id                 String   @id @default(uuid())
+  memorialId         String
+  memorial           Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  cloudinaryPublicId String?
+  url                String   @db.Text
+  caption            String?
+  sortOrder          Int      @default(0)
+  createdAt          DateTime @default(now())
+
+  @@index([memorialId])
+  @@index([sortOrder])
+  @@map("memorial_media")
+}
+
+model Tribute {
+  id          String        @id @default(uuid())
+  memorialId  String
+  memorial    Memorial      @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  visitorName String
+  message     String        @db.Text
+  status      TributeStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([memorialId, status])
+  @@index([createdAt])
+  @@map("tributes")
+}

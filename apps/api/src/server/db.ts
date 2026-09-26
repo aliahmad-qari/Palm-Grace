@@ -1,7 +1,8 @@
-import { PrismaClient, TemplateType, PublicationStatus, TributeStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import net from 'net';
 import { config } from './config.js';
+import type { TemplateType, PublicationStatus, TributeStatus } from '../types.js';
 
 // Prisma singleton with suppressed unhandled error spew
 const globalForPrisma = global as unknown as { prisma: PrismaClient };

@@ -10,6 +10,22 @@ import {
 
 const TOKEN_KEY = 'palm_grace_admin_token';
 
+/**
+ * Get the API base URL
+ * - Development: Uses vite proxy (relative URLs like /api/...)
+ * - Production: Uses environment variable VITE_API_URL or relative (for same-origin proxying)
+ */
+function getApiBaseUrl(): string {
+  // If VITE_API_URL is set in env, use it (e.g., for cross-origin API calls)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Otherwise use relative URLs (works with vite proxy in dev, or Vercel rewrites in prod)
+  return '';
+}
+
+const API_BASE_URL = getApiBaseUrl();
+
 export const tokenStorage = {
   get: () => {
     try {
@@ -50,7 +66,8 @@ async function apiRequest<T>(
   }
 
   try {
-    const res = await fetch(endpoint, {
+    const fullUrl = API_BASE_URL + endpoint;
+    const res = await fetch(fullUrl, {
       ...options,
       headers,
     });

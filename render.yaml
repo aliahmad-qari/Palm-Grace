@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: palm-grace-api
+    runtime: node
+    plan: standard
+    rootDir: apps/api
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000

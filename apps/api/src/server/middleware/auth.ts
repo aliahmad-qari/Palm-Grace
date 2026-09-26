@@ -15,7 +15,7 @@ export interface AuthenticatedRequest extends Request {
  * Middleware to verify admin authentication
  * Supports both HTTP-Only cookies and Bearer tokens for backward compatibility
  */
-export async function requireAdminAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+export async function requireAdminAuth(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> {
   try {
     let token: string | null = null;
 

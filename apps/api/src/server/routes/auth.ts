@@ -39,7 +39,7 @@ authRouter.post('/login', validateBody(loginSchema), async (req: Request, res: R
         name: admin.name,
       },
       config.jwtSecret,
-      { expiresIn: config.jwtExpiresIn }
+      { expiresIn: config.jwtExpiresIn } as jwt.SignOptions
     );
 
     // Set HTTP-Only secure cookie

@@ -1,0 +1,6 @@
+{
+  "name": "Palm & Grace — Digital Memorial Platform",
+  "description": "A premium, responsive digital memorial platform for preserving memories, stories, photographs, and tributes with dignity and grace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

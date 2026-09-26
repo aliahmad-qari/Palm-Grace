@@ -21,7 +21,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node"]
+    "noEmit": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test"]

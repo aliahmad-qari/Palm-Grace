@@ -47,6 +47,7 @@ authRouter.post('/login', validateBody(loginSchema), async (req: Request, res: R
 
     return res.json({
       authenticated: true,
+      token,
       admin: {
         id: admin.id,
         email: admin.email,

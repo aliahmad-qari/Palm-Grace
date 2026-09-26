@@ -20,8 +20,8 @@ function getApiBaseUrl(): string {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  // Otherwise use relative URLs (works with vite proxy in dev, or Vercel rewrites in prod)
-  return '';
+  // Use the local Vite proxy in development and Render directly in production.
+  return import.meta.env.PROD ? 'https://palm-grace.onrender.com' : '';
 }
 
 const API_BASE_URL = getApiBaseUrl();
@@ -88,7 +88,10 @@ async function apiRequest<T>(
       };
     }
 
-    return body;
+    return {
+      success: true,
+      ...body,
+    };
   } catch (err: any) {
     console.error(`API Error on [${options.method || 'GET'} ${endpoint}]:`, err);
     return {

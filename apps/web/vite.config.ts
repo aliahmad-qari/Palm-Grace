@@ -6,6 +6,10 @@ import { defineConfig } from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    define: {
+      // Ensure VITE_API_URL is available in the build
+      'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

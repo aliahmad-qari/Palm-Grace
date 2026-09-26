@@ -14,10 +14,8 @@
     "jsxImportSource": "react",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    },
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"],
     "incremental": true
   },
   "include": ["**/*.ts", "**/*.tsx"],

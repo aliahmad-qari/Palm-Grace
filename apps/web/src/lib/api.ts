@@ -7,6 +7,7 @@ import {
   TemplateType,
   TributeStatus
 } from '../types/index.js';
+import { buildMemorialUrl } from './memorialUrl.js';
 
 const TOKEN_KEY = 'palm_grace_admin_token';
 
@@ -25,6 +26,19 @@ function getApiBaseUrl(): string {
 }
 
 const API_BASE_URL = getApiBaseUrl();
+
+export function apiUrl(endpoint: string): string {
+  return `${API_BASE_URL}${endpoint}`;
+}
+
+export function getCanonicalMemorialUrl(slug: string): string {
+  const configuredSiteUrl = import.meta.env.VITE_PUBLIC_SITE_URL;
+  const fallbackOrigin = import.meta.env.PROD
+    ? 'https://palm-grace-web.vercel.app'
+    : window.location.origin;
+
+  return buildMemorialUrl(slug, configuredSiteUrl, fallbackOrigin);
+}
 
 export const tokenStorage = {
   get: () => {
@@ -66,7 +80,7 @@ async function apiRequest<T>(
   }
 
   try {
-    const fullUrl = API_BASE_URL + endpoint;
+    const fullUrl = apiUrl(endpoint);
     const res = await fetch(fullUrl, {
       ...options,
       headers,

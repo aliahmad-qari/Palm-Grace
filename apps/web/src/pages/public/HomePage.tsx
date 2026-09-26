@@ -18,7 +18,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
-import { api } from '../../lib/api.js';
+import { api, apiUrl } from '../../lib/api.js';
 import { Memorial } from '../../types/index.js';
 
 export const HomePage: React.FC = () => {
@@ -57,63 +57,55 @@ export const HomePage: React.FC = () => {
     <PublicLayout>
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden bg-stone-950 text-stone-100 min-h-[92vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
-        {/* Subtle background ambient light */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-rose-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <img
+          src={featuredMemorials[0]?.mainPhotograph || 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=2000&q=85'}
+          alt={featuredMemorials[0] ? `Memorial portrait of ${featuredMemorials[0].fullName}` : 'Sunlight through a quiet woodland'}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          fetchPriority="high"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-stone-950/65" />
 
-        <div className="relative max-w-5xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-900 border border-stone-800 text-xs text-amber-300 font-sans uppercase tracking-widest shadow-inner">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>The Digital Sanctuary for Enduring Remembrance</span>
-          </div>
-
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light tracking-tight text-stone-100 leading-[1.15]">
-            A timeless sanctuary for the stories that live forever.
-          </h1>
-
-          <p className="font-serif italic text-lg sm:text-2xl text-stone-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            "A life is far greater than an obituary. It is an enduring legacy of wisdom, photographs, gatherings, ceremonies, and cherished memories."
-          </p>
-
-          <p className="font-sans text-xs sm:text-sm text-stone-400 max-w-2xl mx-auto font-light leading-relaxed">
-            Palm &amp; Grace provides grieving families and communities with an ad-free, reverent digital home to celebrate loved ones, broadcast ceremony livestreams, and preserve heartfelt tributes across generations.
-          </p>
-
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 font-sans text-xs uppercase tracking-wider font-semibold">
-            <Link
-              to="/memorials"
-              className="w-full sm:w-auto px-8 py-4 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
-            >
-              <span>Explore Public Memorials</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <a
-              href="#experience"
-              className="w-full sm:w-auto px-8 py-4 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700/80 rounded-xl transition-colors flex items-center justify-center gap-2"
-            >
-              <span>Discover The Experience</span>
-              <ChevronDown className="w-4 h-4 text-stone-400" />
-            </a>
-          </div>
-
-          {/* Core Trust Indicators */}
-          <div className="pt-12 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-stone-800/80 max-w-4xl mx-auto text-left font-sans">
-            <div className="space-y-1">
-              <span className="text-stone-200 font-semibold text-xs block">Zero Advertisements</span>
-              <span className="text-[11px] text-stone-400">Pure, reverent, uncommercialized space.</span>
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="max-w-3xl space-y-6 sm:space-y-8">
+            <div className="inline-flex items-center gap-2 text-xs text-amber-200 font-sans uppercase tracking-widest">
+              <Heart className="w-4 h-4" aria-hidden="true" />
+              <span>Palm &amp; Grace Memorials</span>
             </div>
-            <div className="space-y-1">
-              <span className="text-stone-200 font-semibold text-xs block">Family Moderated</span>
-              <span className="text-[11px] text-stone-400">All guest tributes reviewed before publishing.</span>
+
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.05]">
+              A place to remember a life well lived.
+            </h1>
+
+            <p className="font-sans text-base sm:text-lg text-stone-200 max-w-xl leading-relaxed">
+              Preserve their story, photographs and the words of those who remember them.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 font-sans text-sm font-semibold">
+              <Link
+                to="/memorials"
+                className="min-h-12 w-full sm:w-auto px-6 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-md shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <Search className="w-4 h-4" aria-hidden="true" />
+                <span>Explore memorials</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+
+              <a
+                href="#experience"
+                className="min-h-12 w-full sm:w-auto px-6 bg-stone-950/40 hover:bg-stone-900/80 text-white border border-white/40 rounded-md transition-colors flex items-center justify-center gap-2"
+              >
+                <BookOpen className="w-4 h-4" aria-hidden="true" />
+                <span>How it works</span>
+                <ChevronDown className="w-4 h-4" aria-hidden="true" />
+              </a>
             </div>
-            <div className="space-y-1">
-              <span className="text-stone-200 font-semibold text-xs block">Ceremonial Livestream</span>
-              <span className="text-[11px] text-stone-400">Broadcasts vanish cleanly when inactive.</span>
-            </div>
-            <div className="space-y-1">
-              <span className="text-stone-200 font-semibold text-xs block">Vector Stationery QR</span>
-              <span className="text-[11px] text-stone-400">Print ready for funeral cards and plaques.</span>
+
+            <div className="pt-5 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 border-t border-white/25 font-sans text-xs text-stone-200">
+              <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Family moderated</span></div>
+              <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Ad free</span></div>
+              <div className="flex items-center gap-2"><Video className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Service details</span></div>
+              <div className="flex items-center gap-2"><QrCode className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Print ready QR</span></div>
             </div>
           </div>
         </div>
@@ -131,17 +123,14 @@ export const HomePage: React.FC = () => {
                 Designed for reverence, not algorithms.
               </h2>
               <p className="text-stone-300 leading-relaxed text-sm sm:text-base">
-                Traditional obituaries are often buried in impersonal newspaper archives, while modern social media feeds are cluttered with advertisements, algorithmic noise, and fleeting comments.
-              </p>
-              <p className="text-stone-300 leading-relaxed text-sm sm:text-base">
-                Palm &amp; Grace was created as an intentional sanctuary. Here, a person’s memory is given the room it deserves: an elegant, tailored layout, a high-resolution portrait gallery, a dignified chronicle of their life journey, and a sacred guestbook where every reflection is held with care.
+                A calm, ad-free memorial brings their life story, photographs, service details and family-reviewed tributes together in one place.
               </p>
               <div className="pt-2">
                 <Link
                   to="/memorials"
                   className="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 hover:text-amber-200 uppercase tracking-wider"
                 >
-                  <span>Browse the Memorial Sanctuary Registry</span>
+                  <span>Browse memorials</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -176,7 +165,7 @@ export const HomePage: React.FC = () => {
               Three Distinctive Memorial Atmospheres
             </h2>
             <p className="text-sm sm:text-base text-stone-400 font-serif italic leading-relaxed">
-              Every soul possesses an unmistakable essence. Palm &amp; Grace offers three carefully crafted visual designs, ensuring the sanctuary feels true to the person being remembered.
+              Choose a thoughtful design that feels right for the person being remembered.
             </p>
           </div>
 
@@ -187,24 +176,17 @@ export const HomePage: React.FC = () => {
                 <span className="text-[11px] font-mono tracking-widest uppercase text-amber-300 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 inline-block">
                   Template 1 · Male
                 </span>
-                <h3 className="font-serif text-2xl text-slate-100 font-semibold">
-                  Classic Dignity
-                </h3>
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-300">
+                    <BookOpen className="w-5 h-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="font-serif text-2xl text-slate-100 font-semibold">Classic Dignity</h3>
+                </div>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  Deep slate, timeless navy, architectural restraint, and stately serif typography. Designed to honor fathers, grandfathers, mentors, and gentlemen of steady conviction.
+                  Quiet slate tones and timeless serif typography.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-slate-800/80 text-xs text-slate-400 space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Stately serif headline hierarchy</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Subdued slate and bronze accents</span>
-                </div>
-              </div>
             </div>
 
             {/* Template 2: Grace & Botanical */}
@@ -213,24 +195,17 @@ export const HomePage: React.FC = () => {
                 <span className="text-[11px] font-mono tracking-widest uppercase text-rose-300 px-2.5 py-1 rounded-full bg-stone-800 border border-stone-700 inline-block">
                   Template 2 · Female
                 </span>
-                <h3 className="font-serif text-2xl text-stone-100 font-semibold">
-                  Grace &amp; Botanical
-                </h3>
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-rose-300">
+                    <Sparkles className="w-5 h-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="font-serif text-2xl text-stone-100 font-semibold">Grace &amp; Botanical</h3>
+                </div>
                 <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-                  Warm champagne undertones, poetic typography, soft botanical warmth, and rose accents. Designed to commemorate mothers, matriarchs, and women of enduring joy.
+                  Soft botanical details with gentle, warm accents.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-stone-800/80 text-xs text-stone-400 space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-rose-300" />
-                  <span>Soft stone and champagne warmth</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-rose-300" />
-                  <span>Delicate botanical elegance</span>
-                </div>
-              </div>
             </div>
 
             {/* Template 3: Gentle Celestial */}
@@ -239,24 +214,17 @@ export const HomePage: React.FC = () => {
                 <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-sky-900 border border-sky-800 inline-block">
                   Template 3 · Child
                 </span>
-                <h3 className="font-serif text-2xl text-sky-50 font-semibold">
-                  Gentle Celestial
-                </h3>
+                <div className="flex items-center gap-3">
+                  <span className="w-10 h-10 rounded-full bg-sky-900 border border-sky-800 flex items-center justify-center text-amber-200">
+                    <Heart className="w-5 h-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="font-serif text-2xl text-sky-50 font-semibold">Gentle Celestial</h3>
+                </div>
                 <p className="text-xs sm:text-sm text-sky-200 leading-relaxed">
-                  Tender starlight hues, gentle rounded warmth, and age-appropriate reverence. Designed with infinite tenderness for children and bright, young souls held forever in light.
+                  Tender colors and a gentle sense of light.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-sky-800/80 text-xs text-sky-300/80 space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-amber-200" />
-                  <span>Gentle celestial illumination</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-3.5 h-3.5 text-amber-200" />
-                  <span>Reverent warmth for youth</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -272,57 +240,54 @@ export const HomePage: React.FC = () => {
             <h2 className="font-serif text-3xl sm:text-4xl text-white tracking-tight">
               Creating a Digital Sanctuary
             </h2>
-            <p className="text-sm text-stone-400 font-serif italic">
-              Simple, supportive, and unhurried steps to honor their memory.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-4 bg-stone-950/60 p-6 rounded-2xl border border-stone-800">
-              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300 font-mono font-bold text-sm">
-                01
+              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300">
+                <Images className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
                 Curate Life &amp; Imagery
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Add their focal portrait, lifespans, written biography, extended life journey, and an archival photograph gallery.
+                Share their story and favorite photographs.
               </p>
             </div>
 
             <div className="space-y-4 bg-stone-950/60 p-6 rounded-2xl border border-stone-800">
-              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300 font-mono font-bold text-sm">
-                02
+              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300">
+                <Calendar className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
                 Connect in Ceremony
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Provide ceremony location, chapel address, and optional private livestream or recording links for distant loved ones.
+                Add service details and a livestream or recording.
               </p>
             </div>
 
             <div className="space-y-4 bg-stone-950/60 p-6 rounded-2xl border border-stone-800">
-              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300 font-mono font-bold text-sm">
-                03
+              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300">
+                <Heart className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
                 Gather Tributes
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Invite friends and community to leave condolences. Family administrators review submissions before they appear publicly.
+                Receive words of remembrance, reviewed by family first.
               </p>
             </div>
 
             <div className="space-y-4 bg-stone-950/60 p-6 rounded-2xl border border-stone-800">
-              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300 font-mono font-bold text-sm">
-                04
+              <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300">
+                <QrCode className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
                 Tangible QR Presence
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Download high-resolution vector QR codes ready for printing onto service stationery, prayer bookmarks, or plaques.
+                Share a print-ready QR code on cards or plaques.
               </p>
             </div>
           </div>
@@ -341,7 +306,7 @@ export const HomePage: React.FC = () => {
                 Published Memorial Examples
               </h2>
               <p className="text-sm text-stone-400 font-serif italic mt-1">
-                Explore live sanctuaries demonstrating our template aesthetics and remembrance features.
+                Visit published memorials and their stories.
               </p>
             </div>
 
@@ -429,13 +394,13 @@ export const HomePage: React.FC = () => {
                   Bridging the Physical &amp; Digital
                 </h3>
                 <p className="text-xs text-stone-400 leading-relaxed">
-                  Every memorial generates an instant, lossless vector QR code. Scan with any camera phone—no application installation required.
+                  Scan with a phone camera to open a memorial. Download a vector or high-resolution print file.
                 </p>
 
                 {/* Example QR Visual */}
                 <div className="p-4 bg-white rounded-xl inline-block shadow-inner mx-auto my-2">
                   <img
-                    src="/api/memorials/arthur-pendleton/qr?format=png"
+                    src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
                     alt="Sample Memorial QR Code"
                     className="w-40 h-40 mx-auto"
                   />
@@ -455,7 +420,7 @@ export const HomePage: React.FC = () => {
                 From ceremony stationery to permanent monuments.
               </h2>
               <p className="text-stone-300 leading-relaxed text-sm sm:text-base">
-                A memorial shouldn't end when guests depart the chapel. Palm &amp; Grace bridges the physical gathering with the digital sanctuary.
+                Keep a memorial close, from service cards to a permanent plaque.
               </p>
               <div className="space-y-4 text-xs sm:text-sm text-stone-300">
                 <div className="flex items-start gap-3">
@@ -464,7 +429,6 @@ export const HomePage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-white block font-sans">Funeral Programs &amp; Prayer Cards</strong>
-                    <span className="text-stone-400">Print the vector QR code directly onto ceremony booklets so attendees can read eulogies and share memories on their devices.</span>
                   </div>
                 </div>
 
@@ -474,7 +438,6 @@ export const HomePage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-white block font-sans">Keepsake Bookmarks &amp; Flowers</strong>
-                    <span className="text-stone-400">Provide family members with pocket memorial cards that link to updated photo galleries and ceremonial recordings.</span>
                   </div>
                 </div>
 
@@ -484,7 +447,6 @@ export const HomePage: React.FC = () => {
                   </div>
                   <div>
                     <strong className="text-white block font-sans">Cemetery Plaques &amp; Urns</strong>
-                    <span className="text-stone-400">High-resolution vector assets suitable for laser-etching onto bronze, granite, or stainless steel plaques for generations of visitors.</span>
                   </div>
                 </div>
               </div>
@@ -505,31 +467,23 @@ export const HomePage: React.FC = () => {
               Respectful Moderation
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight">
-              A sacred haven for love, grief, and shared remembrance.
+              Tributes, shared with care.
             </h2>
-            <p className="text-sm sm:text-base text-stone-300 font-serif italic max-w-2xl mx-auto leading-relaxed">
-              "We believe words written in mourning should be held with the highest dignity."
-            </p>
           </div>
 
-          <div className="p-8 rounded-2xl bg-white/3 border border-white/10 text-left space-y-4 max-w-2xl mx-auto">
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-              On generic platforms, comment sections can attract spam, intrusive links, or thoughtless words. On Palm &amp; Grace:
-            </p>
-            <ul className="space-y-3 text-xs sm:text-sm text-stone-300">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Every submitted tribute enters a private moderation queue first.</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Family administrators can approve, reject, or correct typographical errors.</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Only approved condolences are visible to the public.</span>
-              </li>
-            </ul>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto text-sm text-stone-300">
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <Shield className="w-5 h-5 text-amber-300 shrink-0" aria-hidden="true" />
+              <span>Family reviews every tribute.</span>
+            </div>
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <Lock className="w-5 h-5 text-amber-300 shrink-0" aria-hidden="true" />
+              <span>Unapproved messages stay private.</span>
+            </div>
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <CheckCircle className="w-5 h-5 text-amber-300 shrink-0" aria-hidden="true" />
+              <span>Only approved tributes appear.</span>
+            </div>
           </div>
         </div>
       </section>
@@ -538,26 +492,23 @@ export const HomePage: React.FC = () => {
       <section className="py-24 bg-gradient-to-t from-stone-900 to-stone-950 text-stone-100 border-t border-stone-800 text-center font-sans">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <h2 className="font-serif text-3xl sm:text-5xl text-white tracking-tight">
-            Honor a life with the reverence it deserves.
+            Keep their story close.
           </h2>
-          <p className="text-sm sm:text-base text-stone-400 font-serif italic max-w-2xl mx-auto leading-relaxed">
-            Begin exploring published sanctuaries or access the administrator console to create a new memorial.
-          </p>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs uppercase tracking-wider font-semibold">
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 text-sm font-semibold">
             <Link
               to="/memorials"
-              className="w-full sm:w-auto px-8 py-4 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2"
+              className="min-h-12 w-full sm:w-auto px-6 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-md shadow-md transition-colors flex items-center justify-center gap-2"
             >
               <Search className="w-4 h-4" />
-              <span>Explore The Directory</span>
+              <span>Explore memorials</span>
             </Link>
             <Link
-              to="/admin"
-              className="w-full sm:w-auto px-8 py-4 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-xl transition-colors flex items-center justify-center gap-2"
+              to="/admin/login"
+              className="min-h-12 w-full sm:w-auto px-6 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-md transition-colors flex items-center justify-center gap-2"
             >
               <Shield className="w-4 h-4 text-amber-300" />
-              <span>Sanctuary Portal Login</span>
+              <span>Administrator sign in</span>
             </Link>
           </div>
         </div>

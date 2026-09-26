@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { X, QrCode, Download, ExternalLink, Printer, Check, Copy, Eye } from 'lucide-react';
 import { Memorial } from '../../types/index.js';
+import { apiUrl, getCanonicalMemorialUrl } from '../../lib/api.js';
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[char]!);
+}
 
 interface AdminMemorialQrModalProps {
   memorial: Memorial | null;
@@ -17,14 +28,17 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
 
   if (!isOpen || !memorial) return null;
 
-  const publicUrl = `/memorial/${memorial.slug}`;
-  const qrSvgUrl = `/api/memorials/${memorial.slug}/qr?format=svg&download=1`;
-  const qrPngUrl = `/api/memorials/${memorial.slug}/qr?format=png&download=1`;
-  const qrPreviewSrc = `/api/memorials/${memorial.slug}/qr?format=png`;
+  const publicUrl = getCanonicalMemorialUrl(memorial.slug);
+  const qrSvgUrl = apiUrl(`/api/memorials/${memorial.slug}/qr?format=svg&download=1`);
+  const qrPngUrl = apiUrl(`/api/memorials/${memorial.slug}/qr?format=png&download=1`);
+  const qrPreviewSrc = apiUrl(`/api/memorials/${memorial.slug}/qr?format=png`);
 
-  const handleCopyLink = () => {
-    const fullUrl = `${window.location.origin}/memorial/${memorial.slug}`;
-    navigator.clipboard.writeText(fullUrl);
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+    } catch {
+      if (window.prompt('Copy this memorial link:', publicUrl) === null) return;
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -32,12 +46,13 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
+    const escapedName = escapeHtml(memorial.fullName);
 
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Palm & Grace Memorial QR — ${memorial.fullName}</title>
+          <title>Palm & Grace Memorial QR — ${escapedName}</title>
           <style>
             @page { size: auto; margin: 20mm; }
             body {
@@ -96,15 +111,15 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
         </head>
         <body>
           <div class="brand">PALM &amp; GRACE — DIGITAL SANCTUARY</div>
-          <h1 class="name">${memorial.fullName}</h1>
+          <h1 class="name">${escapedName}</h1>
           <div class="lifespan">IN LOVING MEMORY</div>
           <div class="qr-frame">
-            <img src="${window.location.origin}${qrPreviewSrc}" class="qr-img" alt="QR Code" />
+            <img src="${qrPreviewSrc}" class="qr-img" alt="QR Code" />
           </div>
           <div class="instructions">
             Scan with any smartphone camera to visit the digital memorial sanctuary, read eulogies, view photographs, and leave a tribute.
           </div>
-          <div class="slug">palmgrace.com/memorial/${memorial.slug}</div>
+          <div class="slug">${publicUrl}</div>
           <script>
             window.onload = function() {
               window.print();
@@ -203,7 +218,7 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
               <input
                 type="text"
                 readOnly
-                value={`${window.location.origin}/memorial/${memorial.slug}`}
+                value={publicUrl}
                 className="flex-1 bg-transparent px-2.5 text-xs text-stone-700 font-mono focus:outline-hidden truncate"
               />
               <button

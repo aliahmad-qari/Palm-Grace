@@ -10,6 +10,7 @@ import {
   MessageCircle
 } from 'lucide-react';
 import { Memorial } from '../../types/index.js';
+import { getCanonicalMemorialUrl } from '../../lib/api.js';
 
 interface MemorialSocialShareModalProps {
   memorial: Memorial;
@@ -28,7 +29,7 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
 
   if (!isOpen) return null;
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const currentUrl = typeof window !== 'undefined' ? getCanonicalMemorialUrl(memorial.slug) : '';
   const shareTitle = `In Loving Memory of ${memorial.fullName}`;
   const shareText = `Please join us in honoring and remembering ${memorial.fullName} on Palm & Grace Digital Sanctuary.`;
 
@@ -38,9 +39,10 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      if (window.prompt('Copy this memorial link:', currentUrl) !== null) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
     }
   };
 
@@ -53,7 +55,9 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
           url: currentUrl,
         });
       } catch (err) {
-        // User cancelled or share failed
+        if (!(err instanceof DOMException && err.name === 'AbortError')) {
+          await handleCopyLink();
+        }
       }
     }
   };

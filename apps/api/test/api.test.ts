@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { db } from '../server/db.js';
+import { db } from '../src/server/db.js';
 import {
   loginSchema,
   createMemorialSchema,
@@ -8,11 +8,12 @@ import {
   createTributeSchema,
   updateTributeStatusSchema,
   addMediaSchema,
-} from '../server/validators/index.js';
+} from '../src/server/validators/index.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { config } from '../server/config.js';
+import { config, resolvePublicSiteUrl } from '../src/server/config.js';
 import QRCode from 'qrcode';
+import { buildMemorialUrl } from '../../web/src/lib/memorialUrl.ts';
 
 test('1. Authentication: Validates credentials and generates JWT', async () => {
   const admin = await db.findAdminByEmail(config.admin.email);
@@ -433,7 +434,7 @@ test('12. Visitor Tribute Workflow & Security: Submit -> PENDING -> Admin Review
 });
 
 test('13. Tribute Input Validation, Sanitization & Anti-Spam: Zod limits and honeypot detection', async () => {
-  const { createTributeSchema } = await import('../server/validators/index.js');
+  const { createTributeSchema } = await import('../src/server/validators/index.js');
 
   // Valid submission
   const valid = createTributeSchema.safeParse({
@@ -473,11 +474,16 @@ test('13. Tribute Input Validation, Sanitization & Anti-Spam: Zod limits and hon
 });
 
 test('14. Canonical Production QR & PUBLIC_SITE_URL: Generates print-ready vector/raster encoding production URL', async () => {
-  const { config } = await import('../server/config.js');
+  const { config } = await import('../src/server/config.js');
   const slug = 'clara-rose-monroe';
-  const targetCanonicalUrl = `${config.publicSiteUrl}/memorial/${slug}`;
+  const productionUrl = buildMemorialUrl(slug, 'https://palm-grace-web.vercel.app/', 'http://localhost:3000');
+  const targetCanonicalUrl = buildMemorialUrl(slug, config.publicSiteUrl, 'https://palm-grace-web.vercel.app');
 
-  // Ensure canonical production URL does not contain trailing slash or invalid schemes
+  assert.equal(productionUrl, 'https://palm-grace-web.vercel.app/memorial/clara-rose-monroe');
+  assert.equal(new URL(productionUrl).hostname, 'palm-grace-web.vercel.app');
+  assert.equal(resolvePublicSiteUrl('production'), 'https://palm-grace-web.vercel.app');
+  assert.equal(resolvePublicSiteUrl('production', 'https://memorial.example/path?preview=1'), 'https://memorial.example');
+  assert.throws(() => resolvePublicSiteUrl('production', 'http://localhost:3000'));
   assert.ok(targetCanonicalUrl.startsWith('http'), 'Canonical URL must have valid http/https protocol');
   assert.ok(targetCanonicalUrl.endsWith(`/memorial/${slug}`), 'Canonical URL must end with memorial slug');
 
@@ -502,11 +508,11 @@ test('14. Canonical Production QR & PUBLIC_SITE_URL: Generates print-ready vecto
 });
 
 test('15. Social Sharing Canonical URLs & Mobile Web Share compatibility', async () => {
-  const { config } = await import('../server/config.js');
+  const { config } = await import('../src/server/config.js');
   const memorial = await db.findPublicMemorialBySlug('leo-alexander-brooks');
   assert.ok(memorial, 'Memorial must exist');
 
-  const canonicalUrl = `${config.publicSiteUrl}/memorial/${memorial.slug}`;
+  const canonicalUrl = buildMemorialUrl(memorial.slug, config.publicSiteUrl, 'https://palm-grace-web.vercel.app');
   const shareTitle = `In Loving Memory of ${memorial.fullName}`;
   const shareText = `Please join us in honoring and remembering ${memorial.fullName} on Palm & Grace Digital Sanctuary.`;
 

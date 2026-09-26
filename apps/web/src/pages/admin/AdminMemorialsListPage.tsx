@@ -315,13 +315,15 @@ export const AdminMemorialsListPage: React.FC = () => {
                           <Eye className="w-4 h-4" />
                         </button>
 
-                        <button
-                          onClick={() => setQrMemorial(m)}
-                          className="p-1.5 text-amber-700 hover:text-amber-900 rounded-md hover:bg-amber-50 transition-colors"
-                          title="View & Download Physical QR Code"
-                        >
-                          <QrCode className="w-4 h-4" />
-                        </button>
+                        {m.publicationStatus === 'PUBLISHED' && (
+                          <button
+                            onClick={() => setQrMemorial(m)}
+                            className="p-1.5 text-amber-700 hover:text-amber-900 rounded-md hover:bg-amber-50 transition-colors"
+                            title="View & Download Physical QR Code"
+                          >
+                            <QrCode className="w-4 h-4" />
+                          </button>
+                        )}
 
                         {m.publicationStatus === 'PUBLISHED' && (
                           <a

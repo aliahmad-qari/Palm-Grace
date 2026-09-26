@@ -24,7 +24,7 @@ import {
   Compass
 } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
-import { api } from '../../lib/api.js';
+import { api, apiUrl } from '../../lib/api.js';
 import { Memorial, MemorialMedia, Tribute } from '../../types/index.js';
 import { resolveMemorialTemplate } from '../../components/memorial/templateResolver.js';
 import { useMemorialSEO } from '../../components/memorial/useMemorialSEO.js';
@@ -712,7 +712,7 @@ export const PublicMemorialViewPage: React.FC = () => {
               {/* QR Image Preview with White High-Contrast Backdrop */}
               <div className="p-4 bg-white rounded-xl inline-block shadow-inner mx-auto my-1">
                 <img
-                  src={`/api/memorials/${memorial.slug}/qr?format=png`}
+                  src={apiUrl(`/api/memorials/${memorial.slug}/qr?format=png`)}
                   alt={`${memorial.fullName} QR Code`}
                   className="w-48 h-48 mx-auto"
                 />
@@ -730,14 +730,14 @@ export const PublicMemorialViewPage: React.FC = () => {
               {/* Download Vector & Print Assets */}
               <div className="flex items-center justify-center gap-3 pt-2">
                 <a
-                  href={`/api/memorials/${memorial.slug}/qr?format=svg&download=1`}
+                  href={apiUrl(`/api/memorials/${memorial.slug}/qr?format=svg&download=1`)}
                   className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded-lg border border-stone-700 flex items-center gap-1.5 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5 text-amber-300" />
                   <span>Vector SVG</span>
                 </a>
                 <a
-                  href={`/api/memorials/${memorial.slug}/qr?format=png&download=1`}
+                  href={apiUrl(`/api/memorials/${memorial.slug}/qr?format=png&download=1`)}
                   className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />

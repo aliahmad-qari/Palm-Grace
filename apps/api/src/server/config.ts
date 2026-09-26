@@ -26,12 +26,36 @@ if (!parsed.success) {
   console.warn('⚠️ Environment variable validation warnings:', parsed.error.format());
 }
 
+export function resolvePublicSiteUrl(
+  nodeEnv = process.env.NODE_ENV,
+  configuredUrl = process.env.PUBLIC_SITE_URL,
+  appUrl = process.env.APP_URL
+): string {
+  const site = new URL(configuredUrl || (
+    nodeEnv === 'production'
+      ? 'https://palm-grace-web.vercel.app'
+      : appUrl || 'http://localhost:3000'
+  ));
+
+  if (
+    !['http:', 'https:'].includes(site.protocol) ||
+    (nodeEnv === 'production' && (
+      site.protocol !== 'https:' ||
+      ['localhost', '127.0.0.1', '::1'].includes(site.hostname)
+    ))
+  ) {
+    throw new Error('PUBLIC_SITE_URL must be a public HTTPS URL in production');
+  }
+
+  return site.origin;
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   isProduction: process.env.NODE_ENV === 'production',
   appUrl: process.env.APP_URL || 'http://localhost:3000',
-  publicSiteUrl: (process.env.PUBLIC_SITE_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, ''),
+  publicSiteUrl: resolvePublicSiteUrl(),
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/palm_and_grace',
   jwtSecret: process.env.JWT_SECRET || 'palm-and-grace-jwt-secret-phase-1-mvp-2026',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',

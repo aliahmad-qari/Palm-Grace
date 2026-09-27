@@ -112,7 +112,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 2. PALM & GRACE INTRODUCTION */}
-      <section className="py-24 bg-stone-900 text-stone-100 border-t border-stone-800/60 font-sans">
+      <section className="py-24 bg-stone-800 text-stone-100 border-t border-stone-700 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
@@ -171,18 +171,18 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Template 1: Classic Dignity */}
-            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
+            <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
                   Template 1 · Male
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                  <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <BookOpen className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-100 font-semibold">Classic Dignity</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Classic Dignity</h3>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                   Quiet slate tones and timeless serif typography.
                 </p>
               </div>
@@ -190,18 +190,18 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 2: Grace & Botanical */}
-            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
+            <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
                   Template 2 · Female
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                  <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <Sparkles className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-100 font-semibold">Grace &amp; Botanical</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Grace &amp; Botanical</h3>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                   Soft botanical details with gentle, warm accents.
                 </p>
               </div>
@@ -209,18 +209,18 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 3: Gentle Celestial */}
-            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
+            <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
                   Template 3 · Child
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                  <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <Heart className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-100 font-semibold">Gentle Celestial</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Gentle Celestial</h3>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                   Tender colors and a gentle sense of light.
                 </p>
               </div>
@@ -231,62 +231,62 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-stone-900 text-stone-100 border-t border-stone-800 font-sans">
+      <section id="how-it-works" className="py-24 bg-stone-100 text-stone-900 border-t border-stone-300 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs uppercase tracking-widest text-amber-300 font-semibold block">
+            <span className="text-xs uppercase tracking-widest text-amber-800 font-semibold block">
               The Process
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-white tracking-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl text-stone-900 tracking-tight">
               Creating a Digital Sanctuary
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
-              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
+              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
                 <Images className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3 className="font-serif text-lg text-white font-semibold">
+              <h3 className="font-serif text-lg text-stone-100 font-semibold">
                 Curate Life &amp; Imagery
               </h3>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 Share their story and favorite photographs.
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
-              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
+              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
                 <Calendar className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3 className="font-serif text-lg text-white font-semibold">
+              <h3 className="font-serif text-lg text-stone-100 font-semibold">
                 Connect in Ceremony
               </h3>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 Add service details and a livestream or recording.
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
-              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
+              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
                 <Heart className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3 className="font-serif text-lg text-white font-semibold">
+              <h3 className="font-serif text-lg text-stone-100 font-semibold">
                 Gather Tributes
               </h3>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 Receive words of remembrance, reviewed by family first.
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
-              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
+              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
                 <QrCode className="w-5 h-5" aria-hidden="true" />
               </div>
-              <h3 className="font-serif text-lg text-white font-semibold">
+              <h3 className="font-serif text-lg text-stone-100 font-semibold">
                 Tangible QR Presence
               </h3>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 Share a print-ready QR code on cards or plaques.
               </p>
             </div>

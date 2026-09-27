@@ -620,19 +620,19 @@ export const PublicMemorialViewPage: React.FC = () => {
           </div>
 
           {/* Approved Tributes Wall */}
-          <div className="space-y-4 max-w-2xl mx-auto pt-4 rounded-2xl border border-amber-300/30 bg-gradient-to-br from-stone-800 to-stone-900 p-5 sm:p-6 shadow-xl shadow-black/30">
-            <div className="flex items-center justify-between border-b border-amber-200/20 pb-3">
-              <h3 className="font-serif text-xl text-stone-100">
+          <div className="space-y-4 max-w-2xl mx-auto pt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6 shadow-xl shadow-black/30">
+            <div className="flex items-center justify-between border-b border-amber-200 pb-3">
+              <h3 className="font-serif text-xl text-stone-900">
                 Published Tributes ({memorial.tributes?.length || 0})
               </h3>
-              <span className="text-[11px] text-amber-300 font-sans">
+              <span className="text-[11px] text-amber-800 font-sans">
                 Approved by Caretakers
               </span>
             </div>
 
             {(!memorial.tributes || memorial.tributes.length === 0) ? (
-              <div className="text-center py-10 bg-stone-950/60 rounded-xl border border-stone-700">
-                <p className="text-sm font-serif italic text-stone-400">
+              <div className="text-center py-10 bg-white/80 rounded-xl border border-amber-200">
+                <p className="text-sm font-serif italic text-stone-600">
                   Be the first to share a tribute in honor of {memorial.fullName}.
                 </p>
               </div>
@@ -640,17 +640,17 @@ export const PublicMemorialViewPage: React.FC = () => {
               memorial.tributes.map((t) => (
                 <div
                   key={t.id}
-                  className="p-5 rounded-xl bg-stone-950/55 border border-stone-600/80 space-y-2 shadow-xs transition-colors hover:border-amber-300/40 hover:bg-stone-950/75"
+                  className="p-5 rounded-xl bg-white/85 border border-amber-200 space-y-2 shadow-xs transition-colors hover:border-amber-400 hover:bg-white"
                 >
                   <div className="flex items-center justify-between text-xs font-sans">
-                    <span className="font-serif text-base font-semibold text-amber-300">
+                    <span className="font-serif text-base font-semibold text-amber-900">
                       {t.visitorName}
                     </span>
-                    <span className="text-stone-400 tabular-nums">
+                    <span className="text-stone-500 tabular-nums">
                       {formatDate(t.createdAt)}
                     </span>
                   </div>
-                  <p className="font-sans text-sm text-stone-200 whitespace-pre-line leading-relaxed italic">
+                  <p className="font-sans text-sm text-stone-800 whitespace-pre-line leading-relaxed italic">
                     "{t.message}"
                   </p>
                 </div>

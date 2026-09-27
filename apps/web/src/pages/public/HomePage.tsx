@@ -231,7 +231,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-amber-300 text-stone-950 border-t border-amber-400 font-sans">
+      <section id="how-it-works" className="py-24 bg-[#FFB900] text-stone-950 border-t border-[#E6A700] font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-amber-900 font-semibold block">

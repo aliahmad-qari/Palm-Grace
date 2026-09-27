@@ -620,18 +620,18 @@ export const PublicMemorialViewPage: React.FC = () => {
           </div>
 
           {/* Approved Tributes Wall */}
-          <div className="space-y-4 max-w-2xl mx-auto pt-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-2">
-              <h3 className="font-serif text-xl text-stone-200">
+          <div className="space-y-4 max-w-2xl mx-auto pt-4 rounded-2xl border border-stone-700 bg-stone-950/80 p-5 sm:p-6 shadow-xl">
+            <div className="flex items-center justify-between border-b border-stone-700 pb-3">
+              <h3 className="font-serif text-xl text-stone-100">
                 Published Tributes ({memorial.tributes?.length || 0})
               </h3>
-              <span className="text-[11px] text-stone-400 font-sans">
+              <span className="text-[11px] text-amber-300 font-sans">
                 Approved by Caretakers
               </span>
             </div>
 
             {(!memorial.tributes || memorial.tributes.length === 0) ? (
-              <div className="text-center py-10 bg-white/3 rounded-xl border border-white/5">
+              <div className="text-center py-10 bg-stone-900 rounded-xl border border-stone-800">
                 <p className="text-sm font-serif italic text-stone-400">
                   Be the first to share a tribute in honor of {memorial.fullName}.
                 </p>
@@ -640,17 +640,17 @@ export const PublicMemorialViewPage: React.FC = () => {
               memorial.tributes.map((t) => (
                 <div
                   key={t.id}
-                  className="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2 shadow-xs transition-colors hover:bg-white/7"
+                  className="p-5 rounded-xl bg-stone-900 border border-stone-700 space-y-2 shadow-xs transition-colors hover:bg-stone-800"
                 >
                   <div className="flex items-center justify-between text-xs font-sans">
-                    <span className={`font-serif text-base font-semibold ${theme.accentColor}`}>
+                    <span className="font-serif text-base font-semibold text-amber-300">
                       {t.visitorName}
                     </span>
                     <span className="text-stone-400 tabular-nums">
                       {formatDate(t.createdAt)}
                     </span>
                   </div>
-                  <p className="font-sans text-sm text-stone-300 whitespace-pre-line leading-relaxed italic">
+                  <p className="font-sans text-sm text-stone-200 whitespace-pre-line leading-relaxed italic">
                     "{t.message}"
                   </p>
                 </div>

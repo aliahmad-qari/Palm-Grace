@@ -231,10 +231,10 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-stone-100 text-stone-900 border-t border-stone-300 font-sans">
+      <section id="how-it-works" className="py-24 bg-amber-100 text-stone-900 border-t border-amber-200 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs uppercase tracking-widest text-amber-800 font-semibold block">
+            <span className="text-xs uppercase tracking-widest text-amber-900 font-semibold block">
               The Process
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl text-stone-900 tracking-tight">
@@ -243,8 +243,8 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
-              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
+            <div className="space-y-4 bg-stone-950 p-6 rounded-2xl border border-stone-800 shadow-lg shadow-stone-900/25">
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-100">
                 <Images className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-stone-100 font-semibold">
@@ -255,8 +255,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
-              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
+            <div className="space-y-4 bg-stone-950 p-6 rounded-2xl border border-stone-800 shadow-lg shadow-stone-900/25">
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-100">
                 <Calendar className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-stone-100 font-semibold">
@@ -267,8 +267,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
-              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
+            <div className="space-y-4 bg-stone-950 p-6 rounded-2xl border border-stone-800 shadow-lg shadow-stone-900/25">
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-100">
                 <Heart className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-stone-100 font-semibold">
@@ -279,8 +279,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-900 p-6 rounded-2xl border border-stone-700 shadow-lg shadow-stone-900/20">
-              <div className="w-10 h-10 rounded-full bg-amber-300 border border-amber-500 flex items-center justify-center text-stone-950">
+            <div className="space-y-4 bg-stone-950 p-6 rounded-2xl border border-stone-800 shadow-lg shadow-stone-900/25">
+              <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-100">
                 <QrCode className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-stone-100 font-semibold">

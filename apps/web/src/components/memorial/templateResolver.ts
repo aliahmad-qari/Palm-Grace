@@ -153,13 +153,38 @@ export const TEMPLATE_DESIGNS: Record<TemplateType, MemorialTemplateDesign> = {
   },
 };
 
+const MEMORIAL_PALETTE: Omit<MemorialTemplateDesign, 'id' | 'label' | 'tagline' | 'badgeText' | 'motifType'> = {
+  rootBg: 'bg-stone-950',
+  heroGradient: 'bg-gradient-to-b from-stone-900 via-stone-950 to-stone-950',
+  cardBg: 'bg-stone-900/85',
+  cardBorder: 'border-stone-700/80',
+  cardHoverBorder: 'hover:border-amber-300/50',
+  headingColor: 'text-stone-100',
+  bodyTextColor: 'text-stone-300',
+  mutedTextColor: 'text-stone-400',
+  accentColor: 'text-amber-300',
+  accentBorder: 'border-amber-400/50',
+  accentBg: 'bg-amber-400/10',
+  badgeStyle: 'bg-stone-900/90 border-stone-700/80 text-amber-200',
+  portraitBorder: 'border-stone-700/80',
+  portraitGlow: 'shadow-[0_0_35px_rgba(28,25,23,0.6)]',
+  dividerColor: 'border-stone-700/80',
+  subtleBoxBg: 'bg-stone-900/60',
+  subtleBoxBorder: 'border-stone-700/80',
+  inputBg: 'bg-stone-900',
+  inputBorder: 'border-stone-700 focus:border-amber-400 focus:ring-amber-400',
+  buttonPrimary: 'bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold',
+  buttonSecondary: 'bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700',
+};
+
 /**
  * Resolves the visual template presentation for any memorial record.
  * Guarantees a valid, high-fidelity design theme without duplicating data logic.
  */
 export function resolveMemorialTemplate(templateType?: TemplateType | null): MemorialTemplateDesign {
-  if (templateType && TEMPLATE_DESIGNS[templateType]) {
-    return TEMPLATE_DESIGNS[templateType];
-  }
-  return TEMPLATE_DESIGNS.MALE;
+  const template = templateType && TEMPLATE_DESIGNS[templateType]
+    ? TEMPLATE_DESIGNS[templateType]
+    : TEMPLATE_DESIGNS.MALE;
+
+  return { ...template, ...MEMORIAL_PALETTE };
 }

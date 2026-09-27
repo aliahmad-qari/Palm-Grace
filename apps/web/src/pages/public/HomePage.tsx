@@ -171,9 +171,9 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Template 1: Classic Dignity */}
-            <div className="bg-stone-900 rounded-2xl border border-stone-700 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:border-amber-400/50 transition-colors">
+            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-300 px-2.5 py-1 rounded-full bg-stone-800 border border-stone-700 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
                   Template 1 · Male
                 </span>
                 <div className="flex items-center gap-3">
@@ -190,9 +190,9 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 2: Grace & Botanical */}
-            <div className="bg-stone-900 rounded-2xl border border-stone-700 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:border-amber-400/50 transition-colors">
+            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-300 px-2.5 py-1 rounded-full bg-stone-800 border border-stone-700 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
                   Template 2 · Female
                 </span>
                 <div className="flex items-center gap-3">
@@ -209,9 +209,9 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 3: Gentle Celestial */}
-            <div className="bg-stone-900 rounded-2xl border border-stone-700 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:border-amber-400/50 transition-colors">
+            <div className="bg-gradient-to-br from-stone-800 to-stone-900 rounded-2xl border border-amber-300/25 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/30 hover:border-amber-300/60 transition-colors">
               <div className="space-y-4">
-                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-300 px-2.5 py-1 rounded-full bg-stone-800 border border-stone-700 inline-block">
+                <span className="text-[11px] font-mono tracking-widest uppercase text-amber-200 px-2.5 py-1 rounded-full bg-stone-950/70 border border-amber-300/20 inline-block">
                   Template 3 · Child
                 </span>
                 <div className="flex items-center gap-3">
@@ -243,8 +243,8 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4 bg-stone-950/70 p-6 rounded-2xl border border-stone-700">
-              <div className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
+              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
                 <Images className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
@@ -255,8 +255,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-950/70 p-6 rounded-2xl border border-stone-700">
-              <div className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
+              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
                 <Calendar className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
@@ -267,8 +267,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-950/70 p-6 rounded-2xl border border-stone-700">
-              <div className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
+              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
                 <Heart className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">
@@ -279,8 +279,8 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-stone-950/70 p-6 rounded-2xl border border-stone-700">
-              <div className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300">
+            <div className="space-y-4 bg-stone-800/90 p-6 rounded-2xl border border-amber-300/20 shadow-lg shadow-black/20">
+              <div className="w-10 h-10 rounded-full bg-stone-950/70 border border-amber-300/40 flex items-center justify-center text-amber-300">
                 <QrCode className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-white font-semibold">

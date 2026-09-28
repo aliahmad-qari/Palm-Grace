@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Calendar,
@@ -101,20 +101,20 @@ export const PublicMemorialViewPage: React.FC = () => {
       if (res.success) {
         setTributeFeedback({
           type: 'success',
-          text: 'Your words of tribute have been received with profound gratitude. To preserve the sanctuary’s sanctity, it will appear publicly following family moderation.',
+          text: 'Your words of remembrance have been received with gratitude. To preserve the sanctuary’s reverence, your memory will appear publicly following family moderation.',
         });
         setVisitorName('');
         setMessage('');
       } else {
         setTributeFeedback({
           type: 'error',
-          text: res.error || 'Unable to submit tribute at this time. Please try again.',
+          text: res.error || 'Unable to submit your memory at this time. Please try again.',
         });
       }
     } catch (err: any) {
       setTributeFeedback({
         type: 'error',
-        text: err.message || 'Network error submitting tribute.',
+        text: err.message || 'Network error submitting your memory.',
       });
     } finally {
       setIsSubmittingTribute(false);
@@ -517,24 +517,24 @@ export const PublicMemorialViewPage: React.FC = () => {
           </section>
         )}
 
-        {/* 7. WORDS OF TRIBUTE & GUESTBOOK (Rule #17: Displays approved tributes only) */}
+        {/* 7. WORDS OF REMEMBRANCE & SHARED MEMORIES (Rule #17: Displays approved memories only) */}
         <section className="max-w-4xl mx-auto px-4 py-14 space-y-10" id="tributes">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-amber-300 mb-1">
               <MessageSquareHeart className="w-5 h-5" />
             </div>
             <h2 className={`font-serif text-3xl sm:text-4xl ${theme.headingColor}`}>
-              Words of Tribute &amp; Condolences
+              Memories & Words of Remembrance
             </h2>
             <p className="text-xs text-stone-400 font-sans tracking-wide max-w-md mx-auto">
-              Share a memory, heartfelt condolence, or prayer. To protect the family sanctuary, submissions are reviewed respectfully before publication.
+              Share a memory or heartfelt words of remembrance. To preserve the sanctuary's integrity, all submissions are reviewed with care before appearing publicly.
             </p>
           </div>
 
           {/* Tribute Submission Form */}
           <div className={`p-6 sm:p-8 rounded-2xl border ${theme.cardBorder} ${theme.cardBg} shadow-2xl max-w-2xl mx-auto`}>
             <h3 className="font-serif text-lg font-semibold text-white mb-4">
-              Leave a Remembrance Tribute
+              Share a Memory
             </h3>
 
             {tributeFeedback && (
@@ -582,7 +582,7 @@ export const PublicMemorialViewPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">
-                  Your Tribute or Memory *
+                  Your Memory or Words *
                 </label>
                 <textarea
                   required
@@ -611,7 +611,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                   ) : (
                     <>
                       <Send className="w-3.5 h-3.5" />
-                      <span>Post Tribute</span>
+                      <span>Share Memory</span>
                     </>
                   )}
                 </button>
@@ -623,7 +623,7 @@ export const PublicMemorialViewPage: React.FC = () => {
           <div className="space-y-4 max-w-2xl mx-auto pt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6 shadow-xl shadow-black/30">
             <div className="flex items-center justify-between border-b border-amber-200 pb-3">
               <h3 className="font-serif text-xl text-stone-900">
-                Published Tributes ({memorial.tributes?.length || 0})
+                Shared Memories ({memorial.tributes?.length || 0})
               </h3>
               <span className="text-[11px] text-amber-800 font-sans">
                 Approved by Caretakers
@@ -633,7 +633,7 @@ export const PublicMemorialViewPage: React.FC = () => {
             {(!memorial.tributes || memorial.tributes.length === 0) ? (
               <div className="text-center py-10 bg-white/80 rounded-xl border border-amber-200">
                 <p className="text-sm font-serif italic text-stone-600">
-                  Be the first to share a tribute in honor of {memorial.fullName}.
+                  Be the first to share a memory in honor of {memorial.fullName}.
                 </p>
               </div>
             ) : (

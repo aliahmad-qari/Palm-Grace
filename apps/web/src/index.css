@@ -12,4 +12,80 @@
   h1, h2, h3, .font-serif {
     font-family: 'Cormorant Garamond', Georgia, Cambria, 'Times New Roman', Times, serif;
   }
+
+  /* Skip to main content link - accessible to keyboard users */
+  .skip-to-main {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+  }
+
+  .skip-to-main:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    z-index: 9999;
+    padding: 0.5rem;
+    background-color: #fbbf24;
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  /* Focus ring for keyboard navigation - visible and accessible */
+  *:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: more) {
+    body {
+      color: #000;
+      background-color: #fff;
+    }
+
+    .border {
+      border-width: 2px;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    body {
+      color: #f5f5f4;
+      background-color: #0f0f0f;
+    }
+  }
+
+  /* Improved link styling for accessibility */
+  a {
+    position: relative;
+  }
+
+  a:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
+  }
+
+  /* Button accessibility */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
+  }
 }

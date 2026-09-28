@@ -4,6 +4,9 @@ import { AuthProvider, useAuth } from './context/AuthContext.js';
 import { HomePage } from './pages/public/HomePage.js';
 import { MemorialDirectoryPage } from './pages/public/MemorialDirectoryPage.js';
 import { PublicMemorialViewPage } from './pages/public/PublicMemorialViewPage.js';
+import { OurStoryPage } from './pages/public/OurStoryPage.js';
+import { BeginAMemorialPage } from './pages/public/BeginAMemorialPage.js';
+import { OurCarePartnersPage } from './pages/public/OurCarePartnersPage.js';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage.js';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.js';
 import { AdminMemorialsListPage } from './pages/admin/AdminMemorialsListPage.js';
@@ -45,6 +48,9 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/memorials" element={<MemorialDirectoryPage />} />
           <Route path="/memorial/:slug" element={<PublicMemorialViewPage />} />
+          <Route path="/our-story" element={<OurStoryPage />} />
+          <Route path="/begin-a-memorial" element={<BeginAMemorialPage />} />
+          <Route path="/our-care-partners" element={<OurCarePartnersPage />} />
 
           {/* Admin Authentication */}
           <Route path="/admin/login" element={<AdminLoginPage />} />

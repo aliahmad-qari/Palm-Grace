@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Calendar,
@@ -101,20 +101,20 @@ export const PublicMemorialViewPage: React.FC = () => {
       if (res.success) {
         setTributeFeedback({
           type: 'success',
-          text: 'Your words of tribute have been received with profound gratitude. To preserve the sanctuary’s sanctity, it will appear publicly following family moderation.',
+          text: 'Your words of remembrance have been received with gratitude. To preserve the sanctuary’s reverence, your memory will appear publicly following family moderation.',
         });
         setVisitorName('');
         setMessage('');
       } else {
         setTributeFeedback({
           type: 'error',
-          text: res.error || 'Unable to submit tribute at this time. Please try again.',
+          text: res.error || 'Unable to submit your memory at this time. Please try again.',
         });
       }
     } catch (err: any) {
       setTributeFeedback({
         type: 'error',
-        text: err.message || 'Network error submitting tribute.',
+        text: err.message || 'Network error submitting your memory.',
       });
     } finally {
       setIsSubmittingTribute(false);

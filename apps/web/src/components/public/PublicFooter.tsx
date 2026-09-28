@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, Heart, ArrowUpRight, QrCode, Scroll, Lock } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 export const PublicFooter: React.FC = () => {
   return (
@@ -10,12 +11,11 @@ export const PublicFooter: React.FC = () => {
           {/* Brand & Purpose Column */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="inline-block group">
-              <span className="font-serif text-2xl tracking-widest text-stone-100 uppercase block group-hover:text-amber-200 transition-colors">
-                PALM &amp; GRACE
-              </span>
-              <span className="text-xs uppercase tracking-widest text-amber-400 font-sans block mt-0.5">
-                The Digital Sanctuary
-              </span>
+              <BrandLogo 
+                variant="vertical" 
+                size="medium"
+                className="opacity-90 group-hover:opacity-100 transition-opacity"
+              />
             </Link>
             <p className="text-sm text-stone-400 leading-relaxed max-w-md font-serif italic text-base">
               "A timeless sanctuary dedicated to preserving life journeys, ceremony livestreams, family portraits, and memories with reverence, dignity, and grace."

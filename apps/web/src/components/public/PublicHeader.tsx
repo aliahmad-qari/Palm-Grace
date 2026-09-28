@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Menu, X, ArrowRight, Sparkles, BookOpen, Search, QrCode } from 'lucide-react';
+import { Shield, Menu, X, ArrowRight, Sparkles, BookOpen, Search, QrCode, Heart } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 export const PublicHeader: React.FC = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
 
   const navLinks = [
-    { label: 'Sanctuary', href: '/' },
-    { label: 'Memorial Directory', href: '/memorials' },
-    { label: 'The Experience', href: '/#experience' },
-    { label: 'How It Works', href: '/#how-it-works' },
-    { label: 'QR Memorials', href: '/#qr-memorials' },
+    { label: 'Home', href: '/' },
+    { label: 'Memorials', href: '/memorials' },
+    { label: 'Our Story', href: '/our-story' },
+    { label: 'Our Care Partners', href: '/our-care-partners' },
+    { label: 'Begin a Memorial', href: '/begin-a-memorial' },
   ];
 
   const isActive = (href: string) => {
@@ -26,20 +27,15 @@ export const PublicHeader: React.FC = () => {
           {/* Brand Identity */}
           <Link
             to="/"
-            className="flex items-center gap-3 group"
+            className="group"
             onClick={() => setIsMobileOpen(false)}
           >
-            <div className="w-10 h-10 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-amber-300 group-hover:border-amber-400/60 transition-colors">
-              <span className="font-serif text-lg font-bold">☨</span>
-            </div>
-            <div>
-              <span className="font-serif text-xl sm:text-2xl tracking-widest text-stone-100 uppercase block group-hover:text-amber-200 transition-colors">
-                PALM &amp; GRACE
-              </span>
-              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans block -mt-1">
-                The Digital Sanctuary
-              </span>
-            </div>
+            <BrandLogo 
+              variant="horizontal" 
+              size="small"
+              className="opacity-90 group-hover:opacity-100 transition-opacity"
+              isHovered={false}
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -62,19 +58,19 @@ export const PublicHeader: React.FC = () => {
           {/* Desktop Right Actions */}
           <div className="hidden md:flex items-center gap-4">
             <Link
-              to="/memorials"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium text-stone-300 hover:text-white bg-stone-800/80 hover:bg-stone-800 border border-stone-700/60 transition-colors"
+              to="/begin-a-memorial"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-stone-900 bg-amber-400 hover:bg-amber-300 transition-all shadow-xs"
             >
-              <Search className="w-3.5 h-3.5 text-stone-400" />
-              <span>Search Memorials</span>
+              <Heart className="w-3.5 h-3.5 text-stone-900" />
+              <span>Begin a Memorial</span>
             </Link>
 
             <Link
               to="/admin"
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-stone-900 bg-amber-400 hover:bg-amber-300 transition-all shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-stone-900 bg-stone-700 hover:bg-stone-600 transition-all shadow-xs"
             >
               <Shield className="w-3.5 h-3.5 text-stone-900" />
-              <span>Admin Portal</span>
+              <span>Admin</span>
             </Link>
           </div>
 
@@ -87,14 +83,15 @@ export const PublicHeader: React.FC = () => {
             >
               <Search className="w-4 h-4" />
             </Link>
-            <button
-              type="button"
+            <a
               onClick={() => setIsMobileOpen(!isMobileOpen)}
               className="p-2 text-stone-300 hover:text-white rounded-lg hover:bg-stone-800 transition-colors"
-              aria-label="Toggle navigation menu"
+              aria-label={isMobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              role="button"
+              tabIndex={0}
             >
               {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -121,20 +118,20 @@ export const PublicHeader: React.FC = () => {
 
           <div className="pt-3 border-t border-stone-800 flex flex-col gap-2">
             <Link
-              to="/memorials"
+              to="/begin-a-memorial"
               onClick={() => setIsMobileOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-stone-800 text-stone-200 text-xs uppercase tracking-wider font-semibold border border-stone-700"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-400 text-stone-950 text-xs uppercase tracking-wider font-bold shadow-xs"
             >
-              <Search className="w-4 h-4 text-amber-400" />
-              <span>Explore Public Memorials</span>
+              <Heart className="w-4 h-4" />
+              <span>Begin a Memorial</span>
             </Link>
             <Link
               to="/admin"
               onClick={() => setIsMobileOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-400 text-stone-950 text-xs uppercase tracking-wider font-bold shadow-xs"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-stone-700 text-stone-100 text-xs uppercase tracking-wider font-semibold shadow-xs"
             >
               <Shield className="w-4 h-4" />
-              <span>Administrator Portal</span>
+              <span>Admin Portal</span>
             </Link>
           </div>
         </div>

@@ -74,11 +74,11 @@ export const HomePage: React.FC = () => {
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.05]">
-              A place to remember a life well lived.
+              Honouring Lives. Preserving Legacies.
             </h1>
 
             <p className="font-sans text-base sm:text-lg text-stone-200 max-w-xl leading-relaxed">
-              Preserve their story, photographs and the words of those who remember them.
+              A timeless sanctuary dedicated to preserving life journeys, photographs, service ceremonies, and words of remembrance with reverence and grace.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 font-sans text-sm font-semibold">
@@ -123,7 +123,7 @@ export const HomePage: React.FC = () => {
                 Designed for reverence, not algorithms.
               </h2>
               <p className="text-stone-300 leading-relaxed text-sm sm:text-base">
-                A calm, ad-free memorial brings their life story, photographs, service details and family-reviewed tributes together in one place.
+                A serene, ad-free sanctuary brings their life story, photographs, service details, and family-reviewed memories together in one peaceful place—a lasting tribute to their unique legacy.
               </p>
               <div className="pt-2">
                 <Link
@@ -165,7 +165,7 @@ export const HomePage: React.FC = () => {
               Three Distinctive Memorial Atmospheres
             </h2>
             <p className="text-sm sm:text-base text-stone-400 font-serif italic leading-relaxed">
-              Choose a thoughtful design that feels right for the person being remembered.
+              Each designed with thoughtfulness and care—choose a distinctive atmosphere that honours their unique spirit and legacy.
             </p>
           </div>
 
@@ -238,7 +238,7 @@ export const HomePage: React.FC = () => {
               The Process
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl text-stone-900 tracking-tight">
-              Creating a Digital Sanctuary
+              Creating a Living Legacy
             </h2>
           </div>
 
@@ -251,7 +251,7 @@ export const HomePage: React.FC = () => {
                 Curate Life &amp; Imagery
               </h3>
               <p className="text-xs text-stone-300 leading-relaxed">
-                Share their story and favorite photographs.
+                Share their story, legacy, and the photographs that mattered most.
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export const HomePage: React.FC = () => {
                 Connect in Ceremony
               </h3>
               <p className="text-xs text-stone-300 leading-relaxed">
-                Add service details and a livestream or recording.
+                Honour their service with details and a livestream or recording.
               </p>
             </div>
 
@@ -272,10 +272,10 @@ export const HomePage: React.FC = () => {
                 <Heart className="w-5 h-5" aria-hidden="true" />
               </div>
               <h3 className="font-serif text-lg text-stone-100 font-semibold">
-                Gather Tributes
+                Gather Memories &amp; Tributes
               </h3>
               <p className="text-xs text-stone-300 leading-relaxed">
-                Receive words of remembrance, reviewed by family first.
+                Invite loved ones to share words of remembrance, reviewed with care.
               </p>
             </div>
 
@@ -492,7 +492,7 @@ export const HomePage: React.FC = () => {
       <section className="py-24 bg-gradient-to-t from-stone-900 to-stone-950 text-stone-100 border-t border-stone-800 text-center font-sans">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <h2 className="font-serif text-3xl sm:text-5xl text-white tracking-tight">
-            Keep their story close.
+            Keep their memory close.
           </h2>
 
           <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 text-sm font-semibold">

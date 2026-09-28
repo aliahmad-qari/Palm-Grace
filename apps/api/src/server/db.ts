@@ -105,7 +105,7 @@ export interface InMemoryMemorial {
   recordingUrl: string | null;
   closingWords?: string | null;
   templateType: 'MALE' | 'FEMALE' | 'CHILD';
-  publicationStatus: 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED' | 'ARCHIVED';
+  publicationStatus: 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED';
   createdAt: Date;
   updatedAt: Date;
   media?: InMemoryMemorialMedia[];

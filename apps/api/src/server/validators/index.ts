@@ -68,7 +68,7 @@ export const createMemorialSchema = z.object({
   templateType: z.enum(['MALE', 'FEMALE', 'CHILD'], {
     error: () => ({ message: 'Template must be MALE, FEMALE, or CHILD' }),
   }).default('MALE'),
-  publicationStatus: z.enum(['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'),
+  publicationStatus: z.enum(['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED']).default('DRAFT'),
 });
 
 export const updateMemorialSchema = createMemorialSchema.partial();

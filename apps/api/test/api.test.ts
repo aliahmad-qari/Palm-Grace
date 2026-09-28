@@ -573,8 +573,8 @@ test('16. Backward-compatible memorial fields, publication states, typed media, 
   });
   const archived = await db.createMemorial({
     ...memorialInput,
-    slug: 'client-update-archived-test',
-    publicationStatus: 'ARCHIVED',
+    slug: 'client-update-private-test',
+    publicationStatus: 'PRIVATE_PREVIEW',
   });
 
   try {

@@ -520,8 +520,8 @@ class MemorialDataStore {
       return prisma.memorial.create({
         data: {
           ...data,
-          templateType: data.templateType as TemplateType,
-          publicationStatus: data.publicationStatus as PublicationStatus,
+          templateType: data.templateType,
+          publicationStatus: data.publicationStatus,
         }
       });
     }
@@ -542,8 +542,8 @@ class MemorialDataStore {
         where: { id },
         data: {
           ...data,
-          templateType: data.templateType ? (data.templateType as TemplateType) : undefined,
-          publicationStatus: data.publicationStatus ? (data.publicationStatus as PublicationStatus) : undefined,
+          templateType: data.templateType ? data.templateType : undefined,
+          publicationStatus: data.publicationStatus ? data.publicationStatus : undefined,
         }
       });
     }
@@ -728,7 +728,7 @@ class MemorialDataStore {
   // Media operations
   async addMedia(memorialId: string, url: string, cloudinaryPublicId: string | null = null, caption: string | null = null, sortOrder: number = 0, mediaType: MediaType = 'PHOTO'): Promise<InMemoryMemorialMedia> {
     if (await this.checkConnection()) {
-      return prisma.memorialMedia.create({
+      const created = await prisma.memorialMedia.create({
         data: {
           memorialId,
           url,
@@ -738,6 +738,16 @@ class MemorialDataStore {
           mediaType,
         }
       });
+      return {
+        id: created.id,
+        memorialId: created.memorialId,
+        cloudinaryPublicId: created.cloudinaryPublicId,
+        url: created.url,
+        mediaType: created.mediaType,
+        caption: created.caption,
+        sortOrder: created.sortOrder,
+        createdAt: created.createdAt,
+      };
     }
 
     const newMedia: InMemoryMemorialMedia = {

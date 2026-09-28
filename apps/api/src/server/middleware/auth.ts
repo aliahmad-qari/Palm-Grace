@@ -9,6 +9,11 @@ export interface AuthenticatedRequest extends Request {
     email: string;
     name: string;
   };
+  cookies: Record<string, string>;
+  headers: Record<string, string | string[] | undefined>;
+  body: any;
+  params: Record<string, string>;
+  query: Record<string, string | string[] | undefined>;
 }
 
 /**
@@ -25,8 +30,14 @@ export async function requireAdminAuth(req: AuthenticatedRequest, res: Response,
     }
     
     // Fallback to Bearer token header (for backward compatibility)
-    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (!token && req.headers.authorization) {
+      const authHeader = Array.isArray(req.headers.authorization) 
+        ? req.headers.authorization[0] 
+        : req.headers.authorization;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      }
     }
 
     if (!token) {

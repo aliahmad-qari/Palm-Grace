@@ -15,7 +15,14 @@ enum TemplateType {
 
 enum PublicationStatus {
   DRAFT
+  PRIVATE_PREVIEW
   PUBLISHED
+  ARCHIVED
+}
+
+enum MediaType {
+  PHOTO
+  VIDEO
 }
 
 enum TributeStatus {
@@ -39,15 +46,28 @@ model Memorial {
   id                    String            @id @default(uuid())
   slug                  String            @unique
   fullName              String
-  dateOfBirth           DateTime
-  dateOfPassing         DateTime
+  preferredDisplayName  String?
+  birthDate             DateTime?
+  showBirthDate         Boolean           @default(true)
+  deathDate             DateTime?
+  showDeathDate         Boolean           @default(true)
+  dateOfBirth           DateTime?
+  dateOfPassing         DateTime?
   biography             String            @db.Text
+  memorialLine          String?           @db.Text
   lifeStory             String?           @db.Text
   mainPhotograph        String            @db.Text
+  serviceTitle          String?
+  serviceDate           DateTime?
+  serviceTime           String?
+  serviceVenue          String?
+  serviceAddress        String?           @db.Text
+  viewingWakeInformation String?           @db.Text
   serviceInformation    String?           @db.Text
   familyAcknowledgement String?           @db.Text
   livestreamUrl         String?
   recordingUrl          String?
+  closingWords          String?           @db.Text
   templateType          TemplateType      @default(MALE)
   publicationStatus     PublicationStatus @default(DRAFT)
   createdAt             DateTime          @default(now())
@@ -68,6 +88,7 @@ model MemorialMedia {
   memorial           Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
   cloudinaryPublicId String?
   url                String   @db.Text
+  mediaType          MediaType @default(PHOTO)
   caption            String?
   sortOrder          Int      @default(0)
   createdAt          DateTime @default(now())
@@ -82,7 +103,9 @@ model Tribute {
   memorialId  String
   memorial    Memorial      @relation(fields: [memorialId], references: [id], onDelete: Cascade)
   visitorName String
+  relationship String?
   message     String        @db.Text
+  contributorEmail String?
   status      TributeStatus @default(PENDING)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

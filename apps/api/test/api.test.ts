@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { db } from '../src/server/db.js';
+import { db, InMemoryMemorialMedia, InMemoryTribute } from '../src/server/db.js';
 import {
   loginSchema,
   createMemorialSchema,
@@ -14,6 +14,11 @@ import jwt from 'jsonwebtoken';
 import { config, resolvePublicSiteUrl } from '../src/server/config.js';
 import QRCode from 'qrcode';
 import { buildMemorialUrl } from '../../web/src/lib/memorialUrl.ts';
+import express from 'express';
+import { memorialsRouter } from '../src/server/routes/memorials.js';
+import { adminMemorialsRouter } from '../src/server/routes/adminMemorials.js';
+import { adminMediaRouter } from '../src/server/routes/adminMedia.js';
+import { resolveDateAliases, resolveServiceFields } from '../src/server/memorialPayload.js';
 
 test('1. Authentication: Validates credentials and generates JWT', async () => {
   const admin = await db.findAdminByEmail(config.admin.email);
@@ -227,13 +232,13 @@ test('7. Media Management & Cloudinary Signature: Generates SHA-1 signature with
   // Reorder media
   await db.reorderMedia(m1.id, [{ id: media.id, sortOrder: 0 }]);
   const updatedAdmin = await db.findMemorialByIdAdmin(m1.id);
-  const reorderedItem = updatedAdmin?.media?.find(m => m.id === media.id);
+  const reorderedItem = updatedAdmin?.media?.find((item: InMemoryMemorialMedia) => item.id === media.id);
   assert.equal(reorderedItem?.sortOrder, 0);
 
   // Delete media
   await db.deleteMedia(media.id);
   const afterDeleteAdmin = await db.findMemorialByIdAdmin(m1.id);
-  assert.equal(afterDeleteAdmin?.media?.some(m => m.id === media.id), false);
+  assert.equal(afterDeleteAdmin?.media?.some((item: InMemoryMemorialMedia) => item.id === media.id), false);
 });
 
 test('8. Public Directory & Privacy Filter: Excludes drafts and supports search', async () => {
@@ -395,7 +400,7 @@ test('12. Visitor Tribute Workflow & Security: Submit -> PENDING -> Admin Review
   // 2. Verify that public memorial view NEVER exposes the PENDING tribute (Rule #17)
   const publicViewPending = await db.findPublicMemorialBySlug('arthur-pendleton');
   assert.equal(
-    publicViewPending?.tributes?.some(t => t.id === newTribute.id),
+    publicViewPending?.tributes?.some((item: InMemoryTribute) => item.id === newTribute.id),
     false,
     'Pending tribute must NOT appear in public memorial tributes list'
   );
@@ -412,7 +417,7 @@ test('12. Visitor Tribute Workflow & Security: Submit -> PENDING -> Admin Review
   // 5. Now it must be visible in public view
   const publicViewApproved = await db.findPublicMemorialBySlug('arthur-pendleton');
   assert.equal(
-    publicViewApproved?.tributes?.some(t => t.id === newTribute.id),
+    publicViewApproved?.tributes?.some((item: InMemoryTribute) => item.id === newTribute.id),
     true,
     'Approved tribute must now appear in public memorial tributes list'
   );
@@ -424,7 +429,7 @@ test('12. Visitor Tribute Workflow & Security: Submit -> PENDING -> Admin Review
 
   const publicViewRejected = await db.findPublicMemorialBySlug('arthur-pendleton');
   assert.equal(
-    publicViewRejected?.tributes?.some(t => t.id === newTribute.id),
+    publicViewRejected?.tributes?.some((item: InMemoryTribute) => item.id === newTribute.id),
     false,
     'Rejected tribute must be excluded from public memorial tributes'
   );
@@ -523,6 +528,361 @@ test('15. Social Sharing Canonical URLs & Mobile Web Share compatibility', async
   // Twitter share URL format
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(canonicalUrl)}`;
   assert.ok(twitterUrl.includes(encodeURIComponent(canonicalUrl)), 'Twitter share must contain encoded canonical URL');
+});
+
+test('16. Backward-compatible memorial fields, publication states, typed media, and private tribute contact', async () => {
+  const legacyMemorial = await db.findPublicMemorialBySlug('arthur-pendleton');
+  assert.ok(legacyMemorial, 'Existing published memorial must remain publicly readable');
+  assert.equal(legacyMemorial.birthDate?.toISOString(), legacyMemorial.dateOfBirth?.toISOString());
+  assert.equal(legacyMemorial.deathDate?.toISOString(), legacyMemorial.dateOfPassing?.toISOString());
+
+  const memorialInput = {
+    slug: 'client-update-api-test',
+    fullName: 'Client Update Test Memorial',
+    preferredDisplayName: 'Test Memorial',
+    birthDate: new Date('1970-05-10'),
+    showBirthDate: false,
+    deathDate: new Date('2026-06-12'),
+    showDeathDate: true,
+    dateOfBirth: new Date('1970-05-10'),
+    dateOfPassing: new Date('2026-06-12'),
+    biography: 'A memorial record for backward compatibility tests.',
+    memorialLine: 'A life remembered with love.',
+    lifeStory: null,
+    mainPhotograph: 'https://images.example.test/portrait.jpg',
+    serviceTitle: 'A Service of Remembrance',
+    serviceDate: new Date('2026-06-20T10:00:00.000Z'),
+    serviceTime: '10:00 AM',
+    serviceVenue: 'Grace Hall',
+    serviceAddress: '1 Memory Lane',
+    viewingWakeInformation: 'Viewing details shared by invitation.',
+    serviceInformation: JSON.stringify({ venue: 'Grace Hall', date: '2026-06-20T10:00:00.000Z', address: '1 Memory Lane' }),
+    familyAcknowledgement: null,
+    livestreamUrl: null,
+    recordingUrl: null,
+    closingWords: 'Forever part of our story.',
+    templateType: 'FEMALE' as const,
+    publicationStatus: 'PUBLISHED' as const,
+  };
+
+  const published = await db.createMemorial(memorialInput);
+  const privatePreview = await db.createMemorial({
+    ...memorialInput,
+    slug: 'client-update-private-test',
+    publicationStatus: 'PRIVATE_PREVIEW',
+  });
+  const archived = await db.createMemorial({
+    ...memorialInput,
+    slug: 'client-update-archived-test',
+    publicationStatus: 'ARCHIVED',
+  });
+
+  try {
+    const video = await db.addMedia(published.id, 'https://res.cloudinary.com/demo/video/upload/test.mp4', 'test/video-id', 'Service video', 0, 'VIDEO');
+    const legacyPhoto = await db.addMedia(published.id, 'https://res.cloudinary.com/demo/image/upload/test.jpg', 'test/photo-id');
+    assert.equal(video.mediaType, 'VIDEO');
+    assert.equal(legacyPhoto.mediaType, 'PHOTO', 'Existing API callers default to photo media');
+
+    const createdTribute = await db.createTribute(
+      published.id,
+      'A Family Friend',
+      'A kind and generous person who will be remembered.',
+      'Friend',
+      'private-contact@example.test'
+    );
+    await db.updateTributeStatus(createdTribute.id, 'APPROVED');
+
+    const app = express();
+    app.use(express.json());
+    app.use('/api/memorials', memorialsRouter);
+    const server = app.listen(0, '127.0.0.1');
+    await new Promise<void>((resolve) => server.once('listening', resolve));
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+
+    try {
+      const publicResponse = await fetch(`http://127.0.0.1:${address.port}/api/memorials/${published.slug}`);
+      assert.equal(publicResponse.status, 200);
+      const publicBody = await publicResponse.json() as { data: any };
+      assert.equal(publicBody.data.preferredDisplayName, 'Test Memorial');
+      assert.equal(publicBody.data.birthDate, null, 'Hidden birth date must be redacted by the public API');
+      assert.equal(publicBody.data.dateOfBirth, null, 'Legacy birth-date alias must also be redacted');
+      assert.equal(publicBody.data.deathDate, '2026-06-12T00:00:00.000Z');
+      assert.equal(publicBody.data.serviceVenue, 'Grace Hall');
+      assert.equal(publicBody.data.viewingWakeInformation, 'Viewing details shared by invitation.');
+      assert.equal(publicBody.data.media.find((item: any) => item.id === video.id).mediaType, 'VIDEO');
+      assert.equal(publicBody.data.media.find((item: any) => item.id === legacyPhoto.id).mediaType, 'PHOTO');
+      const publicTribute = publicBody.data.tributes.find((item: any) => item.id === createdTribute.id);
+      assert.equal(publicTribute.relationship, 'Friend');
+      assert.equal(Object.hasOwn(publicTribute, 'contributorEmail'), false, 'Public memorial API must not expose contributor email');
+
+      const publicTributeResponse = await fetch(`http://127.0.0.1:${address.port}/api/memorials/${published.slug}/tributes`);
+      const publicTributeBody = await publicTributeResponse.json() as { data: any[] };
+      assert.equal(Object.hasOwn(publicTributeBody.data.find((item) => item.id === createdTribute.id), 'contributorEmail'), false);
+
+      for (const hiddenMemorial of [privatePreview, archived]) {
+        const directResponse: Response = await fetch(`http://127.0.0.1:${address.port}/api/memorials/${hiddenMemorial.slug}`);
+        assert.equal(directResponse.status, 404, `${hiddenMemorial.publicationStatus} must not be publicly accessible`);
+      }
+
+      const publicList = await db.findPublicMemorials();
+      assert.ok(publicList.some((item) => item.id === published.id));
+      assert.equal(publicList.some((item) => item.id === privatePreview.id), false);
+      assert.equal(publicList.some((item) => item.id === archived.id), false);
+
+      const adminTribute = (await db.findTributesAdmin('APPROVED')).find((item: any) => item.id === createdTribute.id) as any;
+      assert.equal(adminTribute.contributorEmail, 'private-contact@example.test');
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
+  } finally {
+    await db.deleteMemorial(published.id);
+    await db.deleteMemorial(privatePreview.id);
+    await db.deleteMemorial(archived.id);
+  }
+});
+
+test('17. Legacy request aliases and structured service payloads remain compatible', () => {
+  const optionalDates = createMemorialSchema.safeParse({
+    fullName: 'Undated Test Memorial',
+    dateOfBirth: '',
+    dateOfPassing: null,
+    showBirthDate: false,
+    biography: 'A memorial with optional dates for a compatibility check.',
+    mainPhotograph: 'https://images.example.test/portrait.jpg',
+    publicationStatus: 'PRIVATE_PREVIEW',
+  });
+  assert.equal(optionalDates.success, true, 'Old empty date inputs and new private-preview state remain valid');
+  if (optionalDates.success) {
+    assert.equal(optionalDates.data.dateOfBirth, null);
+    assert.equal(optionalDates.data.dateOfPassing, null);
+  }
+
+  const videoUpload = addMediaSchema.safeParse({
+    memorialId: 'memorial-id',
+    secureUrl: 'https://res.cloudinary.com/demo/video/upload/service.mp4',
+    mediaType: 'VIDEO',
+  });
+  assert.equal(videoUpload.success, true, 'Secure Cloudinary video URLs are accepted');
+  const legacyPhotoUpload = addMediaSchema.safeParse({
+    memorialId: 'memorial-id',
+    url: 'https://res.cloudinary.com/demo/image/upload/photo.jpg',
+  });
+  assert.equal(legacyPhotoUpload.success, true, 'Legacy photo URL payloads remain accepted');
+  if (legacyPhotoUpload.success) assert.equal(legacyPhotoUpload.data.mediaType, 'PHOTO');
+
+  const newTributePayload = createTributeSchema.safeParse({
+    contributorName: 'Jordan Smith',
+    relationship: 'Cousin',
+    contributorEmail: 'private@example.test',
+    message: 'I will always remember their kindness.',
+  });
+  assert.equal(newTributePayload.success, true, 'New contributor fields are accepted');
+
+  const legacyDates = resolveDateAliases({ dateOfBirth: '1950-01-02', dateOfPassing: '2026-03-04' }, true);
+  assert.equal(legacyDates.birthDate?.toISOString(), '1950-01-02T00:00:00.000Z');
+  assert.equal(legacyDates.dateOfBirth?.toISOString(), legacyDates.birthDate?.toISOString());
+  assert.equal(legacyDates.deathDate?.toISOString(), '2026-03-04T00:00:00.000Z');
+
+  const structured = resolveServiceFields({
+    serviceTitle: 'A Service of Remembrance',
+    serviceDate: '2026-08-22T11:00:00.000Z',
+    serviceTime: '11:00 AM',
+    serviceVenue: 'Grace Harbour Chapel',
+    serviceAddress: 'Nassau',
+  });
+  assert.equal(structured.serviceVenue, 'Grace Harbour Chapel');
+  assert.equal(structured.serviceDate?.toISOString(), '2026-08-22T11:00:00.000Z');
+  const legacyService = JSON.parse(structured.serviceInformation || '{}');
+  assert.equal(legacyService.venue, 'Grace Harbour Chapel');
+  assert.equal(legacyService.address, 'Nassau');
+
+  const oldService = resolveServiceFields({
+    serviceInformation: JSON.stringify({ venue: 'Old Venue', date: '2026-02-04T11:00:00.000Z', address: 'Old Address' }),
+  });
+  assert.equal(oldService.serviceVenue, 'Old Venue');
+  assert.equal(oldService.serviceDate?.toISOString(), '2026-02-04T11:00:00.000Z');
+
+  const clearedLegacyService = resolveServiceFields(
+    { serviceInformation: null },
+    { serviceTitle: 'Old Service', serviceDate: new Date('2026-02-04T11:00:00.000Z'), serviceVenue: 'Old Venue', serviceAddress: 'Old Address' }
+  );
+  assert.equal(clearedLegacyService.serviceTitle, null);
+  assert.equal(clearedLegacyService.serviceDate, null);
+  assert.equal(clearedLegacyService.serviceVenue, null);
+  assert.equal(clearedLegacyService.serviceAddress, null);
+});
+
+test('18. Memorial admin API accepts legacy create fields and updates new private-preview fields', async () => {
+  const app = express();
+  app.use(express.json());
+  app.use('/api/admin/memorials', adminMemorialsRouter);
+  app.use('/api/memorials', memorialsRouter);
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise<void>((resolve) => server.once('listening', resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+
+  let memorialId: string | undefined;
+  try {
+    const createResponse = await fetch(`http://127.0.0.1:${address.port}/api/admin/memorials`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fullName: 'Legacy API Compatibility Memorial',
+        dateOfBirth: '1950-01-02',
+        dateOfPassing: '2026-03-04',
+        biography: 'A legacy-shaped memorial creation payload remains accepted.',
+        mainPhotograph: 'https://images.example.test/legacy.jpg',
+        serviceInformation: JSON.stringify({ venue: 'Legacy Chapel', date: '2026-03-12T10:00:00.000Z', address: 'Old Town' }),
+        templateType: 'MALE',
+        publicationStatus: 'PUBLISHED',
+      }),
+    });
+    assert.equal(createResponse.status, 201);
+    const createdBody = await createResponse.json() as { data: any };
+    memorialId = createdBody.data.id;
+    assert.equal(createdBody.data.birthDate, '1950-01-02T00:00:00.000Z');
+    assert.equal(createdBody.data.dateOfBirth, createdBody.data.birthDate);
+    assert.equal(createdBody.data.serviceVenue, 'Legacy Chapel');
+
+    const updateResponse = await fetch(`http://127.0.0.1:${address.port}/api/admin/memorials/${memorialId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        preferredDisplayName: 'Legacy API Test',
+        birthDate: null,
+        showBirthDate: false,
+        deathDate: '2026-03-04',
+        showDeathDate: true,
+        memorialLine: 'Remembered with love.',
+        serviceTitle: 'A Service of Remembrance',
+        serviceDate: '2026-03-12T10:00:00.000Z',
+        serviceTime: '10:00 AM',
+        serviceVenue: 'New Chapel',
+        serviceAddress: 'New Town',
+        viewingWakeInformation: 'Private viewing by invitation.',
+        closingWords: 'Forever in our stories.',
+        publicationStatus: 'PRIVATE_PREVIEW',
+      }),
+    });
+    assert.equal(updateResponse.status, 200);
+    const updatedBody = await updateResponse.json() as { data: any };
+    assert.equal(updatedBody.data.preferredDisplayName, 'Legacy API Test');
+    assert.equal(updatedBody.data.birthDate, null);
+    assert.equal(updatedBody.data.dateOfBirth, null);
+    assert.equal(updatedBody.data.showBirthDate, false);
+    assert.equal(updatedBody.data.deathDate, '2026-03-04T00:00:00.000Z');
+    assert.equal(updatedBody.data.dateOfPassing, updatedBody.data.deathDate);
+    assert.equal(updatedBody.data.serviceVenue, 'New Chapel');
+    assert.equal(updatedBody.data.viewingWakeInformation, 'Private viewing by invitation.');
+    assert.equal(updatedBody.data.closingWords, 'Forever in our stories.');
+
+    const publicResponse = await fetch(`http://127.0.0.1:${address.port}/api/memorials/${createdBody.data.slug}`);
+    assert.equal(publicResponse.status, 404, 'PRIVATE_PREVIEW memorial must remain admin-only');
+  } finally {
+    if (memorialId) await db.deleteMemorial(memorialId);
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test('19. Existing media API defaults to PHOTO and accepts secure VIDEO media', async () => {
+  const memorial = await db.findPublicMemorialBySlug('arthur-pendleton');
+  assert.ok(memorial);
+
+  const app = express();
+  app.use(express.json());
+  app.use('/api/admin/media', adminMediaRouter);
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise<void>((resolve) => server.once('listening', resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+
+  const addMedia = async (body: Record<string, unknown>) => {
+    const response = await fetch(`http://127.0.0.1:${address.port}/api/admin/media`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ memorialId: memorial.id, ...body }),
+    });
+    return { response, body: await response.json() as { data: any } };
+  };
+
+  let photoId: string | undefined;
+  let videoId: string | undefined;
+  try {
+    const photo = await addMedia({
+      url: 'https://res.cloudinary.com/demo/image/upload/photo.jpg',
+      cloudinaryPublicId: 'tests/photo',
+    });
+    assert.equal(photo.response.status, 201);
+    assert.equal(photo.body.data.mediaType, 'PHOTO');
+    photoId = photo.body.data.id;
+
+    const video = await addMedia({
+      secureUrl: 'https://res.cloudinary.com/demo/video/upload/service.mp4',
+      mediaType: 'VIDEO',
+      cloudinaryPublicId: 'tests/video',
+      caption: 'Service recording',
+    });
+    assert.equal(video.response.status, 201);
+    assert.equal(video.body.data.mediaType, 'VIDEO');
+    assert.equal(video.body.data.secureUrl, video.body.data.url);
+    videoId = video.body.data.id;
+
+    const signatureResponse = await fetch(`http://127.0.0.1:${address.port}/api/admin/media/sign-upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mediaType: 'VIDEO' }),
+    });
+    const signatureBody = await signatureResponse.json() as { data: any };
+    assert.equal(signatureResponse.status, 200);
+    assert.equal(signatureBody.data.resourceType, 'video');
+    assert.equal(Object.hasOwn(signatureBody.data, 'apiSecret'), false);
+  } finally {
+    if (photoId) await db.deleteMedia(photoId);
+    if (videoId) await db.deleteMedia(videoId);
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test('20. Public tribute POST stores private contact data but never returns it', async () => {
+  const memorial = await db.findPublicMemorialBySlug('arthur-pendleton');
+  assert.ok(memorial);
+
+  const app = express();
+  app.use(express.json());
+  app.use('/api/memorials', memorialsRouter);
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise<void>((resolve) => server.once('listening', resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+
+  let tributeId: string | undefined;
+  try {
+    const response = await fetch(`http://127.0.0.1:${address.port}/api/memorials/${memorial.slug}/tributes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contributorName: 'Taylor Example',
+        relationship: 'Colleague',
+        contributorEmail: 'private-contributor@example.test',
+        message: 'I will always remember their generosity.',
+      }),
+    });
+    assert.equal(response.status, 201);
+    const body = await response.json() as { data: { id: string; status: string; contributorEmail?: string } };
+    tributeId = body.data.id;
+    assert.equal(body.data.status, 'PENDING');
+    assert.equal(Object.hasOwn(body.data, 'contributorEmail'), false);
+
+    const pendingAdmin = (await db.findTributesAdmin('PENDING')).find((item: any) => item.id === tributeId) as any;
+    assert.equal(pendingAdmin.visitorName, 'Taylor Example');
+    assert.equal(pendingAdmin.relationship, 'Colleague');
+    assert.equal(pendingAdmin.contributorEmail, 'private-contributor@example.test');
+  } finally {
+    if (tributeId) await db.deleteTribute(tributeId);
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
 });
 
 

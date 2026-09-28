@@ -3,6 +3,7 @@ import { db } from '../db.js';
 import { validateBody } from '../middleware/validate.js';
 import { createMemorialSchema, updateMemorialSchema } from '../validators/index.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
+import { omitUndefined, resolveDateAliases, resolveServiceFields } from '../memorialPayload.js';
 
 export const adminMemorialsRouter = Router();
 
@@ -13,12 +14,12 @@ export const adminMemorialsRouter = Router();
 adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const search = req.query.search ? String(req.query.search).trim() : undefined;
-    const statusFilter = req.query.status as 'DRAFT' | 'PUBLISHED' | undefined;
+    const statusFilter = req.query.status as 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED' | 'ARCHIVED' | undefined;
     const templateFilter = req.query.template as 'MALE' | 'FEMALE' | 'CHILD' | undefined;
 
     let memorials = await db.findAllMemorialsAdmin(search);
 
-    if (statusFilter && ['DRAFT', 'PUBLISHED'].includes(statusFilter)) {
+    if (statusFilter && ['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED'].includes(statusFilter)) {
       memorials = memorials.filter(m => m.publicationStatus === statusFilter);
     }
 
@@ -28,7 +29,9 @@ adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) =
 
     const totalCount = memorials.length;
     const draftCount = memorials.filter(m => m.publicationStatus === 'DRAFT').length;
+    const privatePreviewCount = memorials.filter(m => m.publicationStatus === 'PRIVATE_PREVIEW').length;
     const publishedCount = memorials.filter(m => m.publicationStatus === 'PUBLISHED').length;
+    const archivedCount = memorials.filter(m => m.publicationStatus === 'ARCHIVED').length;
 
     return res.json({
       success: true,
@@ -36,7 +39,9 @@ adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) =
       summary: {
         total: totalCount,
         drafts: draftCount,
+        privatePreview: privatePreviewCount,
         published: publishedCount,
+        archived: archivedCount,
       },
       data: memorials,
     });
@@ -92,19 +97,34 @@ adminMemorialsRouter.post(
       // Safe unique slug generation with collision handling
       const targetSlugSeed = payload.slug || payload.fullName;
       const safeSlug = await db.generateUniqueSlug(targetSlugSeed);
+      const dates = resolveDateAliases(payload, true);
+      const service = resolveServiceFields(payload);
 
       const memorial = await db.createMemorial({
         slug: safeSlug,
         fullName: payload.fullName,
-        dateOfBirth: new Date(payload.dateOfBirth),
-        dateOfPassing: new Date(payload.dateOfPassing),
+        preferredDisplayName: payload.preferredDisplayName || null,
+        birthDate: dates.birthDate ?? null,
+        showBirthDate: payload.showBirthDate,
+        deathDate: dates.deathDate ?? null,
+        showDeathDate: payload.showDeathDate,
+        dateOfBirth: dates.dateOfBirth ?? null,
+        dateOfPassing: dates.dateOfPassing ?? null,
         biography: payload.biography,
+        memorialLine: payload.memorialLine || null,
         lifeStory: payload.lifeStory || null,
         mainPhotograph: payload.mainPhotograph,
-        serviceInformation: payload.serviceInformation || null,
+        serviceTitle: service.serviceTitle ?? null,
+        serviceDate: service.serviceDate ?? null,
+        serviceTime: service.serviceTime ?? null,
+        serviceVenue: service.serviceVenue ?? null,
+        serviceAddress: service.serviceAddress ?? null,
+        viewingWakeInformation: payload.viewingWakeInformation || null,
+        serviceInformation: service.serviceInformation ?? payload.serviceInformation ?? null,
         familyAcknowledgement: payload.familyAcknowledgement || null,
         livestreamUrl: payload.livestreamUrl || null,
         recordingUrl: payload.recordingUrl || null,
+        closingWords: payload.closingWords || null,
         templateType: payload.templateType || 'MALE',
         publicationStatus: payload.publicationStatus || 'DRAFT',
       });
@@ -150,21 +170,29 @@ adminMemorialsRouter.patch(
         updatedSlug = await db.generateUniqueSlug(payload.slug, id);
       }
 
-      const updated = await db.updateMemorial(id, {
+      const dates = resolveDateAliases(payload);
+      const service = resolveServiceFields(payload, existing);
+
+      const updated = await db.updateMemorial(id, omitUndefined({
         fullName: payload.fullName,
         slug: updatedSlug,
-        dateOfBirth: payload.dateOfBirth ? new Date(payload.dateOfBirth) : undefined,
-        dateOfPassing: payload.dateOfPassing ? new Date(payload.dateOfPassing) : undefined,
+        ...dates,
+        preferredDisplayName: payload.preferredDisplayName,
+        showBirthDate: payload.showBirthDate,
+        showDeathDate: payload.showDeathDate,
         biography: payload.biography,
+        memorialLine: payload.memorialLine,
         lifeStory: payload.lifeStory !== undefined ? payload.lifeStory : undefined,
         mainPhotograph: payload.mainPhotograph,
-        serviceInformation: payload.serviceInformation !== undefined ? payload.serviceInformation : undefined,
+        ...service,
+        viewingWakeInformation: payload.viewingWakeInformation,
         familyAcknowledgement: payload.familyAcknowledgement !== undefined ? payload.familyAcknowledgement : undefined,
         livestreamUrl: payload.livestreamUrl !== undefined ? payload.livestreamUrl : undefined,
         recordingUrl: payload.recordingUrl !== undefined ? payload.recordingUrl : undefined,
+        closingWords: payload.closingWords,
         templateType: payload.templateType,
         publicationStatus: payload.publicationStatus,
-      });
+      }));
 
       return res.json({
         success: true,
@@ -206,21 +234,29 @@ adminMemorialsRouter.put(
         updatedSlug = await db.generateUniqueSlug(payload.slug, id);
       }
 
-      const updated = await db.updateMemorial(id, {
+      const dates = resolveDateAliases(payload);
+      const service = resolveServiceFields(payload, existing);
+
+      const updated = await db.updateMemorial(id, omitUndefined({
         fullName: payload.fullName,
         slug: updatedSlug,
-        dateOfBirth: payload.dateOfBirth ? new Date(payload.dateOfBirth) : undefined,
-        dateOfPassing: payload.dateOfPassing ? new Date(payload.dateOfPassing) : undefined,
+        ...dates,
+        preferredDisplayName: payload.preferredDisplayName,
+        showBirthDate: payload.showBirthDate,
+        showDeathDate: payload.showDeathDate,
         biography: payload.biography,
+        memorialLine: payload.memorialLine,
         lifeStory: payload.lifeStory !== undefined ? payload.lifeStory : undefined,
         mainPhotograph: payload.mainPhotograph,
-        serviceInformation: payload.serviceInformation !== undefined ? payload.serviceInformation : undefined,
+        ...service,
+        viewingWakeInformation: payload.viewingWakeInformation,
         familyAcknowledgement: payload.familyAcknowledgement !== undefined ? payload.familyAcknowledgement : undefined,
         livestreamUrl: payload.livestreamUrl !== undefined ? payload.livestreamUrl : undefined,
         recordingUrl: payload.recordingUrl !== undefined ? payload.recordingUrl : undefined,
+        closingWords: payload.closingWords,
         templateType: payload.templateType,
         publicationStatus: payload.publicationStatus,
-      });
+      }));
 
       return res.json({
         success: true,
@@ -273,17 +309,17 @@ adminMemorialsRouter.patch('/:id/publish', async (req: AuthenticatedRequest, res
 
 /**
  * PATCH /api/admin/memorials/:id/status
- * Explicit status update (DRAFT | PUBLISHED)
+ * Explicit status update (DRAFT | PRIVATE_PREVIEW | PUBLISHED | ARCHIVED)
  */
 adminMemorialsRouter.patch('/:id/status', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { publicationStatus } = req.body;
 
-    if (!['DRAFT', 'PUBLISHED'].includes(publicationStatus)) {
+    if (!['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED'].includes(publicationStatus)) {
       return res.status(400).json({
         success: false,
-        error: 'Status must be either "DRAFT" or "PUBLISHED"',
+        error: 'Status must be DRAFT, PRIVATE_PREVIEW, PUBLISHED, or ARCHIVED',
       });
     }
 

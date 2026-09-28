@@ -112,7 +112,7 @@ memorialsRouter.post(
   async (req: Request, res: Response) => {
     try {
       const { slug } = req.params;
-      const { visitorName, message, website } = req.body;
+      const { contributorName, visitorName, relationship, contributorEmail, message, website } = req.body;
 
       // Honeypot spam trap: if hidden field is filled, silently reject or error
       if (website) {
@@ -131,10 +131,16 @@ memorialsRouter.post(
       }
 
       // Safe sanitize of user input: trim and strip any raw HTML tags before storage
-      const sanitizedName = visitorName.replace(/<[^>]*>/g, '').trim();
+      const sanitizedName = (contributorName || visitorName).replace(/<[^>]*>/g, '').trim();
       const sanitizedMessage = message.replace(/<[^>]*>/g, '').trim();
 
-      const tribute = await db.createTribute(memorial.id, sanitizedName, sanitizedMessage);
+      const tribute = await db.createTribute(
+        memorial.id,
+        sanitizedName,
+        sanitizedMessage,
+        relationship || null,
+        contributorEmail || null
+      );
 
       return res.status(201).json({
         success: true,

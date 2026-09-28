@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import net from 'net';
 import { config } from './config.js';
-import type { TemplateType, PublicationStatus, TributeStatus } from '../types.js';
+import type { TemplateType, PublicationStatus, TributeStatus, MediaType } from '../types.js';
 
 // Prisma singleton with suppressed unhandled error spew
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
@@ -60,6 +60,7 @@ export interface InMemoryMemorialMedia {
   memorialId: string;
   cloudinaryPublicId: string | null;
   url: string;
+  mediaType: MediaType;
   caption: string | null;
   sortOrder: number;
   createdAt: Date;
@@ -69,7 +70,9 @@ export interface InMemoryTribute {
   id: string;
   memorialId: string;
   visitorName: string;
+  relationship: string | null;
   message: string;
+  contributorEmail: string | null;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt: Date;
   updatedAt: Date;
@@ -79,21 +82,84 @@ export interface InMemoryMemorial {
   id: string;
   slug: string;
   fullName: string;
-  dateOfBirth: Date;
-  dateOfPassing: Date;
+  preferredDisplayName?: string | null;
+  birthDate?: Date | null;
+  showBirthDate?: boolean;
+  deathDate?: Date | null;
+  showDeathDate?: boolean;
+  dateOfBirth: Date | null;
+  dateOfPassing: Date | null;
   biography: string;
+  memorialLine?: string | null;
   lifeStory: string | null;
   mainPhotograph: string;
+  serviceTitle?: string | null;
+  serviceDate?: Date | null;
+  serviceTime?: string | null;
+  serviceVenue?: string | null;
+  serviceAddress?: string | null;
+  viewingWakeInformation?: string | null;
   serviceInformation: string | null;
   familyAcknowledgement: string | null;
   livestreamUrl: string | null;
   recordingUrl: string | null;
+  closingWords?: string | null;
   templateType: 'MALE' | 'FEMALE' | 'CHILD';
-  publicationStatus: 'DRAFT' | 'PUBLISHED';
+  publicationStatus: 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED' | 'ARCHIVED';
   createdAt: Date;
   updatedAt: Date;
   media?: InMemoryMemorialMedia[];
   tributes?: InMemoryTribute[];
+}
+
+function normalizeServiceFields<T extends Record<string, any>>(memorial: T): T {
+  let legacyService: Record<string, unknown> = {};
+  if (typeof memorial.serviceInformation === 'string') {
+    try {
+      const parsed = JSON.parse(memorial.serviceInformation);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) legacyService = parsed;
+    } catch {
+      // Keep legacy plain-text serviceInformation untouched.
+    }
+  }
+
+  return {
+    ...memorial,
+    media: Array.isArray(memorial.media)
+      ? memorial.media.map((item: Record<string, any>) => ({
+          ...item,
+          mediaType: item.mediaType ?? 'PHOTO',
+          secureUrl: item.secureUrl ?? item.url,
+        }))
+      : memorial.media,
+    preferredDisplayName: memorial.preferredDisplayName ?? null,
+    birthDate: memorial.birthDate ?? memorial.dateOfBirth ?? null,
+    showBirthDate: memorial.showBirthDate ?? true,
+    deathDate: memorial.deathDate ?? memorial.dateOfPassing ?? null,
+    showDeathDate: memorial.showDeathDate ?? true,
+    serviceTitle: memorial.serviceTitle ?? (typeof legacyService.title === 'string' ? legacyService.title : null),
+    serviceDate: memorial.serviceDate ?? (typeof legacyService.date === 'string' ? new Date(legacyService.date) : null),
+    serviceTime: memorial.serviceTime ?? (typeof legacyService.time === 'string' ? legacyService.time : null),
+    serviceVenue: memorial.serviceVenue ?? (typeof legacyService.venue === 'string' ? legacyService.venue : null),
+    serviceAddress: memorial.serviceAddress ?? (typeof legacyService.address === 'string' ? legacyService.address : null),
+    viewingWakeInformation: memorial.viewingWakeInformation ?? null,
+    memorialLine: memorial.memorialLine ?? null,
+    closingWords: memorial.closingWords ?? null,
+  } as T;
+}
+
+function toPublicMemorial<T extends Record<string, any>>(memorial: T): T {
+  const normalized = normalizeServiceFields(memorial);
+  return {
+    ...normalized,
+    birthDate: normalized.showBirthDate ? normalized.birthDate : null,
+    dateOfBirth: normalized.showBirthDate ? normalized.dateOfBirth : null,
+    deathDate: normalized.showDeathDate ? normalized.deathDate : null,
+    dateOfPassing: normalized.showDeathDate ? normalized.dateOfPassing : null,
+    tributes: Array.isArray(normalized.tributes)
+      ? normalized.tributes.map(({ contributorEmail: _privateEmail, ...tribute }: Record<string, any>) => tribute)
+      : normalized.tributes,
+  } as T;
 }
 
 /**
@@ -104,6 +170,9 @@ export interface InMemoryMemorial {
  */
 class MemorialDataStore {
   private isPostgresConnected: boolean | null = null;
+  private nextMemoryMemorialId = 0;
+  private nextMemoryTributeId = 0;
+  private nextMemoryMediaId = 0;
   private memoryAdmins: InMemoryAdminUser[] = [];
   private memoryMemorials: InMemoryMemorial[] = [];
   private memoryMedia: InMemoryMemorialMedia[] = [];
@@ -157,6 +226,7 @@ class MemorialDataStore {
         memorialId: m1Id,
         cloudinaryPublicId: 'pg/arthur-1',
         url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80',
+        mediaType: 'PHOTO',
         caption: 'Arthur in his architectural studio, 1988',
         sortOrder: 0,
         createdAt: new Date(),
@@ -166,6 +236,7 @@ class MemorialDataStore {
         memorialId: m1Id,
         cloudinaryPublicId: 'pg/arthur-2',
         url: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80',
+        mediaType: 'PHOTO',
         caption: 'Walking the highlands with his grandchildren',
         sortOrder: 1,
         createdAt: new Date(),
@@ -177,7 +248,9 @@ class MemorialDataStore {
         id: 'trib-001',
         memorialId: m1Id,
         visitorName: 'Eleanor Vance',
+        relationship: null,
         message: 'Arthur taught me how to see structure in nature and strength in gentle patience. Rest peacefully, dear friend.',
+        contributorEmail: null,
         status: 'APPROVED',
         createdAt: new Date('2026-01-22'),
         updatedAt: new Date('2026-01-22'),
@@ -186,7 +259,9 @@ class MemorialDataStore {
         id: 'trib-002',
         memorialId: m1Id,
         visitorName: 'David K.',
+        relationship: null,
         message: 'A true gentleman whose impact will resonate across generations.',
+        contributorEmail: null,
         status: 'APPROVED',
         createdAt: new Date('2026-01-23'),
         updatedAt: new Date('2026-01-23'),
@@ -307,12 +382,13 @@ class MemorialDataStore {
   // Memorial operations
   async findPublicMemorials(search?: string) {
     if (await this.checkConnection()) {
-      return prisma.memorial.findMany({
+      const memorials = await prisma.memorial.findMany({
         where: {
           publicationStatus: 'PUBLISHED',
           ...(search ? {
             OR: [
               { fullName: { contains: search, mode: 'insensitive' } },
+              { preferredDisplayName: { contains: search, mode: 'insensitive' } },
               { biography: { contains: search, mode: 'insensitive' } },
             ]
           } : {})
@@ -323,6 +399,7 @@ class MemorialDataStore {
           _count: { select: { tributes: { where: { status: 'APPROVED' } } } }
         }
       });
+      return memorials.map(memorial => toPublicMemorial(memorial as unknown as Record<string, any>));
     }
 
     return this.memoryMemorials
@@ -330,10 +407,10 @@ class MemorialDataStore {
       .filter(m => {
         if (!search) return true;
         const q = search.toLowerCase();
-        return m.fullName.toLowerCase().includes(q) || m.biography.toLowerCase().includes(q);
+        return m.fullName.toLowerCase().includes(q) || (m.preferredDisplayName || '').toLowerCase().includes(q) || m.biography.toLowerCase().includes(q);
       })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .map(m => ({
+      .map(m => toPublicMemorial({
         ...m,
         media: this.memoryMedia.filter(med => med.memorialId === m.id).sort((a, b) => a.sortOrder - b.sortOrder),
         _count: {
@@ -344,16 +421,27 @@ class MemorialDataStore {
 
   async findPublicMemorialBySlug(slug: string) {
     if (await this.checkConnection()) {
-      return prisma.memorial.findFirst({
+      const memorial = await prisma.memorial.findFirst({
         where: { slug, publicationStatus: 'PUBLISHED' },
         include: {
           media: { orderBy: { sortOrder: 'asc' } },
           tributes: {
             where: { status: 'APPROVED' },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            select: {
+              id: true,
+              memorialId: true,
+              visitorName: true,
+              relationship: true,
+              message: true,
+              status: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           }
         }
       });
+      return memorial ? toPublicMemorial(memorial as unknown as Record<string, any>) : null;
     }
 
     const memorial = this.memoryMemorials.find(m => m.slug === slug && m.publicationStatus === 'PUBLISHED');
@@ -362,20 +450,21 @@ class MemorialDataStore {
     const media = this.memoryMedia.filter(med => med.memorialId === memorial.id).sort((a, b) => a.sortOrder - b.sortOrder);
     const tributes = this.memoryTributes.filter(t => t.memorialId === memorial.id && t.status === 'APPROVED').sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    return {
+    return toPublicMemorial({
       ...memorial,
       media,
       tributes
-    };
+    });
   }
 
   // Admin Memorial operations
   async findAllMemorialsAdmin(search?: string) {
     if (await this.checkConnection()) {
-      return prisma.memorial.findMany({
+      const memorials = await prisma.memorial.findMany({
         where: search ? {
           OR: [
             { fullName: { contains: search, mode: 'insensitive' } },
+            { preferredDisplayName: { contains: search, mode: 'insensitive' } },
             { slug: { contains: search, mode: 'insensitive' } },
           ]
         } : undefined,
@@ -385,16 +474,17 @@ class MemorialDataStore {
           _count: { select: { tributes: true } }
         }
       });
+      return memorials.map(memorial => normalizeServiceFields(memorial as unknown as Record<string, any>));
     }
 
     return this.memoryMemorials
       .filter(m => {
         if (!search) return true;
         const q = search.toLowerCase();
-        return m.fullName.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q);
+        return m.fullName.toLowerCase().includes(q) || (m.preferredDisplayName || '').toLowerCase().includes(q) || m.slug.toLowerCase().includes(q);
       })
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-      .map(m => ({
+      .map(m => normalizeServiceFields({
         ...m,
         media: this.memoryMedia.filter(med => med.memorialId === m.id).sort((a, b) => a.sortOrder - b.sortOrder),
         _count: {
@@ -405,23 +495,24 @@ class MemorialDataStore {
 
   async findMemorialByIdAdmin(id: string) {
     if (await this.checkConnection()) {
-      return prisma.memorial.findUnique({
+      const memorial = await prisma.memorial.findUnique({
         where: { id },
         include: {
           media: { orderBy: { sortOrder: 'asc' } },
           tributes: { orderBy: { createdAt: 'desc' } }
         }
       });
+      return memorial ? normalizeServiceFields(memorial as unknown as Record<string, any>) : null;
     }
 
     const memorial = this.memoryMemorials.find(m => m.id === id);
     if (!memorial) return null;
 
-    return {
+    return normalizeServiceFields({
       ...memorial,
       media: this.memoryMedia.filter(med => med.memorialId === memorial.id).sort((a, b) => a.sortOrder - b.sortOrder),
       tributes: this.memoryTributes.filter(t => t.memorialId === memorial.id).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-    };
+    });
   }
 
   async createMemorial(data: Omit<InMemoryMemorial, 'id' | 'createdAt' | 'updatedAt' | 'media' | 'tributes'>) {
@@ -437,7 +528,7 @@ class MemorialDataStore {
 
     const newMemorial: InMemoryMemorial = {
       ...data,
-      id: `mem-${Date.now()}`,
+      id: `mem-${Date.now()}-${this.nextMemoryMemorialId++}`,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -531,13 +622,15 @@ class MemorialDataStore {
     };
   }
 
-  async updateTribute(id: string, data: { visitorName?: string; message?: string; status?: 'PENDING' | 'APPROVED' | 'REJECTED' }) {
+  async updateTribute(id: string, data: { visitorName?: string; relationship?: string | null; message?: string; contributorEmail?: string | null; status?: 'PENDING' | 'APPROVED' | 'REJECTED' }) {
     if (await this.checkConnection()) {
       return prisma.tribute.update({
         where: { id },
         data: {
           ...(data.visitorName ? { visitorName: data.visitorName } : {}),
+          ...(data.relationship !== undefined ? { relationship: data.relationship } : {}),
           ...(data.message ? { message: data.message } : {}),
+          ...(data.contributorEmail !== undefined ? { contributorEmail: data.contributorEmail } : {}),
           ...(data.status ? { status: data.status as TributeStatus } : {}),
         }
       });
@@ -546,29 +639,35 @@ class MemorialDataStore {
     const tribute = this.memoryTributes.find(t => t.id === id);
     if (!tribute) throw new Error('Tribute not found');
     if (data.visitorName) tribute.visitorName = data.visitorName;
+    if (data.relationship !== undefined) tribute.relationship = data.relationship;
     if (data.message) tribute.message = data.message;
+    if (data.contributorEmail !== undefined) tribute.contributorEmail = data.contributorEmail;
     if (data.status) tribute.status = data.status;
     tribute.updatedAt = new Date();
     return tribute;
   }
 
-  async createTribute(memorialId: string, visitorName: string, message: string) {
+  async createTribute(memorialId: string, visitorName: string, message: string, relationship: string | null = null, contributorEmail: string | null = null) {
     if (await this.checkConnection()) {
       return prisma.tribute.create({
         data: {
           memorialId,
           visitorName,
+          relationship,
           message,
+          contributorEmail,
           status: 'PENDING',
         }
       });
     }
 
     const newTribute: InMemoryTribute = {
-      id: `trib-${Date.now()}`,
+      id: `trib-${Date.now()}-${this.nextMemoryTributeId++}`,
       memorialId,
       visitorName,
+      relationship,
       message,
+      contributorEmail,
       status: 'PENDING',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -627,7 +726,7 @@ class MemorialDataStore {
   }
 
   // Media operations
-  async addMedia(memorialId: string, url: string, cloudinaryPublicId: string | null = null, caption: string | null = null, sortOrder: number = 0) {
+  async addMedia(memorialId: string, url: string, cloudinaryPublicId: string | null = null, caption: string | null = null, sortOrder: number = 0, mediaType: MediaType = 'PHOTO'): Promise<InMemoryMemorialMedia> {
     if (await this.checkConnection()) {
       return prisma.memorialMedia.create({
         data: {
@@ -636,15 +735,17 @@ class MemorialDataStore {
           cloudinaryPublicId,
           caption,
           sortOrder,
+          mediaType,
         }
       });
     }
 
     const newMedia: InMemoryMemorialMedia = {
-      id: `med-${Date.now()}`,
+      id: `med-${Date.now()}-${this.nextMemoryMediaId++}`,
       memorialId,
       url,
       cloudinaryPublicId,
+      mediaType,
       caption,
       sortOrder,
       createdAt: new Date(),

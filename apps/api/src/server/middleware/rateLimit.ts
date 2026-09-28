@@ -9,7 +9,7 @@ interface RateLimitRecord {
 const ipStore = new Map<string, RateLimitRecord>();
 
 // Clean up stale IPs periodically every 5 minutes
-setInterval(() => {
+const cleanupTimer = setInterval(() => {
   const now = Date.now();
   for (const [ip, record] of ipStore.entries()) {
     if (record.resetAt <= now) {
@@ -17,6 +17,7 @@ setInterval(() => {
     }
   }
 }, 5 * 60 * 1000);
+cleanupTimer.unref();
 
 /**
  * Basic rate protection middleware for public visitor submissions (e.g. tributes)

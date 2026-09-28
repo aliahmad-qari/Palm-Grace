@@ -118,14 +118,20 @@ adminTributesRouter.patch(
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { id } = req.params;
-      const { visitorName, message, status } = req.body;
+      const { contributorName, visitorName, relationship, contributorEmail, message, status } = req.body;
 
       const existing = await db.findTributeById(id);
       if (!existing) {
         return res.status(404).json({ success: false, error: 'Tribute not found' });
       }
 
-      const updated = await db.updateTribute(id, { visitorName, message, status });
+      const updated = await db.updateTribute(id, {
+        visitorName: contributorName ?? visitorName,
+        relationship,
+        contributorEmail,
+        message,
+        status,
+      });
 
       return res.json({
         success: true,

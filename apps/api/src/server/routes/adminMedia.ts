@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { db } from '../db.js';
 import { config } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
-import { addMediaSchema, reorderMediaSchema } from '../validators/index.js';
+import { addMediaSchema, mediaUploadSignatureSchema, reorderMediaSchema } from '../validators/index.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 
 export const adminMediaRouter = Router();
@@ -49,6 +49,11 @@ adminMediaRouter.get('/config', (req: AuthenticatedRequest, res: Response) => {
  */
 adminMediaRouter.post('/sign-upload', (req: AuthenticatedRequest, res: Response) => {
   try {
+    const parsedBody = mediaUploadSignatureSchema.safeParse(req.body ?? {});
+    if (!parsedBody.success) {
+      return res.status(400).json({ success: false, error: 'Invalid media type' });
+    }
+    const mediaType = parsedBody.data.mediaType;
     const timestamp = Math.round(new Date().getTime() / 1000);
     const folder = 'palm-and-grace/memorials';
 
@@ -63,6 +68,8 @@ adminMediaRouter.post('/sign-upload', (req: AuthenticatedRequest, res: Response)
           apiKey: config.cloudinary.apiKey || 'demo-key',
           cloudName: config.cloudinary.cloudName || 'demo',
           signature: 'demo-signature',
+          mediaType,
+          resourceType: mediaType === 'VIDEO' ? 'video' : 'image',
           notice: 'Cloudinary credentials in development mode.',
         },
       });
@@ -83,6 +90,8 @@ adminMediaRouter.post('/sign-upload', (req: AuthenticatedRequest, res: Response)
         apiKey: config.cloudinary.apiKey,
         cloudName: config.cloudinary.cloudName,
         signature,
+        mediaType,
+        resourceType: mediaType === 'VIDEO' ? 'video' : 'image',
       },
     });
   } catch (error) {
@@ -103,7 +112,11 @@ adminMediaRouter.post(
   validateBody(addMediaSchema),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { memorialId, url, cloudinaryPublicId, caption, sortOrder } = req.body;
+      const { memorialId, url, secureUrl, cloudinaryPublicId, caption, sortOrder, mediaType } = req.body;
+      const mediaUrl = secureUrl || url;
+      if (!mediaUrl) {
+        return res.status(400).json({ success: false, error: 'A secure media URL is required' });
+      }
 
       const memorial = await db.findMemorialByIdAdmin(memorialId);
       if (!memorial) {
@@ -115,16 +128,17 @@ adminMediaRouter.post(
 
       const media = await db.addMedia(
         memorialId,
-        url,
+        mediaUrl,
         cloudinaryPublicId || null,
         caption || null,
-        sortOrder ?? 0
+        sortOrder ?? 0,
+        mediaType
       );
 
       return res.status(201).json({
         success: true,
         message: 'Media added to memorial gallery',
-        data: media,
+        data: { ...media, secureUrl: media.url },
       });
     } catch (error) {
       console.error('[Admin Media] Error adding media:', error);

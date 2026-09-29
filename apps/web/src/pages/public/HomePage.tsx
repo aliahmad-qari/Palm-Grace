@@ -22,6 +22,7 @@ import { Memorial } from '../../types/index.js';
 export const HomePage: React.FC = () => {
   const [featuredMemorials, setFeaturedMemorials] = useState<Memorial[]>([]);
   const [isLoadingExamples, setIsLoadingExamples] = useState(true);
+  const [isQrUnavailable, setIsQrUnavailable] = useState(false);
 
   useEffect(() => {
     loadFeaturedMemorials();
@@ -62,7 +63,7 @@ export const HomePage: React.FC = () => {
           fetchPriority="high"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/95 via-brand-secondary/85 to-brand-primary/80" />
+        <div className="absolute inset-0 bg-linear-to-r from-brand-primary/95 via-brand-secondary/85 to-brand-primary/80" />
 
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-3xl space-y-6 sm:space-y-8">
@@ -71,7 +72,7 @@ export const HomePage: React.FC = () => {
               <span>Palm &amp; Grace Memorials</span>
             </div>
 
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.05] drop-shadow-lg">
+            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-light text-white leading-[1.02] drop-shadow-lg max-w-2xl">
               Honouring Lives. Preserving Legacies.
             </h1>
 
@@ -79,10 +80,10 @@ export const HomePage: React.FC = () => {
               Every life leaves a story worth holding close. Palm &amp; Grace creates beautiful digital spaces where families and friends can remember, reflect and preserve the photographs, stories and memories that made a life uniquely theirs.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 font-sans text-sm font-bold">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 font-sans text-sm font-bold">
               <Link
                 to="/memorials"
-                className="min-h-12 w-full sm:w-auto px-8 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wide"
+                className="min-h-12 w-full sm:w-auto min-w-48 px-6 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wide whitespace-nowrap"
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
                 <span>Explore Memorial</span>
@@ -90,7 +91,7 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/our-story"
-                className="min-h-12 w-full sm:w-auto px-8 bg-white/10 hover:bg-white/20 text-brand-white border border-white/50 rounded-lg transition-all flex items-center justify-center gap-2 backdrop-blur-sm uppercase tracking-wide font-bold"
+                className="min-h-12 w-full sm:w-auto min-w-40 px-6 bg-brand-primary/35 hover:bg-brand-primary/55 text-brand-white border border-white/60 rounded-lg transition-all flex items-center justify-center gap-2 backdrop-blur-sm uppercase tracking-wide font-bold whitespace-nowrap"
               >
                 <BookOpen className="w-4 h-4" aria-hidden="true" />
                 <span>Our Story</span>
@@ -118,7 +119,7 @@ export const HomePage: React.FC = () => {
               <div className="pt-4">
                 <Link
                   to="/our-story"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-white bg-brand-primary hover:bg-brand-secondary px-6 py-3 rounded-lg uppercase tracking-wider transition-all group shadow-lg hover:shadow-xl border-2 border-brand-gold"
+                  className="inline-flex min-h-11 items-center gap-2 text-xs font-bold text-white bg-brand-primary hover:bg-brand-secondary px-6 py-3 rounded-lg uppercase tracking-wider transition-all group shadow-lg hover:shadow-xl border border-brand-gold/70 whitespace-nowrap"
                 >
                   <span>Discover Palm &amp; Grace</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -131,11 +132,11 @@ export const HomePage: React.FC = () => {
                 <img
                   src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=80"
                   alt="Dignified forest sunlight symbolizing eternal memory"
-                  className="rounded-lg w-full h-[380px] object-cover filter brightness-95"
+                  className="rounded-lg w-full h-95 object-cover filter brightness-95"
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="absolute inset-2 rounded-lg bg-gradient-to-t from-brand-secondary/90 via-transparent to-transparent flex items-end p-6">
+                <div className="absolute inset-2 rounded-lg bg-linear-to-t from-brand-secondary/90 via-transparent to-transparent flex items-end p-6">
                   <p className="font-serif italic text-brand-white text-sm sm:text-base">
                     "Every life is a masterwork of love, perseverance, and quiet miracles."
                   </p>
@@ -172,7 +173,7 @@ export const HomePage: React.FC = () => {
                   <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <BookOpen className="w-6 h-6" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">A Life in Full</h3>
+                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold leading-tight">A Life in Full</h3>
                 </div>
                 <p className="text-sm text-brand-white/90 leading-relaxed">
                   Quiet slate tones and timeless serif typography honour strength and enduring legacy.
@@ -190,7 +191,7 @@ export const HomePage: React.FC = () => {
                   <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <Sparkles className="w-6 h-6" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">Stories Held Close</h3>
+                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold leading-tight">Stories Held Close</h3>
                 </div>
                 <p className="text-sm text-brand-white/90 leading-relaxed">
                   Soft botanical details with gentle, warm accents celebrate grace and connection.
@@ -208,7 +209,7 @@ export const HomePage: React.FC = () => {
                   <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <Heart className="w-6 h-6" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">Wonder Remembered</h3>
+                  <h3 className="font-serif text-2xl text-brand-gold-light font-semibold leading-tight">Wonder Remembered</h3>
                 </div>
                 <p className="text-sm text-brand-white/90 leading-relaxed">
                   A restrained space shaped around personality, wonder and the love that remains.
@@ -315,8 +316,19 @@ export const HomePage: React.FC = () => {
                 <div key={n} className="bg-brand-primary/80 rounded-2xl p-6 border-2 border-brand-gold/40 animate-pulse h-80" />
               ))
             ) : featuredMemorials.length === 0 ? (
-              <div className="col-span-3 text-center py-12 text-brand-white/60 text-xs">
-                No published memorials currently in showcase.
+              <div className="col-span-3 rounded-2xl border border-white/15 bg-brand-primary/50 px-6 py-12 text-center shadow-inner">
+                <Heart className="mx-auto mb-4 h-8 w-8 text-brand-gold/70" aria-hidden="true" />
+                <h3 className="font-serif text-2xl text-brand-white">A quiet space, ready for their story</h3>
+                <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-brand-white/65">
+                  Published memorials will appear here as families choose to share them with the sanctuary.
+                </p>
+                <Link
+                  to="/memorials"
+                  className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-brand-gold/60 bg-brand-gold/10 px-5 text-xs font-semibold uppercase tracking-wider text-brand-gold-light transition-colors hover:bg-brand-gold/20 whitespace-nowrap"
+                >
+                  Explore the Directory
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             ) : (
               featuredMemorials.map((m) => (
@@ -389,14 +401,21 @@ export const HomePage: React.FC = () => {
                 </p>
 
                 {/* Example QR Visual */}
-                <div className="p-4 bg-white rounded-xl inline-block shadow-lg mx-auto my-4">
-                  <img
-                    src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
-                    alt="Sample Memorial QR Code"
-                    className="w-40 h-40 mx-auto"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                <div className="p-4 bg-white rounded-xl inline-block shadow-lg mx-auto my-4 min-w-48 min-h-48">
+                  {isQrUnavailable ? (
+                    <div className="w-40 h-40 flex items-center justify-center text-center text-xs leading-relaxed text-brand-primary/70">
+                      Print-ready QR access is available on each memorial.
+                    </div>
+                  ) : (
+                    <img
+                      src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
+                      alt="Sample Memorial QR Code"
+                      className="w-40 h-40 mx-auto"
+                      loading="lazy"
+                      decoding="async"
+                      onError={() => setIsQrUnavailable(true)}
+                    />
+                  )}
                 </div>
 
                 <div className="text-xs text-brand-white/75 font-mono">
@@ -491,14 +510,14 @@ export const HomePage: React.FC = () => {
           <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 text-sm font-bold">
             <Link
               to="/memorials"
-              className="min-h-12 w-full sm:w-auto px-8 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all font-bold flex items-center justify-center gap-2 uppercase tracking-wide border-2 border-brand-gold"
+              className="min-h-12 w-full sm:w-auto min-w-48 px-6 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all font-bold flex items-center justify-center gap-2 uppercase tracking-wide whitespace-nowrap"
             >
               <Search className="w-4 h-4" />
               <span>Explore a Memorial</span>
             </Link>
             <Link
               to="/begin-a-memorial"
-              className="min-h-12 w-full sm:w-auto px-8 bg-white/20 hover:bg-white/35 text-brand-white border-2 border-brand-gold-light rounded-lg transition-all backdrop-blur-sm flex items-center justify-center gap-2 uppercase tracking-wide font-bold"
+              className="min-h-12 w-full sm:w-auto min-w-48 px-6 bg-white/10 hover:bg-white/20 text-brand-white border border-brand-gold-light rounded-lg transition-all backdrop-blur-sm flex items-center justify-center gap-2 uppercase tracking-wide font-bold whitespace-nowrap"
             >
               <Heart className="w-4 h-4 text-brand-gold-light" />
               <span>Begin a Memorial</span>

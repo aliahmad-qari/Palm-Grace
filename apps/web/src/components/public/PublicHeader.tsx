@@ -24,23 +24,14 @@ export const PublicHeader: React.FC = () => {
     <header className="sticky top-0 z-40 bg-brand-primary/80 backdrop-blur-xl backdrop-saturate-150 shadow-lg border-b border-brand-gold/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Logo - Professional with Icon Only */}
+          {/* Official full wordmark in a restrained glass panel */}
           <Link
             to="/"
             className="group flex items-center gap-3 shrink-0"
             onClick={() => setIsMobileOpen(false)}
           >
-            <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center shadow-md group-hover:shadow-xl group-hover:scale-105 transition-all duration-300 border border-white/30 ring-1 ring-brand-gold/40 overflow-hidden">
-              <BrandLogo 
-                variant="icon" 
-                size="small"
-                className="opacity-100"
-                isHovered={false}
-              />
-            </div>
-            <div className="hidden sm:flex flex-col leading-none">
-              <span className="font-serif text-xl font-semibold text-white tracking-wide">Palm &amp; Grace</span>
-              <span className="text-[10px] text-brand-gold-light font-medium tracking-[0.25em] mt-1">MEMORIALS</span>
+            <div className="w-44 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center px-3 py-2 shadow-md group-hover:shadow-xl group-hover:scale-[1.02] transition-all duration-300 border border-white/25 ring-1 ring-brand-gold/30">
+              <BrandLogo variant="horizontal" size="small" className="opacity-100" />
             </div>
           </Link>
 

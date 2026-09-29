@@ -1,7 +1,7 @@
 import React from 'react';
-import horizontalLogo from '../../assets/brand/palm-grace-horizontal.png';
-import verticalLogo from '../../assets/brand/palm-grace-vertical.png';
-import emblemLogo from '../../assets/brand/palm-grace-emblem.png';
+import horizontalLogo from '../../assets/brand/palm-grace-horizontal-transparent.png';
+import verticalLogo from '../../assets/brand/palm-grace-vertical-transparent.png';
+import emblemLogo from '../../assets/brand/palm-grace-emblem-transparent.png';
 
 interface BrandLogoProps {
   variant?: 'vertical' | 'horizontal' | 'icon';
@@ -47,7 +47,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     <img
       src={assets[variant]}
       alt={variant === 'icon' ? 'Palm & Grace Memorials' : 'Palm & Grace Memorials - Honouring Lives. Preserving Legacies.'}
-        className={`${dimensions[variant][size]} h-auto max-w-full object-contain mix-blend-multiply`}
+        className={`${dimensions[variant][size]} h-auto max-w-full object-contain`}
     />
   </span>
 );

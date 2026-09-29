@@ -10,9 +10,9 @@ export const PublicFooter: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-12">
           {/* Brand & Purpose Column */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="group inline-flex rounded-2xl border border-white/20 bg-white/10 p-4 shadow-xl backdrop-blur-xl transition-colors hover:bg-white/15">
+            <Link to="/" className="group inline-flex rounded-2xl border border-white/20 bg-white/10 p-5 shadow-xl backdrop-blur-xl transition-colors hover:bg-white/15">
               <BrandLogo
-                variant="vertical"
+                variant="horizontal"
                 size="medium"
                 className="opacity-95 transition-opacity group-hover:opacity-100"
               />

@@ -17,12 +17,19 @@ const TOKEN_KEY = 'palm_grace_admin_token';
  * - Production: Uses environment variable VITE_API_URL or relative (for same-origin proxying)
  */
 function getApiBaseUrl(): string {
-  // If VITE_API_URL is set in env, use it (e.g., for cross-origin API calls)
+  // Production uses the existing Vercel /api proxy from vercel.json. Keeping
+  // browser requests same-origin avoids cross-origin preflight failures while
+  // the API remains hosted on Render.
+  if (import.meta.env.PROD) {
+    return '';
+  }
+
+  // Local development may explicitly target a remote API when required.
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  // Use the local Vite proxy in development and Render directly in production.
-  return import.meta.env.PROD ? 'https://palm-grace.onrender.com' : '';
+
+  return '';
 }
 
 const API_BASE_URL = getApiBaseUrl();

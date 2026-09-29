@@ -2,7 +2,7 @@ import cors, { CorsOptions } from 'cors';
 import { config } from '../config.js';
 
 export function configureCors() {
-  const allowedOrigins = config.corsOrigins;
+  const allowedOrigins = new Set(config.corsOrigins.map(origin => origin.replace(/\/$/, '')));
 
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
@@ -10,17 +10,18 @@ export function configureCors() {
       if (!origin) return callback(null, true);
 
       // Check explicit allowed origins
+      const normalizedOrigin = origin.replace(/\/$/, '');
       const isAllowed =
-        allowedOrigins.includes(origin) ||
-        allowedOrigins.includes('*') ||
+        allowedOrigins.has(normalizedOrigin) ||
+        allowedOrigins.has('*') ||
         // Vercel production deployments
-        origin.endsWith('.vercel.app') ||
+        normalizedOrigin.endsWith('.vercel.app') ||
         // Google Cloud Run & AI Studio
-        origin.endsWith('.run.app') ||
-        origin.endsWith('.google.com') ||
-        origin.endsWith('.aistudio.google.com') ||
+        normalizedOrigin.endsWith('.run.app') ||
+        normalizedOrigin.endsWith('.google.com') ||
+        normalizedOrigin.endsWith('.aistudio.google.com') ||
         // Local development
-        /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/.test(origin);
+        /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/.test(normalizedOrigin);
 
       if (isAllowed) {
         callback(null, true);

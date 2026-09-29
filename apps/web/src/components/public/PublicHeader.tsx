@@ -18,9 +18,9 @@ export const PublicHeader: React.FC = () => {
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
       <div className="mx-auto w-full max-w-[1360px] px-3 pt-3 sm:px-6 sm:pt-4">
         <div className="pointer-events-auto relative flex h-[72px] items-center gap-2 overflow-hidden rounded-[20px] border border-brand-primary/10 bg-header-silver px-3 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] transition-all duration-300 sm:gap-3 sm:px-6 lg:grid lg:h-[86px] lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
-          <div className="flex min-w-0 items-center lg:justify-start">
-            <Link to="/" onClick={() => setIsMobileOpen(false)} className="inline-flex shrink-0 px-1 transition-opacity hover:opacity-85" aria-label="Palm and Grace home">
-              <BrandLogo variant="horizontal" size="medium" className="max-w-[154px] min-[360px]:max-w-[174px] sm:max-w-[210px] [&_img]:block [&_img]:rounded-none" />
+          <div className="flex min-w-0 flex-1 items-center lg:flex-none lg:justify-start">
+            <Link to="/" onClick={() => setIsMobileOpen(false)} className="inline-flex min-w-0 max-w-full px-1 transition-opacity hover:opacity-85" aria-label="Palm and Grace home">
+              <BrandLogo variant="horizontal" size="medium" className="w-[138px] max-w-full min-[360px]:w-[166px] sm:w-[210px] [&_img]:block [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
             </Link>
           </div>
 
@@ -51,7 +51,7 @@ export const PublicHeader: React.FC = () => {
         <div className="pointer-events-auto fixed inset-0 z-50 bg-brand-primary/70 p-3 backdrop-blur-sm lg:hidden" onClick={() => setIsMobileOpen(false)}>
           <div className="overflow-hidden rounded-[20px] border border-brand-primary/10 bg-white shadow-[0_24px_60px_-30px_rgba(0,0,0,.5)]" onClick={(event) => event.stopPropagation()}>
             <div className="flex h-[72px] items-center justify-between border-b border-brand-primary/10 px-4">
-              <BrandLogo variant="horizontal" size="small" className="max-w-[174px] [&_img]:rounded-none" />
+              <BrandLogo variant="horizontal" size="small" className="w-[150px] max-w-[calc(100%-52px)] min-[360px]:w-[174px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
               <button type="button" aria-label="Close navigation menu" onClick={() => setIsMobileOpen(false)} className="grid h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary"><X className="h-5 w-5" /></button>
             </div>
             <nav className="px-4 py-3" aria-label="Mobile navigation">

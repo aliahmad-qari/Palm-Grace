@@ -71,11 +71,11 @@ export const config = {
     syncOnStart: process.env.ADMIN_SYNC_ON_START === 'true',
   },
   corsOrigins: [
-    ...(process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,https://palm-and-grace.vercel.app')
+    ...(process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:3001,http://localhost:5173,https://palm-grace-web.vercel.app')
       .split(',')
-      .map(o => o.trim())
+      .map(o => o.trim().replace(/\/$/, ''))
       .filter(Boolean),
-    ...(process.env.APP_URL ? [process.env.APP_URL.trim()] : []),
+    ...(process.env.APP_URL ? [process.env.APP_URL.trim().replace(/\/$/, '')] : []),
   ],
   enablePublicDirectory: process.env.ENABLE_PUBLIC_DIRECTORY !== 'false',
   cloudinary: {

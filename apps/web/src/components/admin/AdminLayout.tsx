@@ -59,7 +59,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col md:flex-row antialiased">
       {/* Mobile Top Header */}
       <header className="md:hidden flex items-center justify-between px-3 py-3 bg-header-silver text-brand-primary border-b border-brand-primary/15 sticky top-0 z-40 shadow-sm">
-        <div className="flex items-center gap-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 min-[360px]:gap-2.5">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-1.5 rounded-lg text-brand-primary hover:bg-brand-white/40 transition-colors"
@@ -67,10 +67,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <BrandLogo variant="horizontal" size="small" className="max-w-[145px] [&_img]:rounded-none" />
+          <BrandLogo
+            variant="horizontal"
+            size="small"
+            className="w-[106px] max-w-full min-[360px]:w-[128px] sm:w-[145px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-brand-primary/65 font-mono tracking-tight">ADMIN</span>
+        <div className="flex shrink-0 items-center gap-1 min-[360px]:gap-2">
+          <span className="hidden text-xs text-brand-primary/65 font-mono tracking-tight min-[360px]:inline">ADMIN</span>
           <button
             onClick={handleLogout}
             className="p-1.5 text-brand-primary/65 hover:text-brand-primary transition-colors"

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Shield, Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
+import { BrandLogo } from '../../components/public/BrandLogo.js';
 
 export const AdminLoginPage: React.FC = () => {
   const { login, isAuthenticated } = useAuth();
@@ -48,12 +49,11 @@ export const AdminLoginPage: React.FC = () => {
       <div className="relative w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-stone-800 border border-stone-700 text-amber-300 mb-4 shadow-sm">
-            <Shield className="w-6 h-6" />
-          </div>
-          <h1 className="font-serif text-3xl tracking-wider text-stone-50">
-            PALM &amp; GRACE
-          </h1>
+          <BrandLogo
+            variant="horizontal"
+            size="medium"
+            className="mb-5 max-w-[224px] sm:max-w-[260px] [&_img]:rounded-none"
+          />
           <p className="text-xs text-stone-400 uppercase tracking-widest mt-1">
             Administrator Sanctuary Access
           </p>

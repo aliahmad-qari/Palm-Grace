@@ -363,7 +363,7 @@ export const PublicMemorialViewPage: React.FC = () => {
         )}
 
         {/* =============== EMOTIONAL JOURNEY: RECOGNITION =============== */}
-        {/* 3. RECOGNITION SECTION - Biography Inscription (Opening Hook) */}
+        {/* 3. RECOGNITION SECTION - Life Story inscription (Opening Hook) */}
         {memorial.biography && (
           <section className="max-w-3xl mx-auto px-4 py-8">
             <div className="text-center space-y-4">

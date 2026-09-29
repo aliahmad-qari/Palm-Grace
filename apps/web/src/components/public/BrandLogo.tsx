@@ -47,7 +47,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     <img
       src={assets[variant]}
       alt={variant === 'icon' ? 'Palm & Grace Memorials' : 'Palm & Grace Memorials - Honouring Lives. Preserving Legacies.'}
-      className={`${dimensions[variant][size]} h-auto max-w-full object-contain`}
+        className={`${dimensions[variant][size]} h-auto max-w-full object-contain mix-blend-multiply`}
     />
   </span>
 );

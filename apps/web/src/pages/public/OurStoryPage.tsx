@@ -14,8 +14,8 @@ export const OurStoryPage: React.FC = () => {
           <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">
             <Heart className="h-4 w-4" aria-hidden="true" /><span>Our Story</span>
           </div>
-          <h1 className="font-serif text-4xl font-light leading-[1.08] text-brand-white sm:text-6xl lg:text-7xl">Every life leaves something worth preserving.</h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-brand-white/80 sm:text-lg">Palm &amp; Grace was created from a belief that remembrance deserves more than a fleeting place in time.</p>
+          <h1 className="font-serif text-4xl font-light leading-[1.08] text-brand-white sm:text-6xl lg:text-7xl">Our Story</h1>
+          <p className="mx-auto max-w-2xl text-base leading-relaxed text-brand-white/80 sm:text-lg">Every life leaves something worth preserving. Palm &amp; Grace was created from a belief that remembrance deserves more than a fleeting place in time.</p>
         </div>
       </section>
 
@@ -50,7 +50,7 @@ export const OurStoryPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-brand-primary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
+      <section id="contact" className="bg-brand-primary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-3xl space-y-7">
           <h2 className="font-serif text-3xl sm:text-5xl">Begin with a conversation.</h2>
           <p className="mx-auto max-w-xl text-base leading-7 text-brand-white/80">Have a question, or simply need to speak with us? We would be pleased to hear from you.</p>

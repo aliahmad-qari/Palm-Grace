@@ -54,7 +54,7 @@ export const HomePage: React.FC = () => {
   return (
     <PublicLayout>
       {/* 1. HERO SECTION - Strong gradient with gold accents */}
-      <section className="relative overflow-hidden text-brand-white min-h-[92vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden text-brand-white min-h-[92vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 bg-brand-primary">
         <img
           src={featuredMemorials[0]?.mainPhotograph || 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=2000&q=85'}
           alt={featuredMemorials[0] ? `Memorial portrait of ${featuredMemorials[0].fullName}` : 'Sunlight through a quiet woodland'}
@@ -66,7 +66,7 @@ export const HomePage: React.FC = () => {
 
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-3xl space-y-6 sm:space-y-8">
-            <div className="inline-flex items-center gap-2 text-xs text-brand-gold-light font-sans uppercase tracking-widest bg-brand-gold/20 px-4 py-2 rounded-full border-2 border-brand-gold backdrop-blur-sm w-fit">
+            <div className="inline-flex items-center gap-2 text-xs text-brand-gold-light font-sans uppercase tracking-widest bg-brand-primary/40 px-4 py-2 rounded-full border border-brand-gold/60 backdrop-blur-sm w-fit">
               <Heart className="w-4 h-4" aria-hidden="true" />
               <span>Palm &amp; Grace Memorials</span>
             </div>
@@ -82,7 +82,7 @@ export const HomePage: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 font-sans text-sm font-bold">
               <Link
                 to="/memorials"
-                className="min-h-12 w-full sm:w-auto px-8 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wide border-2 border-brand-gold"
+                className="min-h-12 w-full sm:w-auto px-8 bg-brand-gold hover:bg-brand-gold-light text-brand-primary rounded-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wide"
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
                 <span>Explore Memorial</span>
@@ -90,7 +90,7 @@ export const HomePage: React.FC = () => {
 
               <Link
                 to="/our-story"
-                className="min-h-12 w-full sm:w-auto px-8 bg-white/20 hover:bg-white/30 text-brand-white border-2 border-brand-gold-light rounded-lg transition-all flex items-center justify-center gap-2 backdrop-blur-sm uppercase tracking-wide font-bold"
+                className="min-h-12 w-full sm:w-auto px-8 bg-white/10 hover:bg-white/20 text-brand-white border border-white/50 rounded-lg transition-all flex items-center justify-center gap-2 backdrop-blur-sm uppercase tracking-wide font-bold"
               >
                 <BookOpen className="w-4 h-4" aria-hidden="true" />
                 <span>Our Story</span>
@@ -102,7 +102,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 2. INTRODUCTION SECTION - White with strong gold accents */}
-      <section className="py-24 bg-white text-brand-charcoal border-t-8 border-brand-gold font-sans">
+      <section className="py-24 bg-brand-white text-brand-charcoal border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
@@ -127,11 +127,13 @@ export const HomePage: React.FC = () => {
             </div>
 
             <div className="lg:col-span-6">
-              <div className="relative rounded-2xl overflow-hidden bg-brand-secondary border-8 border-brand-gold p-2 shadow-2xl">
+              <div className="relative rounded-2xl overflow-hidden bg-brand-secondary border border-brand-gold/50 p-2 shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1200&q=80"
                   alt="Dignified forest sunlight symbolizing eternal memory"
                   className="rounded-lg w-full h-[380px] object-cover filter brightness-95"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute inset-2 rounded-lg bg-gradient-to-t from-brand-secondary/90 via-transparent to-transparent flex items-end p-6">
                   <p className="font-serif italic text-brand-white text-sm sm:text-base">
@@ -145,7 +147,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 3. EXPERIENCE & THREE TEMPLATES - Green primary with gold dividers */}
-      <section id="experience" className="py-24 bg-brand-secondary text-white border-t-8 border-brand-gold font-sans">
+      <section id="experience" className="py-24 bg-brand-secondary text-white border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-4 max-w-3xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-brand-gold-light font-bold block">
@@ -161,13 +163,13 @@ export const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Template 1 */}
-            <div className="bg-brand-primary/95 rounded-2xl border-4 border-brand-gold p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all">
+            <div className="bg-brand-primary/80 rounded-2xl border border-white/15 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all backdrop-blur-sm">
               <div className="space-y-4">
-                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold px-3 py-1 rounded-full bg-brand-gold/20 border border-brand-gold inline-block">
+                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold-light px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/50 inline-block">
                   Memorial · Male
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
+                  <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <BookOpen className="w-6 h-6" aria-hidden="true" />
                   </span>
                   <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">A Life in Full</h3>
@@ -179,13 +181,13 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 2 */}
-            <div className="bg-brand-primary/95 rounded-2xl border-4 border-brand-gold p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all">
+            <div className="bg-brand-primary/80 rounded-2xl border border-white/15 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all backdrop-blur-sm">
               <div className="space-y-4">
-                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold px-3 py-1 rounded-full bg-brand-gold/20 border border-brand-gold inline-block">
+                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold-light px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/50 inline-block">
                   Memorial · Female
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
+                  <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <Sparkles className="w-6 h-6" aria-hidden="true" />
                   </span>
                   <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">Stories Held Close</h3>
@@ -197,13 +199,13 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Template 3 */}
-            <div className="bg-brand-primary/95 rounded-2xl border-4 border-brand-gold p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all">
+            <div className="bg-brand-primary/80 rounded-2xl border border-white/15 p-8 flex flex-col justify-between space-y-6 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all backdrop-blur-sm">
               <div className="space-y-4">
-                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold px-3 py-1 rounded-full bg-brand-gold/20 border border-brand-gold inline-block">
+                <span className="text-xs font-mono tracking-widest uppercase text-brand-gold-light px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/50 inline-block">
                   Memorial · Child
                 </span>
                 <div className="flex items-center gap-3">
-                  <span className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
+                  <span className="w-12 h-12 rounded-full bg-brand-gold/20 border border-brand-gold/60 flex items-center justify-center text-brand-gold">
                     <Heart className="w-6 h-6" aria-hidden="true" />
                   </span>
                   <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">Wonder Remembered</h3>
@@ -218,7 +220,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 4. HOW IT WORKS - Gold/Light Gold background */}
-      <section id="how-it-works" className="py-24 bg-brand-gold-light text-brand-primary border-t-8 border-brand-gold font-sans">
+      <section id="how-it-works" className="py-24 bg-brand-gold-light/25 text-brand-primary border-t border-brand-gold/40 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-brand-primary font-bold block">
@@ -230,7 +232,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border-2 border-brand-gold shadow-lg hover:shadow-xl transition-all">
+            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border border-brand-gold/50 shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
                 <Images className="w-6 h-6" aria-hidden="true" />
               </div>
@@ -242,7 +244,7 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border-2 border-brand-gold shadow-lg hover:shadow-xl transition-all">
+            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border border-brand-gold/50 shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
                 <Calendar className="w-6 h-6" aria-hidden="true" />
               </div>
@@ -254,7 +256,7 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border-2 border-brand-gold shadow-lg hover:shadow-xl transition-all">
+            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border border-brand-gold/50 shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
                 <Heart className="w-6 h-6" aria-hidden="true" />
               </div>
@@ -266,7 +268,7 @@ export const HomePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border-2 border-brand-gold shadow-lg hover:shadow-xl transition-all">
+            <div className="space-y-4 bg-brand-primary p-8 rounded-2xl border border-brand-gold/50 shadow-lg hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-brand-gold/30 border-2 border-brand-gold flex items-center justify-center text-brand-gold">
                 <QrCode className="w-6 h-6" aria-hidden="true" />
               </div>
@@ -282,7 +284,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 5. MEMORIAL EXAMPLES - Secondary green showcase */}
-      <section className="py-24 bg-brand-secondary text-white border-t-8 border-brand-gold font-sans">
+      <section className="py-24 bg-brand-secondary text-white border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -299,7 +301,7 @@ export const HomePage: React.FC = () => {
 
             <Link
               to="/memorials"
-              className="inline-flex items-center gap-2 text-xs font-bold text-brand-gold-light hover:text-brand-gold uppercase tracking-wider transition-colors bg-brand-primary/40 px-4 py-2 rounded-lg border border-brand-gold/40"
+              className="inline-flex items-center gap-2 text-xs font-bold text-brand-gold-light hover:text-brand-white uppercase tracking-wider transition-colors bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm"
             >
               <span>View All Directory</span>
               <ArrowRight className="w-4 h-4" />
@@ -321,7 +323,7 @@ export const HomePage: React.FC = () => {
                 <Link
                   key={m.id}
                   to={`/memorial/${m.slug}`}
-                  className="group bg-brand-primary/80 hover:bg-brand-primary border-2 border-brand-gold/50 hover:border-brand-gold rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-2"
+                  className="group bg-brand-primary/80 hover:bg-brand-primary border border-white/15 hover:border-brand-gold/60 rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-2 backdrop-blur-sm"
                 >
                   <div className="space-y-6">
                     <div className="flex items-center justify-between text-xs font-mono text-brand-white/70">
@@ -339,6 +341,8 @@ export const HomePage: React.FC = () => {
                         alt={m.fullName}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
 
@@ -369,12 +373,12 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 6. QR MEMORIAL EXPLANATION - Primary green with gold */}
-      <section id="qr-memorials" className="py-24 bg-brand-primary text-white border-t-8 border-brand-gold font-sans">
+      <section id="qr-memorials" className="py-24 bg-brand-primary text-white border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 order-2 lg:order-1">
-              <div className="p-8 rounded-2xl bg-brand-secondary border-4 border-brand-gold text-center space-y-4 shadow-2xl">
-                <div className="w-14 h-14 rounded-full bg-brand-gold/30 border-2 border-brand-gold text-brand-gold flex items-center justify-center mx-auto">
+              <div className="p-8 rounded-2xl bg-brand-secondary/80 border border-brand-gold/50 text-center space-y-4 shadow-2xl backdrop-blur-sm">
+                <div className="w-14 h-14 rounded-full bg-brand-gold/20 border border-brand-gold/60 text-brand-gold flex items-center justify-center mx-auto">
                   <QrCode className="w-8 h-8" />
                 </div>
                 <h3 className="font-serif text-2xl text-brand-gold-light font-semibold">
@@ -390,6 +394,8 @@ export const HomePage: React.FC = () => {
                     src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
                     alt="Sample Memorial QR Code"
                     className="w-40 h-40 mx-auto"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
 
@@ -443,9 +449,9 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 7. TRIBUTE CONCEPT - Secondary green background */}
-      <section className="py-24 bg-brand-secondary text-white border-t-8 border-brand-gold font-sans">
+      <section className="py-24 bg-brand-secondary text-white border-t border-brand-gold/30 font-sans">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-          <div className="w-14 h-14 rounded-full bg-brand-gold/30 border-2 border-brand-gold text-brand-gold flex items-center justify-center mx-auto">
+          <div className="w-14 h-14 rounded-full bg-brand-gold/20 border border-brand-gold/60 text-brand-gold flex items-center justify-center mx-auto">
             <Heart className="w-8 h-8" />
           </div>
 
@@ -459,15 +465,15 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto text-sm text-brand-white/90">
-            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border-2 border-brand-gold/50 font-medium">
+            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border border-white/15 font-medium">
               <Shield className="w-5 h-5 text-brand-gold shrink-0" aria-hidden="true" />
               <span>Family reviews every tribute.</span>
             </div>
-            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border-2 border-brand-gold/50 font-medium">
+            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border border-white/15 font-medium">
               <Layers className="w-5 h-5 text-brand-gold shrink-0" aria-hidden="true" />
               <span>Unapproved messages stay private.</span>
             </div>
-            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border-2 border-brand-gold/50 font-medium">
+            <div className="flex items-center justify-center sm:justify-start gap-3 bg-brand-primary/50 p-4 rounded-lg border border-white/15 font-medium">
               <CheckCircle className="w-5 h-5 text-brand-gold shrink-0" aria-hidden="true" />
               <span>Only approved tributes appear.</span>
             </div>
@@ -476,7 +482,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 8. CTA SECTION - Strong gradient with gold button */}
-      <section className="py-24 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary text-white border-t-8 border-brand-gold text-center font-sans">
+      <section className="py-24 bg-brand-primary text-white border-t border-brand-gold/30 text-center font-sans">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight font-semibold drop-shadow-lg">
             Keep their memory close.

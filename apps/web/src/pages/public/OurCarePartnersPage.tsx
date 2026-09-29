@@ -363,7 +363,7 @@ export const OurCarePartnersPage: React.FC = () => {
                 ) : submitStatus === 'success' ? (
                   <>
                     <CheckCircle className="w-4 h-4" />
-                    <span>Enquiry Submitted</span>
+                    <span>Conversation Started</span>
                   </>
                 ) : (
                   <>

@@ -281,7 +281,7 @@ export const MemorialDirectoryPage: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Biography Excerpt */}
+                      {/* Life Story excerpt */}
                       {m.biography && (
                         <p className="mt-4 text-xs sm:text-sm text-stone-300 line-clamp-3 italic font-serif leading-relaxed text-center px-2">
                           "{m.biography}"

@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext.js';
 import { HomePage } from './pages/public/HomePage.js';
-import { MemorialDirectoryPage } from './pages/public/MemorialDirectoryPage.js';
-import { PublicMemorialViewPage } from './pages/public/PublicMemorialViewPage.js';
-import { OurStoryPage } from './pages/public/OurStoryPage.js';
-import { BeginAMemorialPage } from './pages/public/BeginAMemorialPage.js';
-import { OurCarePartnersPage } from './pages/public/OurCarePartnersPage.js';
-import { AdminLoginPage } from './pages/admin/AdminLoginPage.js';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.js';
-import { AdminMemorialsListPage } from './pages/admin/AdminMemorialsListPage.js';
-import { AdminMemorialEditorPage } from './pages/admin/AdminMemorialEditorPage.js';
-import { AdminTributesPage } from './pages/admin/AdminTributesPage.js';
-import { AdminMediaPage } from './pages/admin/AdminMediaPage.js';
 import { Loader2 } from 'lucide-react';
+
+// Only the homepage loads eagerly; every other route is code-split so the
+// first paint ships the smallest possible bundle.
+const MemorialDirectoryPage = lazy(() => import('./pages/public/MemorialDirectoryPage.js').then(m => ({ default: m.MemorialDirectoryPage })));
+const PublicMemorialViewPage = lazy(() => import('./pages/public/PublicMemorialViewPage.js').then(m => ({ default: m.PublicMemorialViewPage })));
+const OurStoryPage = lazy(() => import('./pages/public/OurStoryPage.js').then(m => ({ default: m.OurStoryPage })));
+const BeginAMemorialPage = lazy(() => import('./pages/public/BeginAMemorialPage.js').then(m => ({ default: m.BeginAMemorialPage })));
+const OurCarePartnersPage = lazy(() => import('./pages/public/OurCarePartnersPage.js').then(m => ({ default: m.OurCarePartnersPage })));
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage.js').then(m => ({ default: m.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage.js').then(m => ({ default: m.AdminDashboardPage })));
+const AdminMemorialsListPage = lazy(() => import('./pages/admin/AdminMemorialsListPage.js').then(m => ({ default: m.AdminMemorialsListPage })));
+const AdminMemorialEditorPage = lazy(() => import('./pages/admin/AdminMemorialEditorPage.js').then(m => ({ default: m.AdminMemorialEditorPage })));
+const AdminTributesPage = lazy(() => import('./pages/admin/AdminTributesPage.js').then(m => ({ default: m.AdminTributesPage })));
+const AdminMediaPage = lazy(() => import('./pages/admin/AdminMediaPage.js').then(m => ({ default: m.AdminMediaPage })));
+
+const RouteFallback: React.FC = () => (
+  <div className="min-h-screen bg-brand-primary flex items-center justify-center">
+    <Loader2 className="w-8 h-8 text-brand-gold animate-spin" />
+  </div>
+);
 
 /**
  * Route guard for administrator pages
@@ -43,7 +52,8 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
           {/* Public Sanctuary Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/memorials" element={<MemorialDirectoryPage />} />
@@ -106,8 +116,9 @@ export default function App() {
           />
 
           {/* 404 Catch All -> Return to Sanctuary Home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
-import horizontalLogo from '../../assets/brand/palm-grace-horizontal-transparent.png';
-import verticalLogo from '../../assets/brand/palm-grace-vertical-transparent.png';
+import horizontalLogo from '../../assets/brand/palm-grace-horizontal-header-transparent.png';
+import verticalLogo from '../../assets/brand/palm-grace-vertical-header-transparent.png';
 import emblemLogo from '../../assets/brand/palm-grace-emblem-transparent.png';
 
 interface BrandLogoProps {

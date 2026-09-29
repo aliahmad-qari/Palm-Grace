@@ -49,11 +49,13 @@ export const AdminLoginPage: React.FC = () => {
       <div className="relative w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <BrandLogo
-            variant="horizontal"
-            size="medium"
-            className="mb-5 max-w-[224px] sm:max-w-[260px] [&_img]:rounded-none"
-          />
+          <div className="mx-auto mb-5 flex min-h-24 w-full max-w-[310px] items-center justify-center rounded-2xl bg-header-silver px-5 py-3 shadow-sm">
+            <BrandLogo
+              variant="horizontal"
+              size="medium"
+              className="w-full max-w-[260px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
+            />
+          </div>
           <p className="text-xs text-stone-400 uppercase tracking-widest mt-1">
             Administrator Sanctuary Access
           </p>

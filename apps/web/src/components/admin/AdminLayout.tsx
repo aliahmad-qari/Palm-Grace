@@ -58,7 +58,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col md:flex-row antialiased">
       {/* Mobile Top Header */}
-      <header className="md:hidden flex items-center justify-between px-3 py-3 bg-header-silver text-brand-primary border-b border-brand-primary/15 sticky top-0 z-40 shadow-sm">
+      <header className="md:hidden flex min-h-[80px] items-center justify-between px-3 py-2 bg-header-silver text-brand-primary border-b border-brand-primary/15 sticky top-0 z-40 shadow-sm sm:min-h-0 sm:py-3">
         <div className="flex min-w-0 flex-1 items-center gap-1.5 min-[360px]:gap-2.5">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -67,12 +67,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <BrandLogo variant="icon" size="small" className="sm:hidden [&_img]:rounded-none" />
-          <BrandLogo
-            variant="horizontal"
-            size="small"
-            className="hidden w-[145px] max-w-full sm:inline-flex [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
-          />
+          <span className="block sm:hidden">
+            <BrandLogo variant="vertical" size="small" className="w-[88px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
+          </span>
+          <span className="hidden sm:block">
+            <BrandLogo
+              variant="horizontal"
+              size="small"
+              className="w-[145px] max-w-full [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
+            />
+          </span>
         </div>
         <div className="flex shrink-0 items-center gap-1 min-[360px]:gap-2">
           <span className="hidden text-xs text-brand-primary/65 font-mono tracking-tight min-[360px]:inline">ADMIN</span>

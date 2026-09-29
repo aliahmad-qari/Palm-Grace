@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Heart, Images, MessageCircleHeart, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
-import { api } from '../../lib/api.js';
+import { api, apiUrl } from '../../lib/api.js';
 import { Memorial } from '../../types/index.js';
 
 export const HomePage: React.FC = () => {
@@ -126,14 +126,26 @@ export const HomePage: React.FC = () => {
       </section>
 
       <section className="bg-brand-white px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.8fr_1.2fr]">
-          <div className="flex min-h-72 items-center justify-center border border-brand-gold/50 bg-brand-gold-light/25 backdrop-blur-md">
-            <div className="flex h-40 w-40 items-center justify-center border border-brand-gold/60 bg-brand-primary shadow-[0_16px_45px_rgba(43,67,51,.18)]"><QrCode className="h-24 w-24 text-brand-gold-light" /></div>
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[.8fr_1.2fr]">
+          <div className="flex min-h-80 items-center justify-center border border-brand-gold/45 bg-brand-gold-light/20 p-8 shadow-[0_20px_55px_rgba(43,67,51,.1)]">
+            <div className="w-full max-w-xs border border-brand-primary/15 bg-brand-primary p-6 text-center shadow-[0_16px_45px_rgba(43,67,51,.2)]">
+              <div className="bg-white p-3">
+                <img
+                  src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
+                  alt="Scan to open an example Palm & Grace memorial"
+                  className="mx-auto aspect-square w-full max-w-48 object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-gold-light">Scan to enter a memorial</p>
+            </div>
           </div>
-          <div>
+          <div className="max-w-2xl">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-brand-secondary">A connection that remains</p>
-            <h2 className="font-serif text-4xl font-light text-brand-primary sm:text-6xl">From a service to the years that follow.</h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-brand-charcoal font-medium">A discreet memorial QR code can connect printed service materials or a lasting place of remembrance to the stories, photographs and memories held online.</p>
+            <h2 className="font-serif text-4xl font-light leading-tight text-brand-primary sm:text-6xl">From a service to the years that follow.</h2>
+            <p className="mt-5 text-base leading-8 text-brand-charcoal/75 sm:text-lg">A discreet memorial QR code can connect printed service materials or a lasting place of remembrance to the stories, photographs and memories held online.</p>
+            <p className="mt-4 text-sm leading-7 text-brand-charcoal/65">A simple scan keeps the memorial close, whether it appears on a service card, keepsake, plaque or family remembrance.</p>
           </div>
         </div>
       </section>

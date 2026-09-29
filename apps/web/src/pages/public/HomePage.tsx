@@ -35,7 +35,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-brand-gold-light/20 px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
+      <section className="bg-brand-white px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">Every life leaves something worth preserving</p>
@@ -44,7 +44,7 @@ export const HomePage: React.FC = () => {
             <p className="text-base leading-8 text-brand-charcoal/75">Each Palm &amp; Grace memorial is personal and cinematic—centred on one life, shaped by the people who knew them, and created with care.</p>
             <Link to="/our-story" className="inline-flex min-h-11 items-center gap-2 font-semibold text-brand-primary underline decoration-brand-gold decoration-2 underline-offset-4">Our Story <ArrowRight className="h-4 w-4" /></Link>
           </div>
-          <div className="relative border border-brand-gold/50 bg-brand-white/60 p-3 shadow-[0_24px_60px_rgba(43,67,51,.14)] backdrop-blur-md">
+          <div className="relative border border-brand-gold/50 bg-brand-primary/10 p-3 shadow-[0_24px_60px_rgba(43,67,51,.14)] backdrop-blur-md">
             <img src="https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85" alt="Leaves illuminated by gentle natural light" className="h-[460px] w-full object-cover" />
             <div className="absolute inset-x-8 bottom-8 border border-brand-white/25 bg-brand-primary/75 p-6 text-brand-white backdrop-blur-lg">
               <p className="font-serif text-2xl leading-snug">A life held in story, image, voice and memory.</p>
@@ -53,17 +53,17 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-brand-gold-light/20 px-4 py-20 text-brand-charcoal sm:px-6 sm:py-24 lg:px-8">
+      <section className="bg-brand-secondary px-4 py-20 text-brand-white sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">One life. One memorial.</p>
-            <h2 className="font-serif text-4xl font-light text-brand-primary sm:text-6xl">Every memorial should feel personal.</h2>
-            <p className="mt-5 text-base leading-8 text-brand-charcoal/70">Thoughtful visual directions provide a gentle foundation. The story, photography and personality of the person being remembered make each space entirely their own.</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold-light">One life. One memorial.</p>
+            <h2 className="font-serif text-4xl font-light text-brand-white sm:text-6xl">Every memorial should feel personal.</h2>
+            <p className="mt-5 text-base leading-8 text-brand-white/80">Thoughtful visual directions provide a gentle foundation. The story, photography and personality of the person being remembered make each space entirely their own.</p>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
-            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><BookOpen className="mb-5 h-6 w-6 text-brand-secondary" /><h3 className="font-serif text-2xl text-brand-primary">Classic Dignity</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A refined, restrained atmosphere shaped around strength, character and enduring legacy.</p></article>
-            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><Sparkles className="mb-5 h-6 w-6 text-brand-gold" /><h3 className="font-serif text-2xl text-brand-primary">Grace &amp; Warmth</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A gentle, elegant atmosphere celebrating connection, warmth and a life beautifully lived.</p></article>
-            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><Heart className="mb-5 h-6 w-6 text-brand-secondary" /><h3 className="font-serif text-2xl text-brand-primary">Gentle Wonder</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A tender, age-appropriate space centred on personality, wonder and the love that remains.</p></article>
+            <article className="border border-brand-white/15 bg-brand-primary/80 p-7 shadow-[0_14px_40px_rgba(0,0,0,.16)] backdrop-blur-md"><BookOpen className="mb-5 h-6 w-6 text-brand-gold-light" /><h3 className="font-serif text-2xl text-brand-gold-light">Classic Dignity</h3><p className="mt-3 text-sm leading-7 text-brand-white/80">A refined, restrained atmosphere shaped around strength, character and enduring legacy.</p></article>
+            <article className="border border-brand-white/15 bg-brand-primary/80 p-7 shadow-[0_14px_40px_rgba(0,0,0,.16)] backdrop-blur-md"><Sparkles className="mb-5 h-6 w-6 text-brand-gold" /><h3 className="font-serif text-2xl text-brand-gold-light">Grace &amp; Warmth</h3><p className="mt-3 text-sm leading-7 text-brand-white/80">A gentle, elegant atmosphere celebrating connection, warmth and a life beautifully lived.</p></article>
+            <article className="border border-brand-white/15 bg-brand-primary/80 p-7 shadow-[0_14px_40px_rgba(0,0,0,.16)] backdrop-blur-md"><Heart className="mb-5 h-6 w-6 text-brand-gold-light" /><h3 className="font-serif text-2xl text-brand-gold-light">Gentle Wonder</h3><p className="mt-3 text-sm leading-7 text-brand-white/80">A tender, age-appropriate space centred on personality, wonder and the love that remains.</p></article>
           </div>
         </div>
       </section>
@@ -125,10 +125,10 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-brand-gold-light/20 px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+      <section className="bg-brand-white px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.8fr_1.2fr]">
-          <div className="flex min-h-72 items-center justify-center border border-brand-gold/45 bg-brand-white/65 backdrop-blur-md">
-            <div className="flex h-40 w-40 items-center justify-center border border-brand-gold/55 bg-brand-white shadow-[0_16px_45px_rgba(43,67,51,.12)]"><QrCode className="h-24 w-24 text-brand-primary" /></div>
+          <div className="flex min-h-72 items-center justify-center border border-brand-gold/50 bg-brand-gold-light/25 backdrop-blur-md">
+            <div className="flex h-40 w-40 items-center justify-center border border-brand-gold/60 bg-brand-primary shadow-[0_16px_45px_rgba(43,67,51,.18)]"><QrCode className="h-24 w-24 text-brand-gold-light" /></div>
           </div>
           <div>
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-brand-secondary">A connection that remains</p>
@@ -138,9 +138,9 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-brand-secondary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
+      <section className="relative overflow-hidden bg-brand-primary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(237,211,154,.18),transparent_45%)]" />
-        <div className="relative mx-auto max-w-3xl border border-brand-white/20 bg-brand-primary/35 p-8 backdrop-blur-lg sm:p-12">
+        <div className="relative mx-auto max-w-3xl border border-brand-gold/45 bg-brand-secondary/80 p-8 shadow-[0_24px_70px_rgba(0,0,0,.18)] backdrop-blur-lg sm:p-12">
           <Heart className="mx-auto mb-6 h-7 w-7 text-brand-gold" />
           <h2 className="font-serif text-4xl font-light sm:text-6xl">Begin with a conversation.</h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-brand-white/78">Every person, family and story is different. You do not need to have everything prepared. This is simply the beginning.</p>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   MessageSquareHeart,
   CheckCircle,
@@ -18,8 +19,16 @@ import { api } from '../../lib/api.js';
 import { Tribute, TributeStatus } from '../../types/index.js';
 
 export const AdminTributesPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  
+  // Initialize active tab from URL query params
+  const urlStatus = searchParams.get('status');
+  const initialTab = (urlStatus && ['PENDING', 'APPROVED', 'REJECTED', 'ALL'].includes(urlStatus))
+    ? urlStatus as 'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'
+    : 'PENDING';
+  
   const [tributes, setTributes] = useState<Tribute[]>([]);
-  const [activeTab, setActiveTab] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'>('PENDING');
+  const [activeTab, setActiveTab] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'>(initialTab);
   const [counts, setCounts] = useState({ pending: 0, approved: 0, rejected: 0, total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');

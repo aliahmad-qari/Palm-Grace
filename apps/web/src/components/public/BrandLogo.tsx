@@ -41,7 +41,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   className = '',
 }) => (
   <span
-    className={`inline-flex items-center justify-center bg-brand-white p-2 ${className}`}
+    className={`inline-flex items-center justify-center ${className}`}
     data-logo-variant={variant}
   >
     <img

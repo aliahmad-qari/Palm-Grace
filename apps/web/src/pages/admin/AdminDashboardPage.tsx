@@ -82,10 +82,13 @@ export const AdminDashboardPage: React.FC = () => {
       {/* 4 Core Summary Metric Cards (Zero-pill, tabular numbers) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Total Memorials */}
-        <div className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+        <Link
+          to="/admin/memorials"
+          className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between hover:border-stone-300 hover:shadow-sm transition-all group"
+        >
           <div className="flex items-center justify-between text-stone-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Total Memorials</span>
-            <Scroll className="w-4 h-4 text-stone-400" />
+            <Scroll className="w-4 h-4 text-stone-400 group-hover:text-stone-600 transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-serif font-bold text-stone-900 tabular-nums">
@@ -93,13 +96,16 @@ export const AdminDashboardPage: React.FC = () => {
             </span>
             <span className="text-xs text-stone-500 font-sans">records</span>
           </div>
-        </div>
+        </Link>
 
         {/* Published Memorials */}
-        <div className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+        <Link
+          to="/admin/memorials?status=PUBLISHED"
+          className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between hover:border-emerald-200 hover:shadow-sm transition-all group"
+        >
           <div className="flex items-center justify-between text-stone-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Published</span>
-            <Globe className="w-4 h-4 text-emerald-600" />
+            <Globe className="w-4 h-4 text-emerald-600 group-hover:text-emerald-700 transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-serif font-bold text-stone-900 tabular-nums">
@@ -107,13 +113,16 @@ export const AdminDashboardPage: React.FC = () => {
             </span>
             <span className="text-xs text-emerald-700 font-sans">active publicly</span>
           </div>
-        </div>
+        </Link>
 
         {/* Draft Memorials */}
-        <div className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+        <Link
+          to="/admin/memorials?status=DRAFT"
+          className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between hover:border-amber-200 hover:shadow-sm transition-all group"
+        >
           <div className="flex items-center justify-between text-stone-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Drafts</span>
-            <FileEdit className="w-4 h-4 text-amber-600" />
+            <FileEdit className="w-4 h-4 text-amber-600 group-hover:text-amber-700 transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-serif font-bold text-stone-900 tabular-nums">
@@ -121,13 +130,16 @@ export const AdminDashboardPage: React.FC = () => {
             </span>
             <span className="text-xs text-amber-700 font-sans">in progress</span>
           </div>
-        </div>
+        </Link>
 
         {/* Pending Tributes */}
-        <div className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between">
+        <Link
+          to="/admin/tributes?status=PENDING"
+          className="bg-white p-5 rounded-xl border border-stone-200/80 shadow-xs flex flex-col justify-between hover:border-rose-200 hover:shadow-sm transition-all group"
+        >
           <div className="flex items-center justify-between text-stone-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Pending Tributes</span>
-            <MessageSquareHeart className="w-4 h-4 text-rose-500" />
+            <MessageSquareHeart className="w-4 h-4 text-rose-500 group-hover:text-rose-600 transition-colors" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-serif font-bold text-stone-900 tabular-nums">
@@ -135,7 +147,7 @@ export const AdminDashboardPage: React.FC = () => {
             </span>
             <span className="text-xs text-rose-600 font-sans">needs review</span>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Pending Tributes Action Banner (if any pending) */}

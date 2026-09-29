@@ -20,7 +20,7 @@ export const PublicHeader: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-brand-primary/95 backdrop-blur-md border-b border-brand-gold/30 text-brand-white transition-colors">
+    <header className="sticky top-0 z-40 bg-brand-primary border-b border-brand-gold/40 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Brand Identity */}
@@ -45,8 +45,8 @@ export const PublicHeader: React.FC = () => {
                 to={link.href}
                 className={`transition-colors py-1 ${
                   isActive(link.href)
-                    ? 'text-brand-gold-light border-b border-brand-gold font-semibold'
-                    : 'text-brand-white/80 hover:text-brand-white'
+                    ? 'text-brand-gold-light border-b-2 border-brand-gold font-semibold'
+                    : 'text-brand-white/85 hover:text-brand-gold-light'
                 }`}
               >
                 {link.label}
@@ -55,22 +55,21 @@ export const PublicHeader: React.FC = () => {
           </nav>
 
           {/* Desktop Right Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <Link
               to="/begin-a-memorial"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-brand-primary bg-brand-gold-light hover:bg-brand-gold transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold text-brand-primary bg-brand-gold hover:bg-brand-gold-light transition-colors shadow-md"
             >
               <Heart className="w-3.5 h-3.5" />
               <span>Begin a Memorial</span>
             </Link>
-
           </div>
 
           {/* Mobile Menu Hamburger Button */}
           <div className="flex md:hidden items-center gap-2">
             <Link
               to="/memorials"
-              className="p-2 text-brand-white/80 hover:text-brand-white rounded-lg hover:bg-brand-secondary"
+              className="p-2 text-brand-gold-light hover:bg-brand-secondary/60 rounded-lg transition-colors"
               aria-label="Search memorials"
             >
               <Search className="w-4 h-4" />
@@ -78,7 +77,7 @@ export const PublicHeader: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="p-2 text-brand-white/80 hover:text-brand-white rounded-lg hover:bg-brand-secondary transition-colors"
+              className="p-2 text-brand-gold-light hover:bg-brand-secondary/60 rounded-lg transition-colors"
               aria-label={isMobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -89,17 +88,17 @@ export const PublicHeader: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {isMobileOpen && (
-        <div className="md:hidden bg-brand-primary border-b border-brand-gold/30 px-4 pt-2 pb-6 space-y-3 font-sans">
+        <div className="md:hidden bg-brand-secondary border-t border-brand-gold/40 px-4 pt-2 pb-6 space-y-3 font-sans">
           <div className="space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileOpen(false)}
-                className={`block px-3 py-2.5 rounded-lg text-sm font-medium ${
+                className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive(link.href)
-                    ? 'bg-brand-secondary text-brand-gold-light font-semibold'
-                    : 'text-brand-white/80 hover:bg-brand-secondary/60 hover:text-brand-white'
+                    ? 'bg-brand-gold/20 text-brand-gold-light font-semibold'
+                    : 'text-brand-white/85 hover:text-brand-gold-light'
                 }`}
               >
                 {link.label}
@@ -111,7 +110,7 @@ export const PublicHeader: React.FC = () => {
             <Link
               to="/begin-a-memorial"
               onClick={() => setIsMobileOpen(false)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-brand-gold-light text-brand-primary text-xs uppercase tracking-wider font-semibold"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-brand-gold text-brand-primary text-xs uppercase tracking-wider font-semibold transition-colors hover:bg-brand-gold-light"
             >
               <Heart className="w-4 h-4" />
               <span>Begin a Memorial</span>

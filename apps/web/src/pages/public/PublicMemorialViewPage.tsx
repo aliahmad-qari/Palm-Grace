@@ -208,43 +208,44 @@ export const PublicMemorialViewPage: React.FC = () => {
 
   return (
     <PublicLayout>
-      <div className={`min-h-screen ${theme.rootBg} ${theme.bodyTextColor} transition-colors duration-300 pb-24 font-sans`}>
-        {/* Navigation & Utilities Header Bar */}
-        <div className="border-b border-white/5 py-4 px-4 sm:px-8 bg-stone-950/40 backdrop-blur-xs">
-          <div className="max-w-5xl mx-auto flex items-center justify-between text-xs">
+      <div className={`min-h-screen ${theme.rootBg} ${theme.bodyTextColor} transition-colors duration-300 font-sans`}>
+        {/* Navigation Bar - Minimal, persistent */}
+        <div className="sticky top-0 z-40 border-b border-white/5 py-3 px-4 sm:px-8 bg-stone-950/50 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
             <Link
               to="/memorials"
               className="inline-flex items-center gap-1.5 text-stone-400 hover:text-white transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Sanctuary Directory</span>
+              <span className="hidden sm:inline">Back to Directory</span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsQrModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
                 title="View &amp; Print Stationery QR Code"
+                aria-label="Download QR code"
               >
-                <QrCode className="w-3.5 h-3.5 text-amber-300" />
-                <span className="hidden sm:inline">Stationery</span>
-                <span>QR</span>
+                <QrCode className="w-4 h-4 text-amber-300" />
               </button>
 
               <button
                 onClick={() => setIsShareModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
                 title="Share Sanctuary Link"
+                aria-label="Share memorial"
               >
-                <Share2 className="w-3.5 h-3.5" />
-                <span>Share</span>
+                <Share2 className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* 1. HERO SECTION (Template Styled: Male / Female / Child) */}
-        <section className={`pt-14 sm:pt-20 pb-16 px-4 ${theme.heroGradient} text-center relative overflow-hidden`}>
+        {/* =============== EMOTIONAL JOURNEY: ARRIVAL =============== */}
+        {/* 1. ARRIVAL SECTION - Portrait, Name, Dates, Memorial Line (Minimal Controls) */}
+        <section className={`pt-16 sm:pt-24 pb-8 sm:pb-12 px-4 ${theme.heroGradient} text-center relative overflow-hidden`}>
           {/* Subtle Motif Ornamentation based on template */}
           <div className="max-w-4xl mx-auto space-y-6 relative z-10">
             {/* Focal Portrait Frame with Responsive Wrap & High-Fidelity Glow */}
@@ -361,7 +362,24 @@ export const PublicMemorialViewPage: React.FC = () => {
           </section>
         )}
 
-        {/* 3. EXTENDED LIFE STORY / EULOGY (Gracefully handles long multiline prose) */}
+        {/* =============== EMOTIONAL JOURNEY: RECOGNITION =============== */}
+        {/* 3. RECOGNITION SECTION - Biography Inscription (Opening Hook) */}
+        {memorial.biography && (
+          <section className="max-w-3xl mx-auto px-4 py-8">
+            <div className="text-center space-y-4">
+              <span className={`text-[11px] uppercase tracking-widest ${theme.accentColor} font-semibold block`}>
+                Who They Were
+              </span>
+              <p className={`font-serif italic text-xl sm:text-2xl ${theme.bodyTextColor} leading-relaxed max-w-2xl mx-auto`}>
+                "{memorial.biography}"
+              </p>
+              <div className={`w-12 h-px ${theme.dividerColor} mx-auto`} />
+            </div>
+          </section>
+        )}
+
+        {/* =============== EMOTIONAL JOURNEY: STORY =============== */}
+        {/* 4. EXTENDED LIFE STORY / EULOGY (Gracefully handles long multiline prose) */}
         {memorial.lifeStory && (
           <section className="max-w-3xl mx-auto px-4 py-10 space-y-6">
             <div className="text-center space-y-2">
@@ -382,142 +400,9 @@ export const PublicMemorialViewPage: React.FC = () => {
           </section>
         )}
 
-        {/* 4. CEREMONIAL SERVICE INFORMATION (Structured details, venue, address, notes) */}
-        {(serviceInfoObj || memorial.serviceInformation) && (
-          <section className="max-w-3xl mx-auto px-4 py-8">
-            <div className={`p-6 sm:p-8 rounded-2xl border ${theme.cardBorder} ${theme.cardBg} space-y-5 shadow-xl`}>
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-stone-200">
-                  <MapPin className="w-4 h-4 text-amber-300" />
-                  <span>Ceremonial Service Gathering</span>
-                </div>
-                {serviceInfoObj?.address && (
-                  <button
-                    onClick={() => handleCopyAddress(serviceInfoObj!.address!)}
-                    className="flex items-center gap-1 text-[11px] text-stone-400 hover:text-white transition-colors"
-                    title="Copy full venue address"
-                  >
-                    {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedAddress ? 'Address Copied' : 'Copy Address'}</span>
-                  </button>
-                )}
-              </div>
-
-              {serviceInfoObj ? (
-                <div className="space-y-4">
-                  {serviceInfoObj.venue && (
-                    <div>
-                      <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
-                        Sanctuary / Venue
-                      </span>
-                      <h4 className="font-serif text-xl sm:text-2xl text-white mt-0.5">
-                        {serviceInfoObj.venue}
-                      </h4>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                    {serviceInfoObj.date && (
-                      <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
-                        <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
-                          Date &amp; Time
-                        </span>
-                        <div className="flex items-center gap-2 text-stone-200 text-sm">
-                          <Clock className="w-4 h-4 text-amber-300 shrink-0" />
-                          <span>{formatDate(serviceInfoObj.date)}</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {serviceInfoObj.address && (
-                      <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
-                        <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
-                          Sanctuary Address
-                        </span>
-                        <div className="flex items-start gap-2 text-stone-200 text-sm">
-                          <MapPin className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
-                          <span className="leading-snug">{serviceInfoObj.address}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {serviceInfoObj.reception && (
-                    <div className="pt-3 border-t border-white/10 text-xs text-stone-400 leading-relaxed space-y-1">
-                      <span className="font-semibold uppercase tracking-wider text-stone-300 text-[10px] block">
-                        Reception &amp; Gathering Notes
-                      </span>
-                      <p className="text-stone-300 italic">{serviceInfoObj.reception}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="whitespace-pre-line text-sm text-stone-300 leading-relaxed font-sans">
-                  {memorial.serviceInformation}
-                </p>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* 5. REMEMBRANCE PHOTO GALLERY (Handles Large Galleries with Lightbox) */}
-        {memorial.media && memorial.media.length > 0 && (
-          <section className="max-w-5xl mx-auto px-4 py-12 space-y-6">
-            <div className="text-center space-y-2">
-              <span className={`text-[11px] uppercase tracking-widest ${theme.accentColor} font-semibold block`}>
-                Archival Photographs
-              </span>
-              <h2 className={`font-serif text-2xl sm:text-4xl ${theme.headingColor}`}>
-                Remembrance Gallery
-              </h2>
-              <p className="text-xs text-stone-400 font-sans tracking-wider">
-                {memorial.media.length} {memorial.media.length === 1 ? 'Photograph' : 'Photographs'} preserved in honor of {memorial.fullName}
-              </p>
-              <div className={`w-12 h-px ${theme.dividerColor} mx-auto`} />
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {memorial.media.map((img, idx) => (
-                <div
-                  key={img.id}
-                  onClick={() => setLightboxIndex(idx)}
-                  className={`group relative aspect-4/3 rounded-xl overflow-hidden bg-stone-900 border border-white/10 cursor-pointer shadow-md transition-all duration-300 hover:scale-[1.02] ${theme.cardHoverBorder}`}
-                  title="Click to view full photograph"
-                >
-                  <img
-                    src={img.url}
-                    alt={img.caption || `Remembrance photo ${idx + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-stone-950/20 group-hover:bg-transparent transition-colors" />
-                  {img.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-stone-950/85 p-2 text-[11px] text-stone-300 truncate font-sans">
-                      {img.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 6. FAMILY ACKNOWLEDGEMENT (Words of gratitude) */}
-        {memorial.familyAcknowledgement && (
-          <section className="max-w-3xl mx-auto px-4 py-10">
-            <div className="p-8 sm:p-10 rounded-2xl bg-white/4 border border-white/10 text-center space-y-3 relative overflow-hidden shadow-xl">
-              <Heart className="w-6 h-6 text-rose-300 mx-auto opacity-80" />
-              <h3 className="font-sans text-xs uppercase tracking-widest text-stone-400 font-semibold">
-                Words of Gratitude from the Family
-              </h3>
-              <p className="font-serif italic text-base sm:text-lg text-stone-200/90 leading-relaxed max-w-xl mx-auto">
-                "{memorial.familyAcknowledgement}"
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* 7. WORDS OF REMEMBRANCE & SHARED MEMORIES (Rule #17: Displays approved memories only) */}
+        {/* =============== EMOTIONAL JOURNEY: CONNECTION =============== */}
+        {/* 5. WORDS OF REMEMBRANCE & SHARED MEMORIES (Rule #17: Displays approved memories only) */}
+        {/* Connection happens here - visitors share memories, person's impact shown through others' perspectives */}
         <section className="max-w-4xl mx-auto px-4 py-14 space-y-10" id="tributes">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 text-amber-300 mb-1">
@@ -659,7 +544,145 @@ export const PublicMemorialViewPage: React.FC = () => {
           </div>
         </section>
 
-        {/* 8. GALLERY LIGHTBOX MODAL */}
+        {/* =============== EMOTIONAL JOURNEY: REMEMBRANCE =============== */}
+        {/* 6. CEREMONIAL SERVICE INFORMATION (Structured details, venue, address, notes) */}
+        {(serviceInfoObj || memorial.serviceInformation) && (
+          <section className="max-w-3xl mx-auto px-4 py-8">
+            <div className={`p-6 sm:p-8 rounded-2xl border ${theme.cardBorder} ${theme.cardBg} space-y-5 shadow-xl`}>
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-stone-200">
+                  <MapPin className="w-4 h-4 text-amber-300" />
+                  <span>Ceremonial Service Gathering</span>
+                </div>
+                {serviceInfoObj?.address && (
+                  <button
+                    onClick={() => handleCopyAddress(serviceInfoObj!.address!)}
+                    className="flex items-center gap-1 text-[11px] text-stone-400 hover:text-white transition-colors"
+                    title="Copy full venue address"
+                  >
+                    {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedAddress ? 'Address Copied' : 'Copy Address'}</span>
+                  </button>
+                )}
+              </div>
+
+              {serviceInfoObj ? (
+                <div className="space-y-4">
+                  {serviceInfoObj.venue && (
+                    <div>
+                      <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
+                        Sanctuary / Venue
+                      </span>
+                      <h4 className="font-serif text-xl sm:text-2xl text-white mt-0.5">
+                        {serviceInfoObj.venue}
+                      </h4>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    {serviceInfoObj.date && (
+                      <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                        <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
+                          Date &amp; Time
+                        </span>
+                        <div className="flex items-center gap-2 text-stone-200 text-sm">
+                          <Clock className="w-4 h-4 text-amber-300 shrink-0" />
+                          <span>{formatDate(serviceInfoObj.date)}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {serviceInfoObj.address && (
+                      <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                        <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
+                          Sanctuary Address
+                        </span>
+                        <div className="flex items-start gap-2 text-stone-200 text-sm">
+                          <MapPin className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                          <span className="leading-snug">{serviceInfoObj.address}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {serviceInfoObj.reception && (
+                    <div className="pt-3 border-t border-white/10 text-xs text-stone-400 leading-relaxed space-y-1">
+                      <span className="font-semibold uppercase tracking-wider text-stone-300 text-[10px] block">
+                        Reception &amp; Gathering Notes
+                      </span>
+                      <p className="text-stone-300 italic">{serviceInfoObj.reception}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="whitespace-pre-line text-sm text-stone-300 leading-relaxed font-sans">
+                  {memorial.serviceInformation}
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* 7. REMEMBRANCE PHOTO GALLERY (Handles Large Galleries with Lightbox) */}
+        {memorial.media && memorial.media.length > 0 && (
+          <section className="max-w-5xl mx-auto px-4 py-12 space-y-6">
+            <div className="text-center space-y-2">
+              <span className={`text-[11px] uppercase tracking-widest ${theme.accentColor} font-semibold block`}>
+                Archival Photographs
+              </span>
+              <h2 className={`font-serif text-2xl sm:text-4xl ${theme.headingColor}`}>
+                Remembrance Gallery
+              </h2>
+              <p className="text-xs text-stone-400 font-sans tracking-wider">
+                {memorial.media.length} {memorial.media.length === 1 ? 'Photograph' : 'Photographs'} preserved in honor of {memorial.fullName}
+              </p>
+              <div className={`w-12 h-px ${theme.dividerColor} mx-auto`} />
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {memorial.media.map((img, idx) => (
+                <div
+                  key={img.id}
+                  onClick={() => setLightboxIndex(idx)}
+                  className={`group relative aspect-4/3 rounded-xl overflow-hidden bg-stone-900 border border-white/10 cursor-pointer shadow-md transition-all duration-300 hover:scale-[1.02] ${theme.cardHoverBorder}`}
+                  title="Click to view full photograph"
+                >
+                  <img
+                    src={img.url}
+                    alt={img.caption || `Remembrance photo ${idx + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-stone-950/20 group-hover:bg-transparent transition-colors" />
+                  {img.caption && (
+                    <div className="absolute inset-x-0 bottom-0 bg-stone-950/85 p-2 text-[11px] text-stone-300 truncate font-sans">
+                      {img.caption}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* =============== EMOTIONAL JOURNEY: REFLECTION =============== */}
+        {/* 8. CLOSING REFLECTION - Intentional End */}
+        {/* Family Acknowledgement Section */}
+        {memorial.familyAcknowledgement && (
+          <section className="max-w-3xl mx-auto px-4 py-10">
+            <div className="p-8 sm:p-10 rounded-2xl bg-white/4 border border-white/10 text-center space-y-3 relative overflow-hidden shadow-xl">
+              <Heart className="w-6 h-6 text-rose-300 mx-auto opacity-80" />
+              <h3 className="font-sans text-xs uppercase tracking-widest text-stone-400 font-semibold">
+                Words of Gratitude from the Family
+              </h3>
+              <p className="font-serif italic text-base sm:text-lg text-stone-200/90 leading-relaxed max-w-xl mx-auto">
+                "{memorial.familyAcknowledgement}"
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* 9. GALLERY LIGHTBOX MODAL */}
         {lightboxIndex !== null && memorial.media && (
           <MemorialGalleryLightbox
             media={memorial.media}
@@ -670,7 +693,7 @@ export const PublicMemorialViewPage: React.FC = () => {
           />
         )}
 
-        {/* 9. SOCIAL SHARING MODAL */}
+        {/* 10. SOCIAL SHARING MODAL */}
         <MemorialSocialShareModal
           memorial={memorial}
           isOpen={isShareModalOpen}
@@ -678,7 +701,7 @@ export const PublicMemorialViewPage: React.FC = () => {
           onOpenQr={() => setIsQrModalOpen(true)}
         />
 
-        {/* 10. PHYSICAL MEMORIAL QR MODAL (Lossless Vector SVG & 300+ DPI PNG) */}
+        {/* 11. PHYSICAL MEMORIAL QR MODAL (Lossless Vector SVG & 300+ DPI PNG) */}
         {isQrModalOpen && (
           <div
             className="fixed inset-0 z-50 bg-stone-950/85 backdrop-blur-md flex items-center justify-center p-4 font-sans select-none"

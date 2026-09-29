@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -22,10 +22,18 @@ import { MemorialPreviewModal } from '../../components/admin/MemorialPreviewModa
 import { AdminMemorialQrModal } from '../../components/admin/AdminMemorialQrModal.js';
 
 export const AdminMemorialsListPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [memorials, setMemorials] = useState<Memorial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | PublicationStatus>('ALL');
+  
+  // Initialize status filter from URL query params
+  const urlStatus = searchParams.get('status');
+  const initialStatus = (urlStatus && ['PUBLISHED', 'DRAFT', 'PRIVATE_PREVIEW', 'ARCHIVED'].includes(urlStatus))
+    ? urlStatus as PublicationStatus
+    : 'ALL';
+  const [statusFilter, setStatusFilter] = useState<'ALL' | PublicationStatus>(initialStatus);
+  
   const [templateFilter, setTemplateFilter] = useState<'ALL' | TemplateType>('ALL');
   const [previewMemorial, setPreviewMemorial] = useState<Memorial | null>(null);
   const [qrMemorial, setQrMemorial] = useState<Memorial | null>(null);

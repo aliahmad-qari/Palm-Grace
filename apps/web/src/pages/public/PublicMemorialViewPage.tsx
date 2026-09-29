@@ -138,7 +138,7 @@ export const PublicMemorialViewPage: React.FC = () => {
   };
 
   // Structured Service Info parsing
-  let serviceInfoObj: { venue?: string; date?: string; address?: string; reception?: string } | null = null;
+  let serviceInfoObj: { title?: string; venue?: string; date?: string; time?: string; address?: string; reception?: string } | null = null;
   if (memorial?.serviceInformation) {
     try {
       serviceInfoObj = JSON.parse(memorial.serviceInformation);
@@ -146,6 +146,18 @@ export const PublicMemorialViewPage: React.FC = () => {
       // plain text fallback handled in render
     }
   }
+
+  const hasStructuredService = Boolean(memorial && (memorial.serviceTitle || memorial.serviceDate || memorial.serviceTime || memorial.serviceVenue || memorial.serviceAddress));
+  if (memorial && hasStructuredService) {
+    serviceInfoObj = {
+      title: memorial.serviceTitle || undefined,
+      venue: memorial.serviceVenue || undefined,
+      date: memorial.serviceDate || undefined,
+      time: memorial.serviceTime || undefined,
+      address: memorial.serviceAddress || undefined,
+    };
+  }
+  if (memorial?.viewingWakeInformation && !serviceInfoObj) serviceInfoObj = {};
 
   // Template Resolver
   const theme = resolveMemorialTemplate(memorial?.templateType);
@@ -205,6 +217,13 @@ export const PublicMemorialViewPage: React.FC = () => {
   const hasLivestream = Boolean(memorial.livestreamUrl && memorial.livestreamUrl.trim());
   const hasRecording = Boolean(memorial.recordingUrl && memorial.recordingUrl.trim());
   const hasBroadcasts = hasLivestream || hasRecording;
+  const displayName = memorial.preferredDisplayName || memorial.fullName;
+  const visibleBirthDate = memorial.showBirthDate === false ? null : (memorial.birthDate || memorial.dateOfBirth);
+  const visibleDeathDate = memorial.showDeathDate === false ? null : (memorial.deathDate || memorial.dateOfPassing);
+  const hasDates = Boolean(visibleBirthDate || visibleDeathDate);
+  const photos = (memorial.media || []).filter((item) => item.mediaType !== 'VIDEO');
+  const videos = (memorial.media || []).filter((item) => item.mediaType === 'VIDEO');
+  const storyParagraphs = memorial.lifeStory?.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean) || [];
 
   return (
     <PublicLayout>
@@ -247,11 +266,11 @@ export const PublicMemorialViewPage: React.FC = () => {
         {/* 1. ARRIVAL SECTION - Portrait, Name, Dates, Memorial Line (Minimal Controls) */}
         <section className={`pt-16 sm:pt-24 pb-8 sm:pb-12 px-4 ${theme.heroGradient} text-center relative overflow-hidden`}>
           {/* Subtle Motif Ornamentation based on template */}
-          <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+          <div className={`max-w-4xl mx-auto ${theme.heroSpacing} relative z-10`}>
             {/* Focal Portrait Frame with Responsive Wrap & High-Fidelity Glow */}
             <div className="relative inline-block mx-auto">
               <div
-                className={`w-44 h-44 sm:w-56 sm:h-56 rounded-full overflow-hidden border-4 ${theme.portraitBorder} ${theme.portraitGlow} bg-stone-900 mx-auto transition-transform duration-300`}
+                className={`w-44 h-52 sm:w-56 sm:h-64 overflow-hidden border-4 ${theme.portraitShape} ${theme.portraitBorder} ${theme.portraitGlow} bg-stone-900 mx-auto transition-transform duration-300`}
               >
                 <img
                   src={memorial.mainPhotograph}
@@ -272,22 +291,20 @@ export const PublicMemorialViewPage: React.FC = () => {
             {/* Deceased Full Name (Handles Long Names with Balanced Scaling & Line-Heights) */}
             <div className="space-y-2 pt-3">
               <h1
-                className={`font-serif text-3xl sm:text-5xl lg:text-6xl font-light tracking-tight ${theme.headingColor} break-words max-w-3xl mx-auto leading-tight`}
+                className={`font-serif text-3xl sm:text-5xl lg:text-6xl font-light ${theme.headingStyle} ${theme.headingColor} break-words max-w-3xl mx-auto leading-tight`}
               >
-                {memorial.fullName}
+                {displayName}
               </h1>
 
               {/* Dates of Birth and Passing */}
-              <p className={`text-sm sm:text-base tracking-widest ${theme.mutedTextColor} font-light`}>
-                {formatDate(memorial.dateOfBirth)} — {formatDate(memorial.dateOfPassing)}
-              </p>
+              {hasDates && <p className={`text-sm sm:text-base tracking-widest ${theme.mutedTextColor} font-light`}>{visibleBirthDate && formatDate(visibleBirthDate)}{visibleBirthDate && visibleDeathDate ? ' — ' : ''}{visibleDeathDate && formatDate(visibleDeathDate)}</p>}
             </div>
 
             {/* Opening Biography Inscription */}
-            {memorial.biography && (
+            {(memorial.memorialLine || memorial.biography) && (
               <div className="max-w-2xl mx-auto pt-2 px-4">
                 <p className={`font-serif italic text-lg sm:text-xl ${theme.bodyTextColor} leading-relaxed font-normal`}>
-                  "{memorial.biography}"
+                  "{memorial.memorialLine || memorial.biography}"
                 </p>
               </div>
             )}
@@ -295,7 +312,7 @@ export const PublicMemorialViewPage: React.FC = () => {
         </section>
 
         {/* 2. CONDITIONAL CEREMONY BROADCASTS (Rule #18: Disappears completely if no livestream and no recording exist) */}
-        {hasBroadcasts && (
+        {false && hasBroadcasts && (
           <section className="max-w-4xl mx-auto px-4 -mt-6 mb-12 relative z-20">
             <div
               className={`p-6 sm:p-7 rounded-2xl border ${theme.cardBorder} ${theme.cardBg} shadow-2xl backdrop-blur-md space-y-4`}
@@ -321,7 +338,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                       </p>
                     </div>
                     <a
-                      href={memorial.livestreamUrl!}
+                      href={memorial!.livestreamUrl!}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
@@ -347,7 +364,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                       </p>
                     </div>
                     <a
-                      href={memorial.recordingUrl!}
+                      href={memorial!.recordingUrl!}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-800 hover:bg-stone-750 text-amber-200 rounded-lg text-xs font-bold uppercase tracking-wider border border-white/10 transition-colors shadow-sm"
@@ -381,7 +398,7 @@ export const PublicMemorialViewPage: React.FC = () => {
         {/* =============== EMOTIONAL JOURNEY: STORY =============== */}
         {/* 4. EXTENDED LIFE STORY / EULOGY (Gracefully handles long multiline prose) */}
         {memorial.lifeStory && (
-          <section className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+          <section className={`${theme.storyMeasure} mx-auto px-4 py-10 space-y-8`}>
             <div className="text-center space-y-2">
               <span className={`text-[11px] uppercase tracking-widest ${theme.accentColor} font-semibold block`}>
                 The Chronicle
@@ -392,10 +409,18 @@ export const PublicMemorialViewPage: React.FC = () => {
               <div className={`w-12 h-px ${theme.dividerColor} mx-auto`} />
             </div>
 
-            <div
-              className={`prose prose-invert max-w-none ${theme.bodyTextColor} leading-relaxed text-base sm:text-lg whitespace-pre-line ${theme.subtleBoxBg} p-6 sm:p-10 rounded-2xl border ${theme.subtleBoxBorder} shadow-inner font-sans`}
-            >
-              {memorial.lifeStory}
+            <div className={`space-y-7 ${theme.bodyTextColor} text-base leading-8 sm:text-lg`}>
+              {storyParagraphs.map((paragraph, index) => (
+                <React.Fragment key={`${index}-${paragraph.slice(0, 20)}`}>
+                  <p className={index === 0 ? 'font-serif text-xl leading-9 sm:text-2xl' : ''}>{paragraph}</p>
+                  {index === 0 && photos[0] && (
+                    <figure className={`my-9 overflow-hidden border ${theme.subtleBoxBorder} ${memorial.templateType === 'MALE' ? 'aspect-[16/8]' : memorial.templateType === 'FEMALE' ? 'aspect-[4/3] max-w-xl mx-auto' : 'aspect-[3/2] max-w-lg mx-auto'}`}>
+                      <img src={photos[0].url} alt={photos[0].caption || `A memory of ${displayName}`} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                      {photos[0].caption && <figcaption className="sr-only">{photos[0].caption}</figcaption>}
+                    </figure>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
           </section>
         )}
@@ -529,7 +554,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                 >
                   <div className="flex items-center justify-between text-xs font-sans">
                     <span className="font-serif text-base font-semibold text-amber-900">
-                      {t.visitorName}
+                      {t.visitorName}{t.relationship ? ` · ${t.relationship}` : ''}
                     </span>
                     <span className="text-stone-500 tabular-nums">
                       {formatDate(t.createdAt)}
@@ -546,7 +571,7 @@ export const PublicMemorialViewPage: React.FC = () => {
 
         {/* =============== EMOTIONAL JOURNEY: REMEMBRANCE =============== */}
         {/* 6. CEREMONIAL SERVICE INFORMATION (Structured details, venue, address, notes) */}
-        {(serviceInfoObj || memorial.serviceInformation) && (
+        {(serviceInfoObj || memorial.serviceInformation || memorial.viewingWakeInformation) && (
           <section className="max-w-3xl mx-auto px-4 py-8">
             <div className={`p-6 sm:p-8 rounded-2xl border ${theme.cardBorder} ${theme.cardBg} space-y-5 shadow-xl`}>
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -568,14 +593,13 @@ export const PublicMemorialViewPage: React.FC = () => {
 
               {serviceInfoObj ? (
                 <div className="space-y-4">
-                  {serviceInfoObj.venue && (
+                  {(serviceInfoObj.title || serviceInfoObj.venue) && (
                     <div>
                       <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
                         Sanctuary / Venue
                       </span>
-                      <h4 className="font-serif text-xl sm:text-2xl text-white mt-0.5">
-                        {serviceInfoObj.venue}
-                      </h4>
+                      {serviceInfoObj.title && <h4 className="font-serif text-xl sm:text-2xl text-white mt-0.5">{serviceInfoObj.title}</h4>}
+                      {serviceInfoObj.venue && <p className="mt-1 text-sm text-stone-300">{serviceInfoObj.venue}</p>}
                     </div>
                   )}
 
@@ -587,7 +611,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                         </span>
                         <div className="flex items-center gap-2 text-stone-200 text-sm">
                           <Clock className="w-4 h-4 text-amber-300 shrink-0" />
-                          <span>{formatDate(serviceInfoObj.date)}</span>
+                          <span>{formatDate(serviceInfoObj.date)}{serviceInfoObj.time ? ` at ${serviceInfoObj.time}` : ''}</span>
                         </div>
                       </div>
                     )}
@@ -613,6 +637,12 @@ export const PublicMemorialViewPage: React.FC = () => {
                       <p className="text-stone-300 italic">{serviceInfoObj.reception}</p>
                     </div>
                   )}
+                  {memorial.viewingWakeInformation && (
+                    <div className="pt-3 border-t border-white/10 text-sm leading-relaxed">
+                      <span className="font-semibold uppercase tracking-wider text-stone-400 text-[10px] block mb-1">Viewing / Wake Information</span>
+                      <p className="text-stone-300 whitespace-pre-line">{memorial.viewingWakeInformation}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="whitespace-pre-line text-sm text-stone-300 leading-relaxed font-sans">
@@ -623,8 +653,20 @@ export const PublicMemorialViewPage: React.FC = () => {
           </section>
         )}
 
+        {hasBroadcasts && (
+          <section className="max-w-3xl mx-auto px-4 py-8">
+            <div className={`p-6 sm:p-8 border ${theme.cardBorder} ${theme.cardBg} space-y-5 shadow-xl`}>
+              <div className="flex items-center gap-2 border-b border-white/10 pb-3 text-xs uppercase tracking-widest text-stone-200"><Video className="h-4 w-4 text-brand-gold" /><span>Livestream &amp; Recording</span></div>
+              <div className={`grid gap-4 ${hasLivestream && hasRecording ? 'sm:grid-cols-2' : ''}`}>
+                {hasLivestream && <a href={memorial.livestreamUrl!} target="_blank" rel="noreferrer" className={`flex min-h-12 items-center justify-center gap-2 px-4 text-sm ${theme.buttonPrimary}`}><Video className="h-4 w-4" /> Join the Livestream</a>}
+                {hasRecording && <a href={memorial.recordingUrl!} target="_blank" rel="noreferrer" className={`flex min-h-12 items-center justify-center gap-2 px-4 text-sm ${theme.buttonSecondary}`}><Play className="h-4 w-4" /> Watch the Recording</a>}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* 7. REMEMBRANCE PHOTO GALLERY (Handles Large Galleries with Lightbox) */}
-        {memorial.media && memorial.media.length > 0 && (
+        {(photos.length > 0 || videos.length > 0) && (
           <section className="max-w-5xl mx-auto px-4 py-12 space-y-6">
             <div className="text-center space-y-2">
               <span className={`text-[11px] uppercase tracking-widest ${theme.accentColor} font-semibold block`}>
@@ -634,13 +676,13 @@ export const PublicMemorialViewPage: React.FC = () => {
                 Remembrance Gallery
               </h2>
               <p className="text-xs text-stone-400 font-sans tracking-wider">
-                {memorial.media.length} {memorial.media.length === 1 ? 'Photograph' : 'Photographs'} preserved in honor of {memorial.fullName}
+                {photos.length + videos.length} {photos.length + videos.length === 1 ? 'memory' : 'memories'} preserved in honour of {displayName}
               </p>
               <div className={`w-12 h-px ${theme.dividerColor} mx-auto`} />
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {memorial.media.map((img, idx) => (
+              {photos.map((img, idx) => (
                 <div
                   key={img.id}
                   onClick={() => setLightboxIndex(idx)}
@@ -662,6 +704,11 @@ export const PublicMemorialViewPage: React.FC = () => {
                 </div>
               ))}
             </div>
+            {videos.length > 0 && (
+              <div className="grid grid-cols-1 gap-5 pt-4 md:grid-cols-2">
+                {videos.map((video) => <figure key={video.id} className={`overflow-hidden border ${theme.cardBorder} ${theme.cardBg}`}><video src={video.url} controls preload="metadata" className="aspect-video w-full bg-black object-contain" />{video.caption && <figcaption className="p-3 text-sm text-stone-300">{video.caption}</figcaption>}</figure>)}
+              </div>
+            )}
           </section>
         )}
 
@@ -682,10 +729,19 @@ export const PublicMemorialViewPage: React.FC = () => {
           </section>
         )}
 
+        <section className="mx-auto max-w-3xl px-4 pb-20 pt-10 text-center">
+          <div className={`border-t ${theme.dividerColor} pt-12`}>
+            <img src={memorial.mainPhotograph} alt="" className={`mx-auto h-24 w-24 object-cover ${theme.portraitShape} ${theme.portraitGlow}`} referrerPolicy="no-referrer" />
+            {memorial.closingWords && <p className={`mx-auto mt-7 max-w-xl font-serif text-2xl italic leading-relaxed ${theme.headingColor}`}>“{memorial.closingWords}”</p>}
+            <h2 className={`mt-6 font-serif text-2xl ${theme.headingColor}`}>{displayName}</h2>
+            {hasDates && <p className={`mt-2 text-xs tracking-widest ${theme.mutedTextColor}`}>{visibleBirthDate && formatDate(visibleBirthDate)}{visibleBirthDate && visibleDeathDate ? ' — ' : ''}{visibleDeathDate && formatDate(visibleDeathDate)}</p>}
+          </div>
+        </section>
+
         {/* 9. GALLERY LIGHTBOX MODAL */}
-        {lightboxIndex !== null && memorial.media && (
+        {lightboxIndex !== null && photos.length > 0 && (
           <MemorialGalleryLightbox
-            media={memorial.media}
+            media={photos}
             currentIndex={lightboxIndex}
             isOpen={lightboxIndex !== null}
             onClose={() => setLightboxIndex(null)}

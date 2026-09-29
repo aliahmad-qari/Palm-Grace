@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 
 export const PublicHeader: React.FC = () => {
@@ -29,9 +29,14 @@ export const PublicHeader: React.FC = () => {
           ))}
         </nav>
 
-        <Link to="/begin-a-memorial" className="hidden min-h-11 items-center justify-center bg-brand-gold px-5 text-sm font-semibold text-brand-primary shadow-[0_8px_24px_rgba(198,165,101,0.28)] transition-colors hover:bg-brand-gold-light lg:inline-flex">
-          Begin a Memorial
-        </Link>
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="inline-flex h-11 w-11 items-center justify-center border border-brand-gold/45 bg-white/60 text-brand-primary backdrop-blur-md transition-colors hover:border-brand-gold hover:bg-brand-gold-light/35">
+            <Search className="h-4.5 w-4.5" aria-hidden="true" />
+          </Link>
+          <Link to="/begin-a-memorial" className="inline-flex min-h-11 items-center justify-center bg-brand-gold px-5 text-sm font-semibold text-brand-primary shadow-[0_8px_24px_rgba(198,165,101,0.28)] transition-colors hover:bg-brand-gold-light">
+            Begin a Memorial
+          </Link>
+        </div>
 
         <button type="button" aria-label={isMobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={isMobileOpen} onClick={() => setIsMobileOpen((open) => !open)} className="inline-flex h-11 w-11 items-center justify-center border border-brand-gold/50 bg-brand-primary/5 text-brand-primary backdrop-blur-md lg:hidden">
           {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -42,6 +47,7 @@ export const PublicHeader: React.FC = () => {
         <nav className="border-t border-brand-gold/25 bg-white/95 px-4 py-5 backdrop-blur-xl lg:hidden" aria-label="Mobile navigation">
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
             {navLinks.map((link) => <Link key={link.href} to={link.href} onClick={() => setIsMobileOpen(false)} className={`px-4 py-3 text-sm font-medium ${isActive(link.href) ? 'bg-brand-primary/[.08] text-brand-primary' : 'text-brand-charcoal/75'}`}>{link.label}</Link>)}
+            <Link to="/memorials" onClick={() => setIsMobileOpen(false)} className="flex min-h-11 items-center gap-2 px-4 text-sm font-medium text-brand-primary"><Search className="h-4 w-4" /> Search Memorials</Link>
             <Link to="/begin-a-memorial" onClick={() => setIsMobileOpen(false)} className="mt-3 flex min-h-12 items-center justify-center bg-brand-gold px-5 text-sm font-semibold text-brand-primary">Begin a Memorial</Link>
           </div>
         </nav>

@@ -8,8 +8,8 @@ export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState('admin@palmgrace.com');
-  const [password, setPassword] = useState('ChangeMeOnFirstLogin2026!');
+  const [email, setEmail] = useState(import.meta.env.DEV ? 'admin@palmgrace.com' : '');
+  const [password, setPassword] = useState(import.meta.env.DEV ? 'ChangeMeOnFirstLogin2026!' : '');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -126,12 +126,7 @@ export const AdminLoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Seed helper notice for local testing */}
-          <div className="mt-6 pt-4 border-t border-stone-700/60 text-center">
-            <p className="text-[11px] text-stone-400">
-              Default administrator credentials pre-filled for local Phase 1 evaluation.
-            </p>
-          </div>
+          {import.meta.env.DEV && <div className="mt-6 pt-4 border-t border-stone-700/60 text-center"><p className="text-[11px] text-stone-400">Local development credentials are pre-filled for evaluation.</p></div>}
         </div>
       </div>
     </div>

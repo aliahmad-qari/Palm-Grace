@@ -14,6 +14,7 @@ const envSchema = z.object({
   ADMIN_DEFAULT_EMAIL: z.string().email().default('admin@palmgrace.com'),
   ADMIN_DEFAULT_PASSWORD: z.string().default('ChangeMeOnFirstLogin2026!'),
   ADMIN_DEFAULT_NAME: z.string().default('Palm & Grace Administrator'),
+  ADMIN_SYNC_ON_START: z.enum(['true', 'false']).default('false'),
   CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:5173,http://localhost:3001,https://palm-grace-web.vercel.app'),
   CLOUDINARY_CLOUD_NAME: z.string().default('demo'),
   CLOUDINARY_API_KEY: z.string().default(''),
@@ -67,6 +68,7 @@ export const config = {
     email: process.env.ADMIN_DEFAULT_EMAIL || 'admin@palmgrace.com',
     password: process.env.ADMIN_DEFAULT_PASSWORD || 'ChangeMeOnFirstLogin2026!',
     name: process.env.ADMIN_DEFAULT_NAME || 'Palm & Grace Administrator',
+    syncOnStart: process.env.ADMIN_SYNC_ON_START === 'true',
   },
   corsOrigins: [
     ...(process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:5173,https://palm-and-grace.vercel.app')

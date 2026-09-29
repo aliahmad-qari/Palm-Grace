@@ -8,6 +8,7 @@
   --color-brand-white: #FFFFFF;
   --color-brand-charcoal: #333333;
   --color-brand-black: #000000;
+  --color-action-gold: #FFB900;
 }
 
 :root {
@@ -18,6 +19,7 @@
   --pg-white: var(--color-brand-white);
   --pg-charcoal: var(--color-brand-charcoal);
   --pg-black: var(--color-brand-black);
+  --pg-action-gold: var(--color-action-gold);
 }
 
 @layer base {

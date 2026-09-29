@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Heart, Images, MessageCircleHeart } from 'lucide-react';
+import { ArrowRight, BookOpen, Heart, Images, MessageCircleHeart, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 import { api } from '../../lib/api.js';
 import { Memorial } from '../../types/index.js';
@@ -28,14 +28,14 @@ export const HomePage: React.FC = () => {
             <h1 className="font-serif text-5xl font-light leading-[1.02] text-brand-white sm:text-6xl lg:text-7xl">Honouring Lives.<br />Preserving Legacies.</h1>
             <p className="mt-7 max-w-2xl text-base leading-8 text-brand-white/85 sm:text-lg">A beautifully considered digital memorial space where photographs, stories, voices and memories can remain together—with dignity, warmth and care.</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 bg-brand-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(198,165,101,.3)] transition-colors hover:bg-brand-gold-light">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.28)] transition-colors hover:bg-brand-gold-light">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
               <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 border border-brand-white/35 bg-brand-white/10 px-7 text-sm font-semibold text-brand-white backdrop-blur-lg transition-colors hover:bg-brand-white/20">Discover Palm &amp; Grace</Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f7f3ea] px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
+      <section className="bg-brand-gold-light/20 px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">Every life leaves something worth preserving</p>
@@ -49,6 +49,21 @@ export const HomePage: React.FC = () => {
             <div className="absolute inset-x-8 bottom-8 border border-brand-white/25 bg-brand-primary/75 p-6 text-brand-white backdrop-blur-lg">
               <p className="font-serif text-2xl leading-snug">A life held in story, image, voice and memory.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-brand-gold-light/20 px-4 py-20 text-brand-charcoal sm:px-6 sm:py-24 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">One life. One memorial.</p>
+            <h2 className="font-serif text-4xl font-light text-brand-primary sm:text-6xl">Every memorial should feel personal.</h2>
+            <p className="mt-5 text-base leading-8 text-brand-charcoal/70">Thoughtful visual directions provide a gentle foundation. The story, photography and personality of the person being remembered make each space entirely their own.</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><BookOpen className="mb-5 h-6 w-6 text-brand-secondary" /><h3 className="font-serif text-2xl text-brand-primary">Classic Dignity</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A refined, restrained atmosphere shaped around strength, character and enduring legacy.</p></article>
+            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><Sparkles className="mb-5 h-6 w-6 text-brand-gold" /><h3 className="font-serif text-2xl text-brand-primary">Grace &amp; Warmth</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A gentle, elegant atmosphere celebrating connection, warmth and a life beautifully lived.</p></article>
+            <article className="border border-brand-gold/45 bg-brand-white/75 p-7 shadow-[0_14px_40px_rgba(43,67,51,.08)] backdrop-blur-md"><Heart className="mb-5 h-6 w-6 text-brand-secondary" /><h3 className="font-serif text-2xl text-brand-primary">Gentle Wonder</h3><p className="mt-3 text-sm leading-7 text-brand-charcoal/70">A tender, age-appropriate space centred on personality, wonder and the love that remains.</p></article>
           </div>
         </div>
       </section>
@@ -81,7 +96,7 @@ export const HomePage: React.FC = () => {
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               {featuredMemorials.map((memorial) => (
-                <Link key={memorial.id} to={`/memorial/${memorial.slug}`} className="group border border-brand-gold/35 bg-[#f7f3ea] p-3 transition-transform duration-300 hover:-translate-y-1">
+                <Link key={memorial.id} to={`/memorial/${memorial.slug}`} className="group border border-brand-gold/35 bg-brand-gold-light/20 p-3 transition-transform duration-300 hover:-translate-y-1">
                   <img src={memorial.mainPhotograph} alt={memorial.preferredDisplayName || memorial.fullName} className="h-72 w-full object-cover" referrerPolicy="no-referrer" />
                   <div className="p-5"><p className="mb-2 text-xs uppercase tracking-[0.16em] text-brand-secondary">{year(memorial.dateOfBirth)}{year(memorial.dateOfBirth) && year(memorial.dateOfPassing) ? ' — ' : ''}{year(memorial.dateOfPassing)}</p><h3 className="font-serif text-2xl text-brand-primary group-hover:text-brand-secondary">{memorial.preferredDisplayName || memorial.fullName}</h3><p className="mt-3 line-clamp-2 text-sm leading-6 text-brand-charcoal/65">{memorial.memorialLine || memorial.biography}</p></div>
                 </Link>
@@ -91,13 +106,45 @@ export const HomePage: React.FC = () => {
         </section>
       )}
 
+      <section className="bg-brand-white px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
+          <article className="border border-brand-gold/40 bg-brand-primary p-8 text-brand-white shadow-[0_18px_50px_rgba(43,67,51,.14)] sm:p-10">
+            <Users className="mb-6 h-7 w-7 text-brand-gold" />
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">Our Care Partners</p>
+            <h2 className="font-serif text-3xl font-light sm:text-4xl">Remembering well is often a shared act of care.</h2>
+            <p className="mt-5 text-sm leading-7 text-brand-white/75">Palm &amp; Grace works alongside selected funeral homes and bereavement professionals who share our commitment to serving families with dignity, compassion and attention to detail.</p>
+            <Link to="/our-care-partners" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-light">Discover Our Care Partners <ArrowRight className="h-4 w-4" /></Link>
+          </article>
+          <article className="border border-brand-gold/40 bg-brand-gold-light/20 p-8 text-brand-charcoal shadow-[0_18px_50px_rgba(43,67,51,.08)] sm:p-10">
+            <ShieldCheck className="mb-6 h-7 w-7 text-brand-secondary" />
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-secondary">Shared with care</p>
+            <h2 className="font-serif text-3xl font-light text-brand-primary sm:text-4xl">A respectful place for memories and tributes.</h2>
+            <p className="mt-5 text-sm leading-7 text-brand-charcoal/70">Friends and family can share a memory, while thoughtful moderation helps each memorial remain a dignified and trusted space.</p>
+            <Link to="/memorials" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary">Explore Memorials <ArrowRight className="h-4 w-4" /></Link>
+          </article>
+        </div>
+      </section>
+
+      <section className="bg-brand-gold-light/20 px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.8fr_1.2fr]">
+          <div className="flex min-h-72 items-center justify-center border border-brand-gold/45 bg-brand-white/65 backdrop-blur-md">
+            <div className="flex h-40 w-40 items-center justify-center border border-brand-gold/55 bg-brand-white shadow-[0_16px_45px_rgba(43,67,51,.12)]"><QrCode className="h-24 w-24 text-brand-primary" /></div>
+          </div>
+          <div>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">A connection that remains</p>
+            <h2 className="font-serif text-4xl font-light text-brand-primary sm:text-6xl">From a service to the years that follow.</h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-brand-charcoal/70">A discreet memorial QR code can connect printed service materials or a lasting place of remembrance to the stories, photographs and memories held online.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="relative overflow-hidden bg-brand-secondary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(237,211,154,.18),transparent_45%)]" />
         <div className="relative mx-auto max-w-3xl border border-brand-white/20 bg-brand-primary/35 p-8 backdrop-blur-lg sm:p-12">
           <Heart className="mx-auto mb-6 h-7 w-7 text-brand-gold" />
           <h2 className="font-serif text-4xl font-light sm:text-6xl">Begin with a conversation.</h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-brand-white/78">Every person, family and story is different. You do not need to have everything prepared. This is simply the beginning.</p>
-          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-brand-gold px-7 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
     </PublicLayout>

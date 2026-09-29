@@ -11,11 +11,17 @@ import { adminMemorialsRouter } from './server/routes/adminMemorials.js';
 import { adminTributesRouter } from './server/routes/adminTributes.js';
 import { adminMediaRouter } from './server/routes/adminMedia.js';
 import { enquiriesRouter } from './server/routes/enquiries.js';
+import { db } from './server/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function startServer() {
+  if (config.admin.syncOnStart) {
+    await db.syncConfiguredAdmin();
+    console.log('Administrator credentials synchronised from secured environment configuration. Disable ADMIN_SYNC_ON_START after this deployment.');
+  }
+
   const app = express();
 
   // Security & trust proxy

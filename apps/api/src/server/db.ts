@@ -379,6 +379,23 @@ class MemorialDataStore {
     return this.memoryAdmins.find(a => a.id === id) || null;
   }
 
+  async syncConfiguredAdmin() {
+    if (!(await this.checkConnection())) {
+      throw new Error('Cannot synchronise administrator credentials because PostgreSQL is unavailable');
+    }
+
+    const passwordHash = await bcrypt.hash(config.admin.password, 12);
+    return prisma.adminUser.upsert({
+      where: { email: config.admin.email },
+      update: { passwordHash, name: config.admin.name },
+      create: {
+        email: config.admin.email,
+        passwordHash,
+        name: config.admin.name,
+      },
+    });
+  }
+
   // Memorial operations
   async findPublicMemorials(search?: string) {
     if (await this.checkConnection()) {

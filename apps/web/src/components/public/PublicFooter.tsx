@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 
 export const PublicFooter: React.FC = () => (
   <footer className="border-t border-brand-gold/30 bg-brand-primary text-brand-white">
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
-      <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr]">
+      <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_.8fr_.9fr_.8fr]">
         <div className="max-w-md space-y-6">
           <Link to="/" className="inline-flex border border-brand-gold/30 bg-white/95 p-3 backdrop-blur-md" aria-label="Palm and Grace home">
-            <BrandLogo variant="vertical" size="medium" className="[&_img]:block [&_img]:rounded-none" />
+            <BrandLogo variant="horizontal" size="medium" className="max-w-[224px] [&_img]:block [&_img]:rounded-none" />
           </Link>
           <p className="font-serif text-xl leading-relaxed text-brand-gold-light">Honouring Lives. Preserving Legacies.</p>
           <p className="text-sm leading-7 text-brand-white/70">Beautifully considered digital memorial spaces where stories, photographs, voices and memories remain together with dignity, warmth and care.</p>
@@ -25,6 +26,11 @@ export const PublicFooter: React.FC = () => (
           <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">Begin</h2>
           <p className="mb-5 text-sm leading-7 text-brand-white/70">You do not need to have everything prepared. Begin with a conversation.</p>
           <Link to="/begin-a-memorial" className="inline-flex min-h-11 items-center justify-center bg-brand-gold px-5 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light">Begin a Memorial</Link>
+        </div>
+        <div>
+          <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">Administration</h2>
+          <p className="mb-5 text-sm leading-7 text-brand-white/70">Secure access for authorised Palm &amp; Grace caretakers.</p>
+          <Link to="/admin/login" className="inline-flex min-h-11 items-center justify-center gap-2 border border-brand-gold/45 bg-brand-white/10 px-5 text-sm font-semibold text-brand-white backdrop-blur-md transition-colors hover:bg-brand-white/15"><Lock className="h-4 w-4 text-brand-gold-light" /> Admin Portal</Link>
         </div>
       </div>
       <div className="mt-12 flex flex-col gap-3 border-t border-brand-white/15 pt-6 text-xs text-brand-white/50 sm:flex-row sm:items-center sm:justify-between">

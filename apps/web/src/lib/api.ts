@@ -84,6 +84,7 @@ async function apiRequest<T>(
     const res = await fetch(fullUrl, {
       ...options,
       headers,
+      credentials: 'include',
     });
 
     const body = await res.json();

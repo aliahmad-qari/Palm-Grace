@@ -25,6 +25,8 @@ export const AdminTributesPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [editingTribute, setEditingTribute] = useState<Tribute | null>(null);
   const [editVisitorName, setEditVisitorName] = useState('');
+  const [editRelationship, setEditRelationship] = useState('');
+  const [editContributorEmail, setEditContributorEmail] = useState('');
   const [editMessage, setEditMessage] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -97,6 +99,8 @@ export const AdminTributesPage: React.FC = () => {
     try {
       const res = await api.updateTribute(editingTribute.id, {
         visitorName: editVisitorName.trim(),
+        relationship: editRelationship.trim() || null,
+        contributorEmail: editContributorEmail.trim() || null,
         message: editMessage.trim(),
       });
       if (res.success) {
@@ -196,7 +200,7 @@ export const AdminTributesPage: React.FC = () => {
                 : 'text-stone-600 hover:text-stone-900'
             }`}
           >
-            <span>Rejected</span>
+            <span>Declined</span>
             <span className="text-[10px] text-stone-500 tabular-nums">({counts.rejected})</span>
           </button>
 
@@ -245,6 +249,7 @@ export const AdminTributesPage: React.FC = () => {
                 {/* Header: Visitor name, memorial link, status, timestamp */}
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="font-semibold text-stone-900 text-sm">{t.visitorName}</span>
+                  {t.relationship && <span className="text-stone-500">({t.relationship})</span>}
                   <span className="text-stone-400">·</span>
                   <span className="text-stone-500">
                     Memorial:{' '}
@@ -275,7 +280,7 @@ export const AdminTributesPage: React.FC = () => {
                         : 'bg-amber-50 text-amber-800 border border-amber-200'
                     }`}
                   >
-                    {t.status}
+                    {t.status === 'REJECTED' ? 'DECLINED' : t.status === 'PENDING' ? 'PENDING REVIEW' : t.status}
                   </span>
                 </div>
 
@@ -283,6 +288,9 @@ export const AdminTributesPage: React.FC = () => {
                 <p className="text-sm text-stone-800 whitespace-pre-line leading-relaxed italic bg-stone-50 p-3 rounded-lg border border-stone-100">
                   "{t.message}"
                 </p>
+                {t.contributorEmail && (
+                  <p className="text-xs text-stone-500">Private contributor email: <a className="font-medium text-stone-700 underline" href={`mailto:${t.contributorEmail}`}>{t.contributorEmail}</a></p>
+                )}
               </div>
 
               {/* Action Buttons */}
@@ -313,6 +321,8 @@ export const AdminTributesPage: React.FC = () => {
                   onClick={() => {
                     setEditingTribute(t);
                     setEditVisitorName(t.visitorName);
+                    setEditRelationship(t.relationship || '');
+                    setEditContributorEmail(t.contributorEmail || '');
                     setEditMessage(t.message);
                   }}
                   className="p-1.5 text-stone-500 hover:text-stone-800 rounded-lg hover:bg-stone-100 border border-stone-200 transition-colors"
@@ -353,8 +363,17 @@ export const AdminTributesPage: React.FC = () => {
               />
             </div>
             <div>
+              <label className="block text-xs font-semibold text-stone-700 mb-1">Relationship</label>
+              <input type="text" value={editRelationship} onChange={(e) => setEditRelationship(e.target.value)} className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:outline-hidden focus:ring-1 focus:ring-stone-800" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-stone-700 mb-1">Private Contributor Email</label>
+              <input type="email" value={editContributorEmail} onChange={(e) => setEditContributorEmail(e.target.value)} className="w-full px-3 py-2 text-sm border border-stone-300 rounded-lg focus:outline-hidden focus:ring-1 focus:ring-stone-800" />
+              <p className="mt-1 text-[11px] text-stone-500">Administrative only. Never shown on the public memorial.</p>
+            </div>
+            <div>
               <label className="block text-xs font-semibold text-stone-700 mb-1">
-                Tribute Message
+                Memory
               </label>
               <textarea
                 rows={4}

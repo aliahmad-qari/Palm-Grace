@@ -13,6 +13,7 @@ interface FormData {
   funeralHome: string;
   serviceDate: string;
   additionalInfo: string;
+  website: string;
 }
 
 export const BeginAMemorialPage: React.FC = () => {
@@ -26,6 +27,7 @@ export const BeginAMemorialPage: React.FC = () => {
     funeralHome: '',
     serviceDate: '',
     additionalInfo: '',
+    website: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,7 +64,8 @@ export const BeginAMemorialPage: React.FC = () => {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (response.ok && result.success) {
         setSubmitStatus('success');
         setFormData({
           yourName: '',
@@ -74,16 +77,15 @@ export const BeginAMemorialPage: React.FC = () => {
           funeralHome: '',
           serviceDate: '',
           additionalInfo: '',
+          website: '',
         });
       } else {
-        // Backend endpoint not yet available - show informational message
-        setSubmitStatus('success');
-        console.warn('Backend memorial enquiry endpoint not yet available; form architecture ready for connection.');
+        setSubmitStatus('error');
+        setErrorMessage(result.error || 'We could not receive your enquiry just now. Please try again shortly.');
       }
     } catch (err) {
-      // Network error or endpoint unavailable
-      console.warn('Memorial enquiry submission: backend endpoint not yet deployed');
-      setSubmitStatus('success');
+      setSubmitStatus('error');
+      setErrorMessage('We could not connect just now. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -92,13 +94,13 @@ export const BeginAMemorialPage: React.FC = () => {
   return (
     <PublicLayout>
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-stone-950 text-stone-100 min-h-[60vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-900/50 via-stone-950 to-stone-950" />
+      <section className="pg-enquiry-hero relative overflow-hidden bg-stone-950 text-stone-100 min-h-[60vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+        <div className="pg-enquiry-hero-overlay absolute inset-0 bg-gradient-to-b from-stone-900/50 via-stone-950 to-stone-950" />
 
         <div className="relative w-full max-w-3xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 text-xs text-amber-300 font-sans uppercase tracking-widest">
             <Heart className="w-4 h-4" aria-hidden="true" />
-            <span>Begin the Journey</span>
+            <span>Begin a Memorial</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-white leading-[1.05]">
@@ -106,15 +108,19 @@ export const BeginAMemorialPage: React.FC = () => {
           </h1>
 
           <p className="font-sans text-base sm:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
-            We're here to guide you through creating a beautiful digital memorial. Tell us about the person you're honouring, and we'll begin the process together.
+            Every person, family and story is different. If you would like to create a Palm &amp; Grace memorial for someone you love, share a few details with us below. You do not need to have everything prepared. This is simply the beginning. A member of our team will be in touch to guide you through what comes next.
           </p>
         </div>
       </section>
 
       {/* FORM SECTION */}
-      <section className="py-24 bg-stone-950 text-stone-100 border-t border-stone-800 font-sans">
+      <section className="pg-enquiry-form py-24 bg-stone-950 text-stone-100 border-t border-stone-800 font-sans">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="relative space-y-8">
+            <div className="absolute -left-[10000px]" aria-hidden="true">
+              <label htmlFor="family-website">Website</label>
+              <input id="family-website" name="website" value={formData.website} onChange={handleChange} tabIndex={-1} autoComplete="off" />
+            </div>
             {/* Section 1: Your Information */}
             <div className="space-y-6">
               <div>
@@ -299,8 +305,8 @@ export const BeginAMemorialPage: React.FC = () => {
               <div className="p-4 rounded-lg bg-green-950 border border-green-700 flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400 shrink-0 mt-0.5" aria-hidden="true" />
                 <div className="text-sm text-green-200">
-                  <strong className="block mb-1">Thank you for reaching out.</strong>
-                  <p>We've received your enquiry and will be in touch shortly to guide you through creating a beautiful memorial.</p>
+                  <strong className="block mb-1">Thank you for reaching out to Palm &amp; Grace.</strong>
+                  <p>Your enquiry has been received. A member of our team will be in touch to guide you through the next steps with care.</p>
                 </div>
               </div>
             )}
@@ -335,7 +341,7 @@ export const BeginAMemorialPage: React.FC = () => {
                 ) : (
                   <>
                     <Heart className="w-4 h-4" />
-                    <span>Submit Enquiry</span>
+                    <span>Begin the Conversation</span>
                   </>
                 )}
               </button>
@@ -351,7 +357,7 @@ export const BeginAMemorialPage: React.FC = () => {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="py-16 bg-stone-900 text-stone-100 border-t border-stone-800 text-center font-sans">
+      <section className="pg-enquiry-cta py-16 bg-stone-900 text-stone-100 border-t border-stone-800 text-center font-sans">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-stone-300 mb-4">
             Would you prefer to explore existing memorials first?

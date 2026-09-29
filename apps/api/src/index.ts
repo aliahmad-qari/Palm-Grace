@@ -10,6 +10,7 @@ import { memorialsRouter } from './server/routes/memorials.js';
 import { adminMemorialsRouter } from './server/routes/adminMemorials.js';
 import { adminTributesRouter } from './server/routes/adminTributes.js';
 import { adminMediaRouter } from './server/routes/adminMedia.js';
+import { enquiriesRouter } from './server/routes/enquiries.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,7 @@ async function startServer() {
   // REST API Routes
   app.use('/api/auth', authRouter);
   app.use('/api/memorials', memorialsRouter);
+  app.use('/api/enquiries', enquiriesRouter);
   app.use('/api/admin/memorials', requireAdminAuth, adminMemorialsRouter);
   app.use('/api/admin/tributes', requireAdminAuth, adminTributesRouter);
   app.use('/api/admin/media', requireAdminAuth, adminMediaRouter);

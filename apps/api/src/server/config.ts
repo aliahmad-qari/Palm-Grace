@@ -18,6 +18,10 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().default('demo'),
   CLOUDINARY_API_KEY: z.string().default(''),
   CLOUDINARY_API_SECRET: z.string().default(''),
+  RESEND_API_KEY: z.string().default(''),
+  ENQUIRY_FROM_EMAIL: z.string().default(''),
+  FAMILY_ENQUIRY_TO_EMAIL: z.string().default(''),
+  CARE_PARTNER_ENQUIRY_TO_EMAIL: z.string().default(''),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -76,5 +80,11 @@ export const config = {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'demo',
     apiKey: process.env.CLOUDINARY_API_KEY || '',
     apiSecret: process.env.CLOUDINARY_API_SECRET || '',
-  }
+  },
+  enquiries: {
+    resendApiKey: process.env.RESEND_API_KEY || '',
+    fromEmail: process.env.ENQUIRY_FROM_EMAIL || '',
+    familyDestination: process.env.FAMILY_ENQUIRY_TO_EMAIL || '',
+    carePartnerDestination: process.env.CARE_PARTNER_ENQUIRY_TO_EMAIL || '',
+  },
 };

@@ -51,7 +51,7 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
     },
   }[template];
 
-  const formatDate = (dateStr?: string) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
     try {
       const d = new Date(dateStr);

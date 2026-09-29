@@ -184,6 +184,13 @@ export const api = {
     });
   },
 
+  async updateMemorialStatus(id: string, publicationStatus: PublicationStatus) {
+    return apiRequest<Memorial>(`/api/admin/memorials/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ publicationStatus }),
+    });
+  },
+
   async deleteMemorial(id: string) {
     return apiRequest(`/api/admin/memorials/${id}`, {
       method: 'DELETE',
@@ -208,7 +215,7 @@ export const api = {
     });
   },
 
-  async updateTribute(id: string, data: { visitorName?: string; message?: string; status?: TributeStatus }) {
+  async updateTribute(id: string, data: { visitorName?: string; relationship?: string | null; message?: string; contributorEmail?: string | null; status?: TributeStatus }) {
     return apiRequest<Tribute>(`/api/admin/tributes/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -240,12 +247,27 @@ export const api = {
     });
   },
 
+  async getMediaUploadSignature(mediaType: 'PHOTO' | 'VIDEO') {
+    return apiRequest<{
+      timestamp: number;
+      folder: string;
+      apiKey: string;
+      cloudName: string;
+      signature: string;
+      resourceType?: 'image' | 'video';
+    }>('/api/admin/media/sign-upload', {
+      method: 'POST',
+      body: JSON.stringify({ mediaType }),
+    });
+  },
+
   async addMedia(payload: {
     memorialId: string;
     url: string;
     cloudinaryPublicId?: string | null;
     caption?: string | null;
     sortOrder?: number;
+    mediaType?: 'PHOTO' | 'VIDEO';
   }) {
     return apiRequest<MemorialMedia>('/api/admin/media', {
       method: 'POST',

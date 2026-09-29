@@ -55,3 +55,32 @@ export function rateLimitTributes(options: { maxRequests: number; windowMs: numb
     return next();
   };
 }
+
+/** Low-friction flood protection for public enquiry forms. */
+export function rateLimitEnquiries(options: { maxRequests: number; windowMs: number }) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const clientIp =
+      (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() ||
+      req.socket.remoteAddress ||
+      'unknown-ip';
+    const key = `enquiry:${req.path}:${clientIp}`;
+    const now = Date.now();
+    let record = ipStore.get(key);
+
+    if (!record || record.resetAt <= now) {
+      ipStore.set(key, { count: 1, resetAt: now + options.windowMs });
+      return next();
+    }
+
+    if (record.count >= options.maxRequests) {
+      res.setHeader('Retry-After', Math.ceil((record.resetAt - now) / 1000));
+      return res.status(429).json({
+        success: false,
+        error: 'We have received several enquiries from this connection. Please wait a little before trying again.',
+      });
+    }
+
+    record.count += 1;
+    return next();
+  };
+}

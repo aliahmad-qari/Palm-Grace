@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Heart, ArrowUpRight, QrCode, Scroll, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 
 export const PublicFooter: React.FC = () => {
   return (
-    <footer className="bg-stone-950 text-stone-300 border-t border-stone-800/80 font-sans">
+    <footer className="bg-brand-primary text-brand-white/80 border-t border-brand-gold/30 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           {/* Brand & Purpose Column */}
@@ -18,12 +18,8 @@ export const PublicFooter: React.FC = () => {
               />
             </Link>
             <p className="text-sm text-stone-400 leading-relaxed max-w-md font-serif italic text-base">
-              "A timeless sanctuary dedicated to preserving life journeys, ceremony livestreams, family portraits, and memories with reverence, dignity, and grace."
+              "A digital sanctuary where a life is remembered through story, image, voice and the people who carry it forward."
             </p>
-            <div className="pt-2 text-xs text-stone-500 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Cloudinary CDN &amp; High-Availability Architecture</span>
-            </div>
           </div>
 
           {/* Navigation Links */}
@@ -34,28 +30,22 @@ export const PublicFooter: React.FC = () => {
             <ul className="space-y-2 text-sm text-stone-400">
               <li>
                 <Link to="/" className="hover:text-amber-200 transition-colors">
-                  Overview
+                  Home
                 </Link>
               </li>
               <li>
                 <Link to="/memorials" className="hover:text-amber-200 transition-colors">
-                  Memorial Directory
+                  Memorials
                 </Link>
               </li>
               <li>
-                <a href="/#experience" className="hover:text-amber-200 transition-colors">
-                  Atmospheric Templates
-                </a>
+                <Link to="/our-story" className="hover:text-brand-gold-light transition-colors">Our Story</Link>
               </li>
               <li>
-                <a href="/#how-it-works" className="hover:text-amber-200 transition-colors">
-                  How It Works
-                </a>
+                <Link to="/our-care-partners" className="hover:text-brand-gold-light transition-colors">Our Care Partners</Link>
               </li>
               <li>
-                <a href="/#qr-memorials" className="hover:text-amber-200 transition-colors">
-                  Stationery &amp; QR Codes
-                </a>
+                <Link to="/begin-a-memorial" className="hover:text-brand-gold-light transition-colors">Begin a Memorial</Link>
               </li>
             </ul>
           </div>

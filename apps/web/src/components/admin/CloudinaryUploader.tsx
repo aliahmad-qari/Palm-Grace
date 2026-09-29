@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, AlertCircle, CheckCircle2, Loader2, Link2 } from 'lucide-react';
+import { Upload, X, AlertCircle, CheckCircle2, Loader2, Link2 } from 'lucide-react';
 import { api } from '../../lib/api.js';
 
 interface CloudinaryUploaderProps {
@@ -9,6 +9,7 @@ interface CloudinaryUploaderProps {
   hint?: string;
   maxSizeMB?: number;
   aspectRatioLabel?: string;
+  mediaType?: 'PHOTO' | 'VIDEO';
 }
 
 export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
@@ -17,7 +18,8 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
   label = 'Upload Image',
   hint = 'Supports JPG, PNG, WEBP up to 8MB',
   maxSizeMB = 8,
-  aspectRatioLabel = 'Recommended 3:4 or 1:1 portrait'
+  aspectRatioLabel = 'Recommended 3:4 or 1:1 portrait',
+  mediaType = 'PHOTO'
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
@@ -28,9 +30,13 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
 
   const validateFile = (file: File): string | null => {
     // File type validation
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+    const allowedTypes = mediaType === 'VIDEO'
+      ? ['video/mp4', 'video/webm', 'video/quicktime']
+      : ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
     if (!allowedTypes.includes(file.type)) {
-      return 'Invalid file type. Only JPG, PNG, and WEBP images are supported.';
+      return mediaType === 'VIDEO'
+        ? 'Invalid file type. Only MP4, WEBM, and MOV videos are supported.'
+        : 'Invalid file type. Only JPG, PNG, WEBP, and AVIF images are supported.';
     }
 
     // Reasonable file size validation (default 8MB)
@@ -58,7 +64,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
 
     try {
       // 1. Request secure signature from backend
-      const sigRes = await api.getUploadSignature();
+      const sigRes = await api.getMediaUploadSignature(mediaType);
       if (!sigRes.success || !sigRes.data) {
         throw new Error(sigRes.error || 'Failed to authenticate upload signature with server');
       }
@@ -90,7 +96,8 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
       formData.append('signature', signature);
       formData.append('folder', folder);
 
-      const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const resourceType = mediaType === 'VIDEO' ? 'video' : 'image';
+      const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -108,7 +115,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
       });
     } catch (err: any) {
       console.error('Upload error:', err);
-      setErrorMsg(err.message || 'Image upload failed. You can also provide a direct HTTPS image URL below.');
+      setErrorMsg(err.message || `${mediaType === 'VIDEO' ? 'Video' : 'Image'} upload failed. You can also provide a direct HTTPS URL below.`);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -153,19 +160,18 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
 
       {previewUrl ? (
         <div className="relative rounded-lg overflow-hidden border border-stone-200 bg-stone-100 group max-w-sm">
-          <img
-            src={previewUrl}
-            alt="Preview"
-            className="w-full h-48 object-cover transition-opacity duration-200"
-            referrerPolicy="no-referrer"
-          />
+          {mediaType === 'VIDEO' ? (
+            <video src={previewUrl} controls className="h-48 w-full object-cover" />
+          ) : (
+            <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover transition-opacity duration-200" referrerPolicy="no-referrer" />
+          )}
           <div className="absolute inset-0 bg-stone-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="px-3 py-1.5 bg-white text-stone-900 text-xs font-medium rounded-md shadow-xs hover:bg-stone-50 transition-colors"
             >
-              Replace Photo
+              Replace {mediaType === 'VIDEO' ? 'Video' : 'Photo'}
             </button>
             <button
               type="button"
@@ -178,7 +184,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
           </div>
           <div className="absolute bottom-2 left-2 bg-stone-900/80 text-white text-[11px] px-2 py-0.5 rounded-sm flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-            <span>Ready</span>
+              <span>{mediaType === 'VIDEO' ? 'Video' : 'Photo'} ready</span>
           </div>
         </div>
       ) : isManualUrlOpen ? (
@@ -187,7 +193,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
             type="url"
             value={manualUrlInput}
             onChange={(e) => setManualUrlInput(e.target.value)}
-            placeholder="https://example.com/portrait.jpg"
+            placeholder={mediaType === 'VIDEO' ? 'https://example.com/video.mp4' : 'https://example.com/portrait.jpg'}
             className="flex-1 px-3 py-2 text-sm border border-stone-300 rounded-md focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800"
           />
           <button
@@ -209,7 +215,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
           {isUploading ? (
             <div className="flex flex-col items-center justify-center gap-2">
               <Loader2 className="w-6 h-6 text-stone-600 animate-spin" />
-              <span className="text-xs font-medium text-stone-600">Uploading photograph to Cloudinary...</span>
+              <span className="text-xs font-medium text-stone-600">Uploading {mediaType === 'VIDEO' ? 'video' : 'photograph'} to Cloudinary...</span>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-2">
@@ -218,7 +224,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
               </div>
               <div>
                 <p className="text-sm font-medium text-stone-800">
-                  Click to select photo or drag and drop
+                  Click to select {mediaType === 'VIDEO' ? 'video' : 'photo'} or drag and drop
                 </p>
                 <p className="text-xs text-stone-500 mt-0.5">{hint} · {aspectRatioLabel}</p>
               </div>
@@ -231,7 +237,7 @@ export const CloudinaryUploader: React.FC<CloudinaryUploaderProps> = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/avif"
+        accept={mediaType === 'VIDEO' ? 'video/mp4,video/webm,video/quicktime' : 'image/jpeg,image/png,image/webp,image/avif'}
         onChange={handleFileChange}
         className="hidden"
       />

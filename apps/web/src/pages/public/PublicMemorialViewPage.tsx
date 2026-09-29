@@ -127,7 +127,7 @@ export const PublicMemorialViewPage: React.FC = () => {
     setTimeout(() => setCopiedAddress(false), 2500);
   };
 
-  const formatDate = (dateStr?: string) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
     try {
       const d = new Date(dateStr);

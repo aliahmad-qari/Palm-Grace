@@ -14,12 +14,12 @@ export const adminMemorialsRouter = Router();
 adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const search = req.query.search ? String(req.query.search).trim() : undefined;
-    const statusFilter = req.query.status as 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED' | undefined;
+    const statusFilter = req.query.status as 'DRAFT' | 'PRIVATE_PREVIEW' | 'PUBLISHED' | 'ARCHIVED' | undefined;
     const templateFilter = req.query.template as 'MALE' | 'FEMALE' | 'CHILD' | undefined;
 
     let memorials = await db.findAllMemorialsAdmin(search);
 
-    if (statusFilter && ['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED'].includes(statusFilter)) {
+    if (statusFilter && ['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED'].includes(statusFilter)) {
       memorials = memorials.filter(m => m.publicationStatus === statusFilter);
     }
 
@@ -31,6 +31,7 @@ adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) =
     const draftCount = memorials.filter(m => m.publicationStatus === 'DRAFT').length;
     const privatePreviewCount = memorials.filter(m => m.publicationStatus === 'PRIVATE_PREVIEW').length;
     const publishedCount = memorials.filter(m => m.publicationStatus === 'PUBLISHED').length;
+    const archivedCount = memorials.filter(m => m.publicationStatus === 'ARCHIVED').length;
 
     return res.json({
       success: true,
@@ -40,6 +41,7 @@ adminMemorialsRouter.get('/', async (req: AuthenticatedRequest, res: Response) =
         drafts: draftCount,
         privatePreview: privatePreviewCount,
         published: publishedCount,
+        archived: archivedCount,
       },
       data: memorials,
     });
@@ -314,10 +316,10 @@ adminMemorialsRouter.patch('/:id/status', async (req: AuthenticatedRequest, res:
     const { id } = req.params;
     const { publicationStatus } = req.body;
 
-    if (!['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED'].includes(publicationStatus)) {
+    if (!['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED'].includes(publicationStatus)) {
       return res.status(400).json({
         success: false,
-        error: 'Status must be DRAFT, PRIVATE_PREVIEW, or PUBLISHED',
+        error: 'Status must be DRAFT, PRIVATE_PREVIEW, PUBLISHED, or ARCHIVED',
       });
     }
 

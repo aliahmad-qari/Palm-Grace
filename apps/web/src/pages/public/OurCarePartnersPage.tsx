@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Heart, CheckCircle, AlertCircle, Loader2, Users, Briefcase, MapPin } from 'lucide-react';
+import { ArrowRight, CheckCircle, AlertCircle, Loader2, Users, Briefcase } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 
 interface PartnershipFormData {
@@ -11,6 +11,7 @@ interface PartnershipFormData {
   telephone: string;
   location: string;
   enquiry: string;
+  website: string;
 }
 
 export const OurCarePartnersPage: React.FC = () => {
@@ -22,6 +23,7 @@ export const OurCarePartnersPage: React.FC = () => {
     telephone: '',
     location: '',
     enquiry: '',
+    website: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,7 +60,8 @@ export const OurCarePartnersPage: React.FC = () => {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (response.ok && result.success) {
         setSubmitStatus('success');
         setFormData({
           organisationName: '',
@@ -68,16 +71,15 @@ export const OurCarePartnersPage: React.FC = () => {
           telephone: '',
           location: '',
           enquiry: '',
+          website: '',
         });
       } else {
-        // Backend endpoint not yet available - show informational message
-        setSubmitStatus('success');
-        console.warn('Backend partnership enquiry endpoint not yet available; form architecture ready for connection.');
+        setSubmitStatus('error');
+        setErrorMessage(result.error || 'We could not receive your enquiry just now. Please try again shortly.');
       }
     } catch (err) {
-      // Network error or endpoint unavailable
-      console.warn('Partnership enquiry submission: backend endpoint not yet deployed');
-      setSubmitStatus('success');
+      setSubmitStatus('error');
+      setErrorMessage('We could not connect just now. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -86,34 +88,34 @@ export const OurCarePartnersPage: React.FC = () => {
   return (
     <PublicLayout>
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-stone-950 text-stone-100 min-h-[60vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-900/50 via-stone-950 to-stone-950" />
+      <section className="pg-enquiry-hero relative overflow-hidden bg-stone-950 text-stone-100 min-h-[60vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+        <div className="pg-enquiry-hero-overlay absolute inset-0 bg-gradient-to-b from-stone-900/50 via-stone-950 to-stone-950" />
 
         <div className="relative w-full max-w-3xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 text-xs text-amber-300 font-sans uppercase tracking-widest">
             <Users className="w-4 h-4" aria-hidden="true" />
-            <span>Care Partners</span>
+            <span>Our Care Partners</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light text-white leading-[1.05]">
-            Strengthen your service with digital memorials.
+            Remembering well is often a shared act of care.
           </h1>
 
           <p className="font-sans text-base sm:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
-            Palm & Grace partnerships integrate dignified digital memorials into funeral homes, crematoria, cemeteries, and bereavement services.
+            Palm &amp; Grace works alongside selected funeral homes and bereavement professionals who share our commitment to serving families with dignity, compassion and attention to detail.
           </p>
         </div>
       </section>
 
       {/* PARTNERSHIP VALUE */}
-      <section className="py-24 bg-stone-900 text-stone-100 border-t border-stone-800 font-sans">
+      <section className="pg-partner-value py-24 bg-stone-900 text-stone-100 border-t border-stone-800 font-sans">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="space-y-6">
             <span className="text-xs uppercase tracking-widest text-amber-300 font-semibold block">
-              Partnership Value
+              Care that continues
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl text-white tracking-tight">
-              Why funeral and bereavement organisations choose Palm & Grace
+              Thoughtful support around a funeral or memorial service
             </h2>
           </div>
 
@@ -124,9 +126,9 @@ export const OurCarePartnersPage: React.FC = () => {
                   <CheckCircle className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg text-white font-semibold mb-1">Differentiate Your Service</h3>
+                  <h3 className="font-serif text-lg text-white font-semibold mb-1">A considered introduction</h3>
                   <p className="text-sm text-stone-300 leading-relaxed">
-                    Provide families with a beautiful, ad-free digital sanctuary as part of your offering—strengthening your brand and family relationships.
+                    Care Partners can introduce families to Palm &amp; Grace as part of the wider support surrounding a funeral or memorial service.
                   </p>
                 </div>
               </div>
@@ -138,9 +140,9 @@ export const OurCarePartnersPage: React.FC = () => {
                   <CheckCircle className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg text-white font-semibold mb-1">Reduce Support Burden</h3>
+                  <h3 className="font-serif text-lg text-white font-semibold mb-1">A guided family process</h3>
                   <p className="text-sm text-stone-300 leading-relaxed">
-                    Palm & Grace handles memorial hosting and tribute moderation, freeing your team to focus on family care and services.
+                    We guide each family with warmth and clarity, so they do not need to have every story, photograph or detail prepared at the outset.
                   </p>
                 </div>
               </div>
@@ -152,9 +154,9 @@ export const OurCarePartnersPage: React.FC = () => {
                   <CheckCircle className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg text-white font-semibold mb-1">Trusted Technology</h3>
+                  <h3 className="font-serif text-lg text-white font-semibold mb-1">Memories held together</h3>
                   <p className="text-sm text-stone-300 leading-relaxed">
-                    Family-moderated tributes, family-controlled privacy, and secure permanent records give families confidence in their memorial.
+                    Each personal memorial brings stories, photographs, voices and memories together with dignity and care.
                   </p>
                 </div>
               </div>
@@ -166,9 +168,9 @@ export const OurCarePartnersPage: React.FC = () => {
                   <CheckCircle className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg text-white font-semibold mb-1">Strengthen Relationships</h3>
+                  <h3 className="font-serif text-lg text-white font-semibold mb-1">A shared commitment</h3>
                   <p className="text-sm text-stone-300 leading-relaxed">
-                    Families continue to return to their memorial for years, creating ongoing touchpoints and deepening loyalty to your organisation.
+                    We build relationships with professionals who share our commitment to compassionate service and thoughtful remembrance.
                   </p>
                 </div>
               </div>
@@ -178,7 +180,7 @@ export const OurCarePartnersPage: React.FC = () => {
       </section>
 
       {/* ENQUIRY FORM SECTION */}
-      <section className="py-24 bg-stone-950 text-stone-100 border-t border-stone-800 font-sans">
+      <section className="pg-enquiry-form py-24 bg-stone-950 text-stone-100 border-t border-stone-800 font-sans">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-8 mb-12">
             <div>
@@ -186,12 +188,16 @@ export const OurCarePartnersPage: React.FC = () => {
                 Explore a Partnership
               </h2>
               <p className="text-sm text-stone-300 leading-relaxed">
-                Tell us about your organisation and what you'd like to explore. We'll be in touch to discuss how we can work together.
+                If your funeral home would like to explore becoming a Palm &amp; Grace Care Partner, we would be pleased to begin a conversation.
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="relative space-y-8">
+            <div className="absolute -left-[10000px]" aria-hidden="true">
+              <label htmlFor="partner-website">Website</label>
+              <input id="partner-website" name="website" value={formData.website} onChange={handleChange} tabIndex={-1} autoComplete="off" />
+            </div>
             {/* Organisation Information */}
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -362,7 +368,7 @@ export const OurCarePartnersPage: React.FC = () => {
                 ) : (
                   <>
                     <Briefcase className="w-4 h-4" />
-                    <span>Submit Enquiry</span>
+                    <span>Explore a Partnership</span>
                   </>
                 )}
               </button>
@@ -378,7 +384,7 @@ export const OurCarePartnersPage: React.FC = () => {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="py-16 bg-stone-900 text-stone-100 border-t border-stone-800 text-center font-sans">
+      <section className="pg-enquiry-cta py-16 bg-stone-900 text-stone-100 border-t border-stone-800 text-center font-sans">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <p className="text-sm text-stone-300">
             Interested in providing Palm & Grace memorials to your families?

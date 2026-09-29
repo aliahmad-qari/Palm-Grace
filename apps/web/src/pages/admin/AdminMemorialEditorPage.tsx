@@ -32,10 +32,14 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
   // Form State
   const [fullName, setFullName] = useState('');
+  const [preferredDisplayName, setPreferredDisplayName] = useState('');
   const [slug, setSlug] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [dateOfPassing, setDateOfPassing] = useState('');
+  const [showBirthDate, setShowBirthDate] = useState(true);
+  const [showDeathDate, setShowDeathDate] = useState(true);
   const [biography, setBiography] = useState('');
+  const [memorialLine, setMemorialLine] = useState('');
   const [lifeStory, setLifeStory] = useState('');
   const [mainPhotograph, setMainPhotograph] = useState('');
   const [templateType, setTemplateType] = useState<TemplateType>('MALE');
@@ -43,12 +47,16 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
   // Service Information
   const [serviceVenue, setServiceVenue] = useState('');
+  const [serviceTitle, setServiceTitle] = useState('');
   const [serviceDate, setServiceDate] = useState('');
+  const [serviceTime, setServiceTime] = useState('');
   const [serviceAddress, setServiceAddress] = useState('');
-  const [serviceReception, setServiceReception] = useState('');
+  const [viewingWakeInformation, setViewingWakeInformation] = useState('');
 
   // Acknowledgements
   const [familyAcknowledgement, setFamilyAcknowledgement] = useState('');
+  const [closingWords, setClosingWords] = useState('');
+  const [galleryMediaType, setGalleryMediaType] = useState<'PHOTO' | 'VIDEO'>('PHOTO');
 
   // Media / Streaming
   const [livestreamUrl, setLivestreamUrl] = useState('');
@@ -79,26 +87,38 @@ export const AdminMemorialEditorPage: React.FC = () => {
       if (res.success && res.data) {
         const m = res.data;
         setFullName(m.fullName);
+        setPreferredDisplayName(m.preferredDisplayName || '');
         setSlug(m.slug);
-        setDateOfBirth(m.dateOfBirth ? m.dateOfBirth.slice(0, 10) : '');
-        setDateOfPassing(m.dateOfPassing ? m.dateOfPassing.slice(0, 10) : '');
+        setDateOfBirth((m.birthDate || m.dateOfBirth) ? (m.birthDate || m.dateOfBirth)!.slice(0, 10) : '');
+        setDateOfPassing((m.deathDate || m.dateOfPassing) ? (m.deathDate || m.dateOfPassing)!.slice(0, 10) : '');
+        setShowBirthDate(m.showBirthDate ?? true);
+        setShowDeathDate(m.showDeathDate ?? true);
         setBiography(m.biography);
+        setMemorialLine(m.memorialLine || '');
         setLifeStory(m.lifeStory || '');
         setMainPhotograph(m.mainPhotograph);
         setTemplateType(m.templateType);
         setPublicationStatus(m.publicationStatus);
         setFamilyAcknowledgement(m.familyAcknowledgement || '');
+        setClosingWords(m.closingWords || '');
         setLivestreamUrl(m.livestreamUrl || '');
         setRecordingUrl(m.recordingUrl || '');
         setGallery(m.media || []);
 
-        if (m.serviceInformation) {
+        setServiceTitle(m.serviceTitle || '');
+        setServiceDate(m.serviceDate ? m.serviceDate.slice(0, 10) : '');
+        setServiceTime(m.serviceTime || '');
+        setServiceVenue(m.serviceVenue || '');
+        setServiceAddress(m.serviceAddress || '');
+        setViewingWakeInformation(m.viewingWakeInformation || '');
+        if (!m.serviceVenue && m.serviceInformation) {
           try {
             const parsed = JSON.parse(m.serviceInformation);
             setServiceVenue(parsed.venue || '');
-            setServiceDate(parsed.date ? parsed.date.slice(0, 16) : '');
+            setServiceDate(parsed.date ? parsed.date.slice(0, 10) : '');
+            setServiceTime(parsed.time || '');
             setServiceAddress(parsed.address || '');
-            setServiceReception(parsed.reception || '');
+            setViewingWakeInformation(parsed.reception || '');
           } catch {
             setServiceVenue(m.serviceInformation);
           }
@@ -114,14 +134,15 @@ export const AdminMemorialEditorPage: React.FC = () => {
   };
 
   const constructServiceInformation = (): string | null => {
-    if (!serviceVenue && !serviceDate && !serviceAddress && !serviceReception) {
+    if (!serviceTitle && !serviceVenue && !serviceDate && !serviceTime && !serviceAddress) {
       return null;
     }
     return JSON.stringify({
+      title: serviceTitle,
       venue: serviceVenue,
-      date: serviceDate ? new Date(serviceDate).toISOString() : null,
+      date: serviceDate || null,
+      time: serviceTime,
       address: serviceAddress,
-      reception: serviceReception,
     });
   };
 
@@ -133,16 +154,27 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
     const payload = {
       fullName: fullName.trim(),
+      preferredDisplayName: preferredDisplayName.trim() || null,
       slug: slug.trim() || undefined,
-      dateOfBirth: dateOfBirth,
-      dateOfPassing: dateOfPassing,
+      birthDate: dateOfBirth || null,
+      deathDate: dateOfPassing || null,
+      showBirthDate,
+      showDeathDate,
       biography: biography.trim(),
+      memorialLine: memorialLine.trim() || null,
       lifeStory: lifeStory.trim() || null,
       mainPhotograph: mainPhotograph.trim(),
       templateType,
       publicationStatus,
       familyAcknowledgement: familyAcknowledgement.trim() || null,
+      closingWords: closingWords.trim() || null,
       serviceInformation: constructServiceInformation(),
+      serviceTitle: serviceTitle.trim() || null,
+      serviceDate: serviceDate || null,
+      serviceTime: serviceTime.trim() || null,
+      serviceVenue: serviceVenue.trim() || null,
+      serviceAddress: serviceAddress.trim() || null,
+      viewingWakeInformation: viewingWakeInformation.trim() || null,
       livestreamUrl: livestreamUrl.trim() || null,
       recordingUrl: recordingUrl.trim() || null,
     };
@@ -181,6 +213,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
         cloudinaryPublicId: result.publicId || null,
         caption: null,
         sortOrder: gallery.length,
+        mediaType: galleryMediaType,
       });
 
       if (res.success && res.data) {
@@ -203,19 +236,46 @@ export const AdminMemorialEditorPage: React.FC = () => {
     }
   };
 
+  const handleMoveMedia = async (index: number, direction: -1 | 1) => {
+    if (!id) return;
+    const target = index + direction;
+    if (target < 0 || target >= gallery.length) return;
+    const reordered = [...gallery];
+    [reordered[index], reordered[target]] = [reordered[target], reordered[index]];
+    setGallery(reordered);
+    const res = await api.reorderMedia(id, reordered.map((item, sortOrder) => ({ id: item.id, sortOrder })));
+    if (!res.success) {
+      setGallery(gallery);
+      setErrorMsg(res.error || 'Unable to reorder media');
+    }
+  };
+
   // Live preview snapshot
   const currentPreviewState: Partial<Memorial> = {
     fullName: fullName || 'Full Name',
+    preferredDisplayName: preferredDisplayName || null,
     slug: slug || 'preview-slug',
     dateOfBirth,
     dateOfPassing,
+    birthDate: dateOfBirth || null,
+    deathDate: dateOfPassing || null,
+    showBirthDate,
+    showDeathDate,
     biography,
+    memorialLine: memorialLine || null,
     lifeStory,
     mainPhotograph,
     templateType,
     publicationStatus,
     familyAcknowledgement,
+    closingWords: closingWords || null,
     serviceInformation: constructServiceInformation(),
+    serviceTitle: serviceTitle || null,
+    serviceDate: serviceDate || null,
+    serviceTime: serviceTime || null,
+    serviceVenue: serviceVenue || null,
+    serviceAddress: serviceAddress || null,
+    viewingWakeInformation: viewingWakeInformation || null,
     livestreamUrl: livestreamUrl || null,
     recordingUrl: recordingUrl || null,
     media: gallery,
@@ -369,6 +429,11 @@ export const AdminMemorialEditorPage: React.FC = () => {
             </div>
 
             <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Preferred Display Name</label>
+              <input type="text" value={preferredDisplayName} onChange={(e) => setPreferredDisplayName(e.target.value)} placeholder="Name shown publicly, if different" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
+            </div>
+
+            <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
                 URL Slug (Shareable Path)
               </label>
@@ -395,11 +460,11 @@ export const AdminMemorialEditorPage: React.FC = () => {
               </label>
               <input
                 type="date"
-                required
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800"
               />
+              <label className="mt-2 flex items-center gap-2 text-xs text-stone-600"><input type="checkbox" checked={showBirthDate} onChange={(e) => setShowBirthDate(e.target.checked)} /> Show birth date publicly</label>
             </div>
 
             <div>
@@ -408,11 +473,11 @@ export const AdminMemorialEditorPage: React.FC = () => {
               </label>
               <input
                 type="date"
-                required
                 value={dateOfPassing}
                 onChange={(e) => setDateOfPassing(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800"
               />
+              <label className="mt-2 flex items-center gap-2 text-xs text-stone-600"><input type="checkbox" checked={showDeathDate} onChange={(e) => setShowDeathDate(e.target.checked)} /> Show death date publicly</label>
             </div>
           </div>
 
@@ -451,6 +516,11 @@ export const AdminMemorialEditorPage: React.FC = () => {
           </div>
 
           <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Memorial Line</label>
+            <textarea rows={2} value={memorialLine} onChange={(e) => setMemorialLine(e.target.value)} placeholder="A short line of remembrance" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
+          </div>
+
+          <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
               Complete Life Story / Eulogy (Optional)
             </label>
@@ -474,6 +544,10 @@ export const AdminMemorialEditorPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Service Title</label>
+              <input type="text" value={serviceTitle} onChange={(e) => setServiceTitle(e.target.value)} placeholder="A Service of Remembrance" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
+            </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
                 Venue / Sanctuary Name
@@ -489,14 +563,19 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
-                Service Date &amp; Time
+                Service Date
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 value={serviceDate}
                 onChange={(e) => setServiceDate(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Service Time</label>
+              <input type="time" value={serviceTime} onChange={(e) => setServiceTime(e.target.value)} className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
             </div>
 
             <div className="md:col-span-2">
@@ -514,13 +593,13 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
             <div className="md:col-span-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
-                Reception / Post-Service Gathering Notes
+                Viewing / Wake Information
               </label>
               <input
                 type="text"
-                value={serviceReception}
-                onChange={(e) => setServiceReception(e.target.value)}
-                placeholder="e.g. The Grand Conservatory following the ceremony"
+                value={viewingWakeInformation}
+                onChange={(e) => setViewingWakeInformation(e.target.value)}
+                placeholder="Viewing, wake or gathering details"
                 className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800"
               />
             </div>
@@ -593,6 +672,10 @@ export const AdminMemorialEditorPage: React.FC = () => {
               className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800 leading-relaxed"
             />
           </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Closing Words</label>
+            <textarea rows={3} value={closingWords} onChange={(e) => setClosingWords(e.target.value)} placeholder="Optional closing words for the memorial" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm leading-relaxed" />
+          </div>
         </div>
 
         {/* Section 7: Remembrance Photo Gallery (If already created) */}
@@ -602,9 +685,9 @@ export const AdminMemorialEditorPage: React.FC = () => {
               <div>
                 <h3 className="text-base font-serif font-bold text-stone-900 flex items-center gap-2">
                   <Images className="w-5 h-5 text-amber-600" />
-                  <span>7. Remembrance Photo Gallery ({gallery.length})</span>
+                  <span>7. Photo &amp; Video Gallery ({gallery.length})</span>
                 </h3>
-                <p className="text-xs text-stone-500">Upload multiple remembrance photos to the Cloudinary gallery.</p>
+                <p className="text-xs text-stone-500">Upload, order and remove remembrance photographs and videos.</p>
               </div>
               <button
                 type="button"
@@ -612,15 +695,22 @@ export const AdminMemorialEditorPage: React.FC = () => {
                 className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-medium rounded-lg flex items-center gap-1 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Add Gallery Photo</span>
+                <span>Add Gallery Media</span>
               </button>
             </div>
 
             {isGalleryUploading && (
               <div className="p-4 bg-stone-50 rounded-lg border border-stone-200 mb-4">
+                <div className="mb-4 flex gap-2">
+                  {(['PHOTO', 'VIDEO'] as const).map((type) => (
+                    <button key={type} type="button" onClick={() => setGalleryMediaType(type)} className={`rounded-md px-3 py-1.5 text-xs font-semibold ${galleryMediaType === type ? 'bg-stone-900 text-white' : 'bg-white text-stone-600 border border-stone-300'}`}>{type === 'PHOTO' ? 'Photo' : 'Video'}</button>
+                  ))}
+                </div>
                 <CloudinaryUploader
-                  label="Add Photo to Gallery"
-                  hint="Select a photograph to add to the public remembrance gallery"
+                  label={`Add ${galleryMediaType === 'PHOTO' ? 'Photo' : 'Video'} to Gallery`}
+                  hint={galleryMediaType === 'PHOTO' ? 'Select a photograph to add to the gallery' : 'Select an MP4, WEBM or MOV video'}
+                  mediaType={galleryMediaType}
+                  maxSizeMB={galleryMediaType === 'VIDEO' ? 100 : 8}
                   onUploadSuccess={handleAddGalleryPhoto}
                 />
               </div>
@@ -628,24 +718,22 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
             {gallery.length === 0 ? (
               <p className="text-xs text-stone-400 italic py-2">
-                No gallery photos added yet. Click "Add Gallery Photo" to upload photographs.
+                No gallery media added yet. Click "Add Gallery Media" to upload photographs or videos.
               </p>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {gallery.map((photo) => (
+                {gallery.map((photo, index) => (
                   <div key={photo.id} className="relative group rounded-lg overflow-hidden border border-stone-200 bg-stone-100 aspect-4/3">
-                    <img
-                      src={photo.url}
-                      alt={photo.caption || 'Gallery photo'}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
+                    {photo.mediaType === 'VIDEO' ? <video src={photo.url} controls className="w-full h-full object-cover" /> : <img src={photo.url} alt={photo.caption || 'Gallery photo'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />}
+                    <span className="absolute left-2 top-2 rounded bg-stone-950/75 px-2 py-0.5 text-[10px] font-semibold text-white">{photo.mediaType || 'PHOTO'}</span>
                     <div className="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button type="button" disabled={index === 0} onClick={() => handleMoveMedia(index, -1)} className="mr-1 p-1.5 bg-white text-stone-800 rounded-md disabled:opacity-40" title="Move earlier">←</button>
+                      <button type="button" disabled={index === gallery.length - 1} onClick={() => handleMoveMedia(index, 1)} className="mr-2 p-1.5 bg-white text-stone-800 rounded-md disabled:opacity-40" title="Move later">→</button>
                       <button
                         type="button"
                         onClick={() => handleDeleteGalleryPhoto(photo.id)}
                         className="p-1.5 bg-rose-600 text-white rounded-md hover:bg-rose-700 transition-colors"
-                        title="Delete photo from gallery"
+                        title="Remove media from gallery"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -664,7 +752,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
               Publication Visibility
             </h4>
             <p className="text-xs text-stone-400 mt-0.5">
-              Drafts are private to administrators. Published records appear on the public directory.
+              Draft and private-preview records remain off the public directory. Archived records are retained but unavailable publicly.
             </p>
           </div>
 
@@ -691,6 +779,20 @@ export const AdminMemorialEditorPage: React.FC = () => {
                 }`}
               >
                 Publish Live
+              </button>
+              <button
+                type="button"
+                onClick={() => setPublicationStatus('PRIVATE_PREVIEW')}
+                className={`px-3 py-1.5 rounded-md transition-colors ${publicationStatus === 'PRIVATE_PREVIEW' ? 'bg-sky-500/20 text-sky-300 font-semibold' : 'text-stone-400 hover:text-white'}`}
+              >
+                Private Preview
+              </button>
+              <button
+                type="button"
+                onClick={() => setPublicationStatus('ARCHIVED')}
+                className={`px-3 py-1.5 rounded-md transition-colors ${publicationStatus === 'ARCHIVED' ? 'bg-stone-500/30 text-stone-200 font-semibold' : 'text-stone-400 hover:text-white'}`}
+              >
+                Archive
               </button>
             </div>
 

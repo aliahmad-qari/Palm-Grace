@@ -68,7 +68,7 @@ export const createMemorialSchema = z.object({
   templateType: z.enum(['MALE', 'FEMALE', 'CHILD'], {
     error: () => ({ message: 'Template must be MALE, FEMALE, or CHILD' }),
   }).default('MALE'),
-  publicationStatus: z.enum(['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED']).default('DRAFT'),
+  publicationStatus: z.enum(['DRAFT', 'PRIVATE_PREVIEW', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'),
 });
 
 export const updateMemorialSchema = createMemorialSchema.partial();
@@ -142,4 +142,33 @@ export const reorderMediaSchema = z.object({
       sortOrder: z.number().int().min(0),
     })
   ).min(1, 'At least one media item must be provided'),
+});
+
+const enquiryName = z.string().trim().min(2).max(150);
+const enquiryEmail = z.string().trim().email().max(320);
+const enquiryPhone = z.string().trim().max(50).optional().default('');
+const honeypot = z.string().max(0, 'Spam detected').optional().default('');
+
+export const familyEnquirySchema = z.object({
+  yourName: enquiryName,
+  email: enquiryEmail,
+  telephone: enquiryPhone,
+  personName: enquiryName,
+  relationship: z.string().trim().max(150).optional().default(''),
+  hasArrangements: z.enum(['no', 'planning', 'scheduled']),
+  funeralHome: z.string().trim().max(250).optional().default(''),
+  serviceDate: optionalDate,
+  additionalInfo: z.string().trim().max(5000).optional().default(''),
+  website: honeypot,
+});
+
+export const carePartnerEnquirySchema = z.object({
+  organisationName: enquiryName,
+  contactPerson: enquiryName,
+  role: z.string().trim().max(150).optional().default(''),
+  email: enquiryEmail,
+  telephone: enquiryPhone,
+  location: z.string().trim().max(250).optional().default(''),
+  enquiry: z.string().trim().max(5000).optional().default(''),
+  website: honeypot,
 });

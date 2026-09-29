@@ -5,7 +5,6 @@ import {
   Shield,
   QrCode,
   Heart,
-  Video,
   Sparkles,
   Search,
   BookOpen,
@@ -15,7 +14,6 @@ import {
   Eye,
   Calendar,
   Lock,
-  ChevronDown
 } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 import { api, apiUrl } from '../../lib/api.js';
@@ -44,7 +42,7 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const formatDate = (dateStr?: string) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
     try {
       return new Date(dateStr).getFullYear().toString();
@@ -56,7 +54,7 @@ export const HomePage: React.FC = () => {
   return (
     <PublicLayout>
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden bg-stone-950 text-stone-100 min-h-[92vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-brand-black text-brand-white min-h-[92vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         <img
           src={featuredMemorials[0]?.mainPhotograph || 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=2000&q=85'}
           alt={featuredMemorials[0] ? `Memorial portrait of ${featuredMemorials[0].fullName}` : 'Sunlight through a quiet woodland'}
@@ -64,11 +62,11 @@ export const HomePage: React.FC = () => {
           fetchPriority="high"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-stone-950/65" />
+        <div className="absolute inset-0 bg-brand-primary/80" />
 
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="max-w-3xl space-y-6 sm:space-y-8">
-            <div className="inline-flex items-center gap-2 text-xs text-amber-200 font-sans uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 text-xs text-brand-gold-light font-sans uppercase tracking-widest">
               <Heart className="w-4 h-4" aria-hidden="true" />
               <span>Palm &amp; Grace Memorials</span>
             </div>
@@ -77,60 +75,54 @@ export const HomePage: React.FC = () => {
               Honouring Lives. Preserving Legacies.
             </h1>
 
-            <p className="font-sans text-base sm:text-lg text-stone-200 max-w-xl leading-relaxed">
-              A timeless sanctuary dedicated to preserving life journeys, photographs, service ceremonies, and words of remembrance with reverence and grace.
+            <p className="font-sans text-base sm:text-lg text-brand-white/90 max-w-2xl leading-relaxed">
+              Every life leaves a story worth holding close. Palm &amp; Grace creates beautiful digital spaces where families and friends can remember, reflect and preserve the photographs, stories and memories that made a life uniquely theirs.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 font-sans text-sm font-semibold">
               <Link
                 to="/memorials"
-                className="min-h-12 w-full sm:w-auto px-6 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-md shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                className="min-h-12 w-full sm:w-auto px-6 bg-brand-gold-light hover:bg-brand-gold text-brand-primary rounded-full shadow-md transition-colors flex items-center justify-center gap-2"
               >
                 <Search className="w-4 h-4" aria-hidden="true" />
-                <span>Explore memorials</span>
+                <span>Explore a Memorial</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
 
-              <a
-                href="#experience"
-                className="min-h-12 w-full sm:w-auto px-6 bg-stone-950/40 hover:bg-stone-900/80 text-white border border-white/40 rounded-md transition-colors flex items-center justify-center gap-2"
+              <Link
+                to="/our-story"
+                className="min-h-12 w-full sm:w-auto px-6 bg-brand-primary/40 hover:bg-brand-secondary/80 text-brand-white border border-brand-gold-light/60 rounded-full transition-colors flex items-center justify-center gap-2"
               >
                 <BookOpen className="w-4 h-4" aria-hidden="true" />
-                <span>How it works</span>
-                <ChevronDown className="w-4 h-4" aria-hidden="true" />
-              </a>
+                <span>Discover Palm &amp; Grace</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
             </div>
 
-            <div className="pt-5 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-3 border-t border-white/25 font-sans text-xs text-stone-200">
-              <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Family moderated</span></div>
-              <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Ad free</span></div>
-              <div className="flex items-center gap-2"><Video className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Service details</span></div>
-              <div className="flex items-center gap-2"><QrCode className="w-4 h-4 text-amber-300" aria-hidden="true" /><span>Print ready QR</span></div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* 2. PALM & GRACE INTRODUCTION */}
-      <section className="py-24 bg-stone-800 text-stone-100 border-t border-stone-700 font-sans">
+      <section className="py-24 bg-brand-white text-brand-charcoal border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs uppercase tracking-widest text-amber-300 font-semibold block">
-                Preserving What Cannot Be Replaced
+              <span className="text-xs uppercase tracking-widest text-brand-gold font-semibold block">
+                Remembrance deserves a place of its own
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
-                Designed for reverence, not algorithms.
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-brand-primary tracking-tight leading-tight">
+                More than dates. More than photographs.
               </h2>
-              <p className="text-stone-300 leading-relaxed text-sm sm:text-base">
-                A serene, ad-free sanctuary brings their life story, photographs, service details, and family-reviewed memories together in one peaceful place—a lasting tribute to their unique legacy.
+              <p className="text-brand-charcoal leading-relaxed text-sm sm:text-base">
+                A place where photographs, stories, voices and memories can live together with dignity, long after a service has ended. Palm &amp; Grace helps families preserve a life in the details, for those who knew them and for generations still to come.
               </p>
               <div className="pt-2">
                 <Link
-                  to="/memorials"
-                  className="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 hover:text-amber-200 uppercase tracking-wider"
+                  to="/our-story"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-brand-primary hover:text-brand-secondary uppercase tracking-wider"
                 >
-                  <span>Browse memorials</span>
+                  <span>Discover Palm &amp; Grace</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -155,17 +147,17 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 3. MEMORIAL EXPERIENCE & THREE TEMPLATES */}
-      <section id="experience" className="py-24 bg-stone-950 text-stone-100 border-t border-stone-800 font-sans">
+      <section id="experience" className="py-24 bg-brand-primary text-brand-white border-t border-brand-gold/30 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-4 max-w-3xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-amber-300 font-semibold block">
               Curated Atmosphere
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl text-white tracking-tight">
-              Three Distinctive Memorial Atmospheres
+              Every memorial belongs to one life
             </h2>
             <p className="text-sm sm:text-base text-stone-400 font-serif italic leading-relaxed">
-              Each designed with thoughtfulness and care—choose a distinctive atmosphere that honours their unique spirit and legacy.
+              Three considered directions provide a starting point, while story, photography and personality keep each memorial unmistakably personal.
             </p>
           </div>
 
@@ -174,13 +166,13 @@ export const HomePage: React.FC = () => {
             <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
                 <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
-                  Template 1 · Male
+                  Memorial direction · Male
                 </span>
                 <div className="flex items-center gap-3">
                   <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <BookOpen className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Classic Dignity</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">A Life in Full</h3>
                 </div>
                 <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                   Quiet slate tones and timeless serif typography.
@@ -193,13 +185,13 @@ export const HomePage: React.FC = () => {
             <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
                 <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
-                  Template 2 · Female
+                  Memorial direction · Female
                 </span>
                 <div className="flex items-center gap-3">
                   <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <Sparkles className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Grace &amp; Botanical</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Stories Held Close</h3>
                 </div>
                 <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
                   Soft botanical details with gentle, warm accents.
@@ -212,16 +204,16 @@ export const HomePage: React.FC = () => {
             <div className="bg-amber-50 rounded-2xl border border-amber-200 p-8 flex flex-col justify-between space-y-6 shadow-xl shadow-black/20 hover:border-amber-400 transition-colors">
               <div className="space-y-4">
                 <span className="text-[11px] font-mono tracking-widest uppercase text-stone-800 px-2.5 py-1 rounded-full bg-white border border-amber-200 inline-block">
-                  Template 3 · Child
+                  Memorial direction · Child
                 </span>
                 <div className="flex items-center gap-3">
                   <span className="w-10 h-10 rounded-full bg-stone-900 border border-amber-500/50 flex items-center justify-center text-amber-300">
                     <Heart className="w-5 h-5" aria-hidden="true" />
                   </span>
-                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Gentle Celestial</h3>
+                  <h3 className="font-serif text-2xl text-stone-900 font-semibold">Wonder Remembered</h3>
                 </div>
                 <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
-                  Tender colors and a gentle sense of light.
+                  A restrained space shaped around personality, wonder and the love that remains.
                 </p>
               </div>
 
@@ -231,7 +223,7 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-24 bg-[#FFB900] text-stone-950 border-t border-[#E6A700] font-sans">
+      <section id="how-it-works" className="py-24 bg-brand-gold-light text-brand-primary border-t border-brand-gold font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center space-y-3 max-w-2xl mx-auto">
             <span className="text-xs uppercase tracking-widest text-amber-900 font-semibold block">
@@ -501,14 +493,14 @@ export const HomePage: React.FC = () => {
               className="min-h-12 w-full sm:w-auto px-6 bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-md shadow-md transition-colors flex items-center justify-center gap-2"
             >
               <Search className="w-4 h-4" />
-              <span>Explore memorials</span>
+              <span>Explore a Memorial</span>
             </Link>
             <Link
-              to="/admin/login"
-              className="min-h-12 w-full sm:w-auto px-6 bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 rounded-md transition-colors flex items-center justify-center gap-2"
+              to="/begin-a-memorial"
+              className="min-h-12 w-full sm:w-auto px-6 bg-brand-primary hover:bg-brand-secondary text-brand-white border border-brand-gold/60 rounded-full transition-colors flex items-center justify-center gap-2"
             >
-              <Shield className="w-4 h-4 text-amber-300" />
-              <span>Administrator sign in</span>
+              <Heart className="w-4 h-4 text-brand-gold-light" />
+              <span>Begin a Memorial</span>
             </Link>
           </div>
         </div>

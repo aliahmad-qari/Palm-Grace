@@ -8,6 +8,8 @@ import {
   createTributeSchema,
   updateTributeStatusSchema,
   addMediaSchema,
+  familyEnquirySchema,
+  carePartnerEnquirySchema,
 } from '../src/server/validators/index.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -18,7 +20,77 @@ import express from 'express';
 import { memorialsRouter } from '../src/server/routes/memorials.js';
 import { adminMemorialsRouter } from '../src/server/routes/adminMemorials.js';
 import { adminMediaRouter } from '../src/server/routes/adminMedia.js';
+import { enquiriesRouter } from '../src/server/routes/enquiries.js';
 import { resolveDateAliases, resolveServiceFields } from '../src/server/memorialPayload.js';
+
+test('21. Family and Care Partner enquiries validate separately and route privately', async () => {
+  const family = familyEnquirySchema.safeParse({
+    yourName: 'Ava Example',
+    email: 'ava@example.test',
+    telephone: '+1 555 0100',
+    personName: 'Jordan Example',
+    relationship: 'Daughter',
+    hasArrangements: 'planning',
+    funeralHome: 'Harbour Care',
+    serviceDate: '2026-10-12',
+    additionalInfo: 'Please contact me in the afternoon.',
+    website: '',
+  });
+  assert.equal(family.success, true);
+  assert.equal(carePartnerEnquirySchema.safeParse({ organisationName: '', contactPerson: '', email: 'bad' }).success, false);
+  assert.equal(familyEnquirySchema.safeParse({
+    yourName: 'Bot Example', email: 'bot@example.test', personName: 'Example', hasArrangements: 'no', website: 'spam.example'
+  }).success, false, 'Honeypot must reject automated submissions');
+
+  const previousConfig = { ...config.enquiries };
+  const originalFetch = globalThis.fetch;
+  const deliveries: Array<Record<string, any>> = [];
+  config.enquiries.resendApiKey = 'test-key';
+  config.enquiries.fromEmail = 'Palm & Grace <enquiries@example.test>';
+  config.enquiries.familyDestination = 'family@example.test';
+  config.enquiries.carePartnerDestination = 'partners@example.test';
+
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    if (String(input) === 'https://api.resend.com/emails') {
+      deliveries.push(JSON.parse(String(init?.body)));
+      return new Response(JSON.stringify({ id: 'email-test' }), { status: 200 });
+    }
+    return originalFetch(input, init);
+  }) as typeof fetch;
+
+  const app = express();
+  app.use(express.json());
+  app.use('/api/enquiries', enquiriesRouter);
+  const server = app.listen(0, '127.0.0.1');
+
+  try {
+    await new Promise<void>(resolve => server.once('listening', resolve));
+    const address = server.address();
+    assert.ok(address && typeof address === 'object');
+    const base = `http://127.0.0.1:${address.port}`;
+
+    const familyResponse = await originalFetch(`${base}/api/enquiries/memorial`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(family.data),
+    });
+    assert.equal(familyResponse.status, 202);
+
+    const partnerResponse = await originalFetch(`${base}/api/enquiries/partnership`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+        organisationName: 'Harbour Funeral Home', contactPerson: 'Taylor Example', role: 'Director',
+        email: 'taylor@example.test', telephone: '+1 555 0101', location: 'Nassau',
+        enquiry: 'Introducing memorials to families.', website: '',
+      }),
+    });
+    assert.equal(partnerResponse.status, 202);
+    assert.equal(deliveries[0].to[0], 'family@example.test');
+    assert.equal(deliveries[1].to[0], 'partners@example.test');
+    assert.notEqual(deliveries[0].to[0], deliveries[1].to[0]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.assign(config.enquiries, previousConfig);
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  }
+});
 
 test('1. Authentication: Validates credentials and generates JWT', async () => {
   const admin = await db.findAdminByEmail(config.admin.email);
@@ -884,5 +956,4 @@ test('20. Public tribute POST stores private contact data but never returns it',
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
 });
-
 

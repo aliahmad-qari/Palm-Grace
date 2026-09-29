@@ -58,7 +58,7 @@ export const MemorialDirectoryPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const formatDate = (dateStr?: string) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
     try {
       const d = new Date(dateStr);

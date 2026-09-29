@@ -29,7 +29,7 @@ export const HomePage: React.FC = () => {
             <p className="mt-7 max-w-2xl text-base leading-8 text-brand-white/85 sm:text-lg">A beautifully considered digital memorial space where photographs, stories, voices and memories can remain together—with dignity, warmth and care.</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.28)] transition-colors hover:bg-brand-gold-light">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
-              <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 border border-brand-white/35 bg-brand-white/10 px-7 text-sm font-semibold text-brand-white backdrop-blur-lg transition-colors hover:bg-brand-white/20">Discover Palm &amp; Grace</Link>
+              <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Discover Palm &amp; Grace</Link>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ export const HomePage: React.FC = () => {
           <Heart className="mx-auto mb-6 h-7 w-7 text-brand-gold" />
           <h2 className="font-serif text-4xl font-light sm:text-6xl">Begin with a conversation.</h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-brand-white/78">Every person, family and story is different. You do not need to have everything prepared. This is simply the beginning.</p>
-          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
     </PublicLayout>

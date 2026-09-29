@@ -64,6 +64,7 @@ export default function App() {
 
           {/* Admin Authentication */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/login" element={<Navigate to="/admin/login" replace />} />
 
           {/* Admin Protected Console */}
           <Route

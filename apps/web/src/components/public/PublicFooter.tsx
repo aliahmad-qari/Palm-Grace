@@ -30,7 +30,7 @@ export const PublicFooter: React.FC = () => (
         <div>
           <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">Administration</h2>
           <p className="mb-5 text-sm leading-7 text-brand-white/70">Secure access for authorised Palm &amp; Grace caretakers.</p>
-          <Link to="/admin/login" className="inline-flex min-h-11 items-center justify-center gap-2 border border-brand-gold/45 bg-brand-white/10 px-5 text-sm font-semibold text-brand-white backdrop-blur-md transition-colors hover:bg-brand-white/15"><Lock className="h-4 w-4 text-brand-gold-light" /> Admin Portal</Link>
+              <Link to="/admin/login" className="inline-flex min-h-11 items-center justify-center gap-2 border border-action-gold bg-action-gold px-5 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light"><Lock className="h-4 w-4 text-brand-primary" /> Admin Portal</Link>
         </div>
       </div>
       <div className="mt-12 flex flex-col gap-3 border-t border-brand-white/15 pt-6 text-xs text-brand-white/50 sm:flex-row sm:items-center sm:justify-between">

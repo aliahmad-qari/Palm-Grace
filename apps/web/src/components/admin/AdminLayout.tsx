@@ -67,10 +67,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
+          <BrandLogo variant="icon" size="small" className="sm:hidden [&_img]:rounded-none" />
           <BrandLogo
             variant="horizontal"
             size="small"
-            className="w-[106px] max-w-full min-[360px]:w-[128px] sm:w-[145px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
+            className="hidden w-[145px] max-w-full sm:inline-flex [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none"
           />
         </div>
         <div className="flex shrink-0 items-center gap-1 min-[360px]:gap-2">

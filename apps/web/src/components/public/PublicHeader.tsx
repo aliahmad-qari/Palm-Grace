@@ -20,7 +20,8 @@ export const PublicHeader: React.FC = () => {
         <div className="pointer-events-auto relative flex h-[72px] items-center gap-2 overflow-hidden rounded-[20px] border border-brand-primary/10 bg-header-silver px-3 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] transition-all duration-300 sm:gap-3 sm:px-6 lg:grid lg:h-[86px] lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
           <div className="flex min-w-0 flex-1 items-center lg:flex-none lg:justify-start">
             <Link to="/" onClick={() => setIsMobileOpen(false)} className="inline-flex min-w-0 max-w-full px-1 transition-opacity hover:opacity-85" aria-label="Palm and Grace home">
-              <BrandLogo variant="horizontal" size="medium" className="w-[138px] max-w-full min-[360px]:w-[166px] sm:w-[210px] [&_img]:block [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
+              <BrandLogo variant="icon" size="small" className="sm:hidden [&_img]:block [&_img]:rounded-none" />
+              <BrandLogo variant="horizontal" size="medium" className="hidden w-[210px] max-w-full sm:inline-flex [&_img]:block [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
             </Link>
           </div>
 

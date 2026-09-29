@@ -131,9 +131,9 @@ export const HomePage: React.FC = () => {
             <div className="flex h-40 w-40 items-center justify-center border border-brand-gold/55 bg-brand-white shadow-[0_16px_45px_rgba(43,67,51,.12)]"><QrCode className="h-24 w-24 text-brand-primary" /></div>
           </div>
           <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">A connection that remains</p>
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-brand-secondary">A connection that remains</p>
             <h2 className="font-serif text-4xl font-light text-brand-primary sm:text-6xl">From a service to the years that follow.</h2>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-brand-charcoal/70">A discreet memorial QR code can connect printed service materials or a lasting place of remembrance to the stories, photographs and memories held online.</p>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-brand-charcoal font-medium">A discreet memorial QR code can connect printed service materials or a lasting place of remembrance to the stories, photographs and memories held online.</p>
           </div>
         </div>
       </section>

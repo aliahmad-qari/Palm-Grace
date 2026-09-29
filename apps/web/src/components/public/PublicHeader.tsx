@@ -17,10 +17,10 @@ export const PublicHeader: React.FC = () => {
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
       <div className="mx-auto w-full max-w-[1360px] px-3 pt-3 sm:px-6 sm:pt-4">
-        <div className="pointer-events-auto relative flex h-[72px] items-center gap-3 overflow-hidden rounded-[20px] border border-white/60 bg-white/[.86] px-4 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] backdrop-blur-xl transition-all duration-300 sm:px-6 lg:grid lg:h-[86px] lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+        <div className="pointer-events-auto relative flex h-[72px] items-center gap-2 overflow-hidden rounded-[20px] border border-brand-primary/10 bg-header-silver px-3 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] transition-all duration-300 sm:gap-3 sm:px-6 lg:grid lg:h-[86px] lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
           <div className="flex min-w-0 items-center lg:justify-start">
             <Link to="/" onClick={() => setIsMobileOpen(false)} className="inline-flex shrink-0 px-1 transition-opacity hover:opacity-85" aria-label="Palm and Grace home">
-              <BrandLogo variant="horizontal" size="medium" className="max-w-[174px] sm:max-w-[210px] [&_img]:block [&_img]:rounded-none" />
+              <BrandLogo variant="horizontal" size="medium" className="max-w-[154px] min-[360px]:max-w-[174px] sm:max-w-[210px] [&_img]:block [&_img]:rounded-none" />
             </Link>
           </div>
 
@@ -34,7 +34,7 @@ export const PublicHeader: React.FC = () => {
           </nav>
 
           <div className="ms-auto flex items-center gap-2 lg:justify-end">
-            <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="grid h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold hover:bg-brand-gold/10">
+            <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="hidden h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold hover:bg-brand-gold/10 sm:grid">
               <Search className="h-4 w-4" />
             </Link>
             <Link to="/begin-a-memorial" className="hidden h-11 items-center justify-center gap-2 rounded-[11px] bg-action-gold px-5 text-xs font-semibold uppercase tracking-[0.1em] text-brand-primary shadow-[0_10px_30px_-14px_rgba(198,165,101,.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-gold-light sm:inline-flex">

@@ -9,6 +9,7 @@
   --color-brand-charcoal: #333333;
   --color-brand-black: #000000;
   --color-action-gold: #FFB900;
+  --color-header-silver: #CFD0CF;
 }
 
 :root {
@@ -20,6 +21,7 @@
   --pg-charcoal: var(--color-brand-charcoal);
   --pg-black: var(--color-brand-black);
   --pg-action-gold: var(--color-action-gold);
+  --pg-header-silver: var(--color-header-silver);
 }
 
 @layer base {

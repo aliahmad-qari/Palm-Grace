@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
+import { BrandLogo } from '../public/BrandLogo.js';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -57,22 +58,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col md:flex-row antialiased">
       {/* Mobile Top Header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3.5 bg-stone-900 text-stone-100 border-b border-stone-800 sticky top-0 z-40">
+      <header className="md:hidden flex items-center justify-between px-3 py-3 bg-header-silver text-brand-primary border-b border-brand-primary/15 sticky top-0 z-40 shadow-sm">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-stone-800 transition-colors"
+            className="p-1.5 rounded-lg text-brand-primary hover:bg-brand-white/40 transition-colors"
             aria-label="Toggle Navigation Menu"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <span className="font-serif text-lg tracking-wider text-amber-100">PALM &amp; GRACE</span>
+          <BrandLogo variant="horizontal" size="small" className="max-w-[145px] [&_img]:rounded-none" />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-stone-400 font-mono tracking-tight">ADMIN</span>
+          <span className="text-xs text-brand-primary/65 font-mono tracking-tight">ADMIN</span>
           <button
             onClick={handleLogout}
-            className="p-1.5 text-stone-400 hover:text-amber-200 transition-colors"
+            className="p-1.5 text-brand-primary/65 hover:text-brand-primary transition-colors"
             title="Sign Out"
           >
             <LogOut className="w-4 h-4" />
@@ -90,26 +91,24 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-stone-900 text-stone-100 flex flex-col justify-between border-r border-stone-800 z-40 transition-transform duration-200 ease-in-out ${
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-header-silver text-brand-primary flex flex-col justify-between border-r border-brand-primary/15 z-40 transition-transform duration-200 ease-in-out shadow-[10px_0_30px_-24px_rgba(43,67,51,.55)] ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div>
           {/* Brand Header */}
-          <div className="px-6 py-6 border-b border-stone-800/80">
+          <div className="px-5 py-5 border-b border-brand-primary/15">
             <Link
               to="/admin"
               className="inline-block"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <div className="flex items-center gap-2 text-amber-200/90 text-xs tracking-widest uppercase mb-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+              <BrandLogo variant="horizontal" size="small" className="max-w-[190px] mb-3 [&_img]:rounded-none" />
+              <div className="flex items-center gap-2 text-brand-primary/70 text-xs tracking-widest uppercase mb-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" />
                 <span>Sanctuary Portal</span>
               </div>
-              <h1 className="font-serif text-2xl tracking-wider text-stone-50">
-                PALM &amp; GRACE
-              </h1>
-              <p className="text-xs text-stone-400 font-sans tracking-normal mt-0.5">
+              <p className="text-xs text-brand-primary/60 font-sans tracking-normal mt-0.5">
                 Phase 1 Administrator Console
               </p>
             </Link>
@@ -127,11 +126,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     active
-                      ? 'bg-stone-800 text-amber-200 font-semibold shadow-xs'
-                      : 'text-stone-300 hover:bg-stone-800/60 hover:text-white'
+                      ? 'bg-brand-primary text-brand-gold-light font-semibold shadow-sm'
+                      : 'text-brand-primary/75 hover:bg-brand-white/45 hover:text-brand-primary'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${active ? 'text-amber-300' : 'text-stone-400'}`} />
+                  <Icon className={`w-4 h-4 ${active ? 'text-action-gold' : 'text-brand-primary/55'}`} />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -140,16 +139,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </div>
 
         {/* User Profile & Quick Actions Footer */}
-        <div className="p-4 border-t border-stone-800 bg-stone-900/90">
-          <div className="flex items-center gap-3 px-2 py-2 mb-3 rounded-lg bg-stone-800/40">
-            <div className="w-8 h-8 rounded-full bg-stone-700 flex items-center justify-center text-amber-200 text-xs font-serif font-bold">
+        <div className="p-4 border-t border-brand-primary/15 bg-brand-white/20">
+          <div className="flex items-center gap-3 px-2 py-2 mb-3 rounded-lg bg-brand-white/35">
+            <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-brand-gold-light text-xs font-serif font-bold">
               {adminUser?.name ? adminUser.name[0] : 'A'}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-medium text-stone-200 truncate">
+              <div className="text-xs font-medium text-brand-primary truncate">
                 {adminUser?.name || 'Administrator'}
               </div>
-              <div className="text-[11px] text-stone-400 truncate">
+              <div className="text-[11px] text-brand-primary/60 truncate">
                 {adminUser?.email || 'admin@palmgrace.com'}
               </div>
             </div>
@@ -160,14 +159,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               to="/"
               target="_blank"
               rel="noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2 text-stone-300 hover:text-amber-200 hover:bg-stone-800 rounded-md transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2 text-brand-primary/75 hover:text-brand-primary hover:bg-brand-white/40 rounded-md transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Public Site</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center justify-center gap-1.5 px-2.5 py-2 text-stone-300 hover:text-rose-300 hover:bg-stone-800 rounded-md transition-colors"
+              className="flex items-center justify-center gap-1.5 px-2.5 py-2 text-brand-primary/75 hover:text-brand-primary hover:bg-brand-white/40 rounded-md transition-colors"
               title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />

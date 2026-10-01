@@ -13,11 +13,12 @@ export const PublicHeader: React.FC = () => {
     { label: 'Our Care Partners', href: '/our-care-partners' },
   ];
   const isActive = (href: string) => href === '/' ? location.pathname === '/' : location.pathname === href;
+  const isHome = location.pathname === '/';
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
-      <div className="mx-auto w-full max-w-[1360px] px-3 pt-3 sm:px-6 sm:pt-4">
-        <div className="pointer-events-auto relative flex h-[80px] items-center gap-2 overflow-hidden rounded-[20px] border border-brand-primary/10 bg-white px-3 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] transition-all duration-300 sm:h-[72px] sm:gap-3 sm:px-6 lg:grid lg:h-[86px] lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
+      <div className={isHome ? 'mx-auto w-full' : 'mx-auto w-full max-w-[1360px] px-3 pt-3 sm:px-6 sm:pt-4'}>
+        <div className={`pointer-events-auto relative flex items-center gap-2 overflow-hidden border-brand-primary/10 bg-white px-4 transition-all duration-300 sm:gap-3 sm:px-7 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:gap-6 ${isHome ? 'h-[80px] border-b bg-white/96 shadow-[0_8px_28px_-20px_rgba(43,67,51,.5)] backdrop-blur-xl sm:h-[78px] lg:h-[82px] lg:px-10' : 'h-[80px] rounded-[20px] border px-3 shadow-[0_16px_45px_-25px_rgba(43,67,51,.55)] sm:h-[72px] sm:px-6 lg:h-[86px]'}`}>
           <div className="flex min-w-0 flex-1 items-center lg:flex-none lg:justify-start">
             <Link to="/" onClick={() => setIsMobileOpen(false)} className="inline-flex min-w-0 max-w-full px-1" aria-label="Palm and Grace home">
               <span className="block sm:hidden">
@@ -42,7 +43,7 @@ export const PublicHeader: React.FC = () => {
             <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="hidden h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold hover:bg-brand-gold/10 sm:grid">
               <Search className="h-4 w-4" />
             </Link>
-            <Link to="/begin-a-memorial" className="hidden h-11 items-center justify-center gap-2 rounded-[11px] bg-action-gold px-5 text-xs font-semibold uppercase tracking-[0.1em] text-brand-primary shadow-[0_10px_30px_-14px_rgba(198,165,101,.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-gold-light sm:inline-flex">
+            <Link to="/begin-a-memorial" className="hidden h-11 items-center justify-center gap-2 rounded-[11px] bg-[#334936] px-5 text-xs font-semibold uppercase tracking-[0.1em] text-white shadow-[0_10px_30px_-14px_rgba(198,165,101,.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-gold sm:inline-flex">
               Begin a Memorial <ArrowRight className="h-4 w-4" />
             </Link>
             <button type="button" aria-label={isMobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={isMobileOpen} onClick={() => setIsMobileOpen((open) => !open)} className="grid h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold lg:hidden">

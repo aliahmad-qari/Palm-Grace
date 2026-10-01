@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Heart, Images, MessageCircleHeart, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
+import { ArrowDown, ArrowRight, BookOpen, Heart, Images, MessageCircleHeart, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 import { api, apiUrl } from '../../lib/api.js';
 import { Memorial } from '../../types/index.js';
@@ -18,24 +18,28 @@ export const HomePage: React.FC = () => {
 
   return (
     <PublicLayout>
-      <section className="relative flex min-h-[calc(100vh-84px)] items-center overflow-hidden bg-brand-primary px-4 py-20 text-brand-white sm:px-6 lg:px-8">
-        <img src={featuredMemorials[0]?.mainPhotograph || 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=2000&q=85'} alt="" className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" referrerPolicy="no-referrer" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(25,45,33,.96)_0%,rgba(43,67,51,.88)_48%,rgba(43,67,51,.45)_100%)]" />
-        <div className="absolute -right-28 top-16 h-80 w-80 rounded-full bg-brand-gold/20 blur-3xl" aria-hidden="true" />
-        <div className="relative mx-auto w-full max-w-7xl">
-          <div className="max-w-3xl border border-brand-white/20 bg-brand-primary/35 p-7 shadow-[0_24px_70px_rgba(0,0,0,.24)] backdrop-blur-md sm:p-10 lg:p-14">
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold-light">Palm &amp; Grace Memorials</p>
-            <h1 className="font-serif text-5xl font-light leading-[1.02] text-brand-white sm:text-6xl lg:text-7xl">Honouring Lives.<br />Preserving Legacies.</h1>
-            <p className="mt-7 max-w-2xl text-base leading-8 text-brand-white/85 sm:text-lg">A beautifully considered digital memorial space where photographs, stories, voices and memories can remain together—with dignity, warmth and care.</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.28)] transition-colors hover:bg-brand-gold-light">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
-              <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Discover Palm &amp; Grace</Link>
+      <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-brand-primary px-5 pb-24 pt-32 text-brand-white sm:px-8 sm:pb-28 sm:pt-36 lg:px-12 lg:pt-40">
+        <img src="/homepage image.png" alt="A peaceful coastline illuminated by warm evening light" className="absolute inset-0 h-full w-full scale-[1.015] object-cover object-center motion-safe:animate-[pg-hero-reveal_1.4s_ease-out_both]" fetchPriority="high" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,28,21,.82)_0%,rgba(24,39,29,.58)_45%,rgba(24,39,29,.16)_76%),linear-gradient(0deg,rgba(12,22,16,.64)_0%,transparent_45%,rgba(12,22,16,.18)_100%)]" />
+        <div className="relative mx-auto w-full max-w-[1360px]">
+          <div className="max-w-[760px] motion-safe:animate-[pg-content-rise_1s_.15s_ease-out_both]">
+            <p className="mb-5 text-[.68rem] font-semibold uppercase tracking-[0.32em] text-brand-gold-light sm:text-xs">Extraordinary lives</p>
+            <h1 className="max-w-4xl font-serif text-[clamp(2.8rem,6.2vw,6.25rem)] font-light leading-[.92] tracking-[-.03em] text-brand-white">Honouring Lives.<br />Preserving Legacies.</h1>
+            <p className="mt-7 max-w-xl text-sm leading-7 text-brand-white/88 sm:text-base sm:leading-8">A beautifully considered digital memorial space where photographs, stories, voices and memories can remain together—with dignity, warmth and care.</p>
+            <div className="mt-8 flex flex-col gap-3 min-[390px]:flex-row sm:mt-10">
+              <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-[#334936] px-7 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(0,0,0,.2)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-gold">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm border border-brand-white/65 bg-brand-white/92 px-7 text-sm font-semibold text-brand-primary backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-white">Discover Palm &amp; Grace</Link>
             </div>
           </div>
         </div>
+        <p className="absolute bottom-7 left-5 hidden max-w-[230px] border-l border-brand-gold-light/80 pl-4 text-[.58rem] font-semibold uppercase leading-4 tracking-[.24em] text-brand-white/75 sm:block lg:left-12">A lasting place<br />for the people who matter most.</p>
+        <a href="#meaning" className="absolute bottom-6 right-5 flex flex-col items-center gap-2 text-[.55rem] font-semibold uppercase tracking-[.26em] text-brand-white/78 transition-colors hover:text-brand-gold-light sm:right-8 lg:right-12" aria-label="Scroll to explore the Palm and Grace story">
+          <span className="grid h-9 w-6 place-items-center rounded-full border border-brand-white/55"><ArrowDown className="h-3.5 w-3.5 motion-safe:animate-bounce" /></span>
+          <span>Scroll to explore</span>
+        </a>
       </section>
 
-      <section className="bg-brand-white px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
+      <section id="meaning" className="scroll-mt-24 bg-brand-white px-4 py-20 text-brand-charcoal sm:px-6 sm:py-28 lg:px-8">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-secondary">Every life leaves something worth preserving</p>
@@ -45,7 +49,7 @@ export const HomePage: React.FC = () => {
             <Link to="/our-story" className="inline-flex min-h-11 items-center gap-2 font-semibold text-brand-primary underline decoration-brand-gold decoration-2 underline-offset-4">Our Story <ArrowRight className="h-4 w-4" /></Link>
           </div>
           <div className="relative border border-brand-gold/50 bg-brand-primary/10 p-3 shadow-[0_24px_60px_rgba(43,67,51,.14)] backdrop-blur-md">
-            <img src="https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85" alt="Leaves illuminated by gentle natural light" className="h-[460px] w-full object-cover" />
+            <img src="/Golden Memories by the Lake.png" alt="A family photo album and flowers beside a peaceful lake at golden hour" className="h-[460px] w-full object-cover" />
             <div className="absolute inset-x-8 bottom-8 border border-brand-white/25 bg-brand-primary/75 p-6 text-brand-white backdrop-blur-lg">
               <p className="font-serif text-2xl leading-snug">A life held in story, image, voice and memory.</p>
             </div>
@@ -156,7 +160,7 @@ export const HomePage: React.FC = () => {
           <Heart className="mx-auto mb-6 h-7 w-7 text-brand-gold" />
           <h2 className="font-serif text-4xl font-light sm:text-6xl">Begin with a conversation.</h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-brand-white/78">Every person, family and story is different. You do not need to have everything prepared. This is simply the beginning.</p>
-          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-action-gold px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/begin-a-memorial" className="mt-8 inline-flex rounded min-h-12 items-center justify-center gap-2 bg-brand-gold-light px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
     </PublicLayout>

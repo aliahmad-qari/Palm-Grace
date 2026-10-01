@@ -88,13 +88,36 @@ async function apiRequest<T>(
 
   try {
     const fullUrl = apiUrl(endpoint);
-    const res = await fetch(fullUrl, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
+    const request = () => fetch(fullUrl, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
 
-    const body = await res.json();
+    let res = await request();
+    let rawBody = await res.text();
+
+    // Render can return an empty gateway response while a sleeping service is
+    // waking up. Retry auth once; login is safe to repeat and this avoids an
+    // intermittent first-attempt failure without retrying arbitrary writes.
+    const isAuthRequest = endpoint === '/api/auth/login' || endpoint === '/api/auth/session';
+    const isTransientResponse = !rawBody.trim() || [502, 503, 504].includes(res.status);
+    if (isAuthRequest && isTransientResponse) {
+      res = await request();
+      rawBody = await res.text();
+    }
+
+    let body: Record<string, any> = {};
+    if (rawBody.trim()) {
+      try {
+        body = JSON.parse(rawBody);
+      } catch {
+        return {
+          success: false,
+          error: `The server returned an invalid response (${res.status}). Please try again shortly.`,
+        };
+      }
+    }
 
     if (!res.ok) {
       if (res.status === 401 && !endpoint.includes('/api/auth/login')) {
@@ -105,8 +128,19 @@ async function apiRequest<T>(
       }
       return {
         success: false,
-        error: body.error || `Request failed with status ${res.status}`,
+        error: body.error || (
+          !rawBody.trim()
+            ? `The server is temporarily unavailable (${res.status}). Please try again shortly.`
+            : `Request failed with status ${res.status}`
+        ),
         details: body.details,
+      };
+    }
+
+    if (!rawBody.trim()) {
+      return {
+        success: false,
+        error: 'The server returned an empty response. Please try again shortly.',
       };
     }
 

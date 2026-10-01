@@ -760,6 +760,13 @@ class MemorialDataStore {
   }
 
   // Media operations
+  async findMediaById(id: string) {
+    if (await this.checkConnection()) {
+      return prisma.memorialMedia.findUnique({ where: { id } });
+    }
+    return this.memoryMedia.find(media => media.id === id) || null;
+  }
+
   async addMedia(memorialId: string, url: string, cloudinaryPublicId: string | null = null, caption: string | null = null, sortOrder: number = 0, mediaType: MediaType = 'PHOTO'): Promise<InMemoryMemorialMedia> {
     if (await this.checkConnection()) {
       const created = await prisma.memorialMedia.create({
@@ -800,12 +807,12 @@ class MemorialDataStore {
 
   async reorderMedia(memorialId: string, items: { id: string; sortOrder: number }[]) {
     if (await this.checkConnection()) {
-      for (const item of items) {
-        await prisma.memorialMedia.updateMany({
+      await prisma.$transaction(
+        items.map(item => prisma.memorialMedia.updateMany({
           where: { id: item.id, memorialId },
           data: { sortOrder: item.sortOrder },
-        });
-      }
+        }))
+      );
       return true;
     }
 

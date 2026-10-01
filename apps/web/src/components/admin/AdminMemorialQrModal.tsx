@@ -29,9 +29,9 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
   if (!isOpen || !memorial) return null;
 
   const publicUrl = getCanonicalMemorialUrl(memorial.slug);
-  const qrSvgUrl = apiUrl(`/api/memorials/${memorial.slug}/qr?format=svg&download=1`);
-  const qrPngUrl = apiUrl(`/api/memorials/${memorial.slug}/qr?format=png&download=1`);
-  const qrPreviewSrc = apiUrl(`/api/memorials/${memorial.slug}/qr?format=png`);
+  const qrSvgUrl = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=svg&download=1`);
+  const qrPngUrl = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=png&download=1`);
+  const qrPreviewSrc = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=png`);
 
   const handleCopyLink = async () => {
     try {

@@ -129,13 +129,13 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-brand-white px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+      {featuredMemorials[0] && <section className="bg-brand-white px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[.8fr_1.2fr]">
           <div className="flex min-h-80 items-center justify-center border border-brand-gold/45 bg-brand-gold-light/20 p-8 shadow-[0_20px_55px_rgba(43,67,51,.1)]">
             <div className="w-full max-w-xs border border-brand-primary/15 bg-brand-primary p-6 text-center shadow-[0_16px_45px_rgba(43,67,51,.2)]">
               <div className="bg-white p-3">
                 <img
-                  src={apiUrl('/api/memorials/arthur-pendleton/qr?format=png')}
+                  src={apiUrl(`/api/memorials/${featuredMemorials[0].slug}/qr?format=png`)}
                   alt="Scan to open an example Palm & Grace memorial"
                   className="mx-auto aspect-square w-full max-w-48 object-contain"
                   loading="lazy"
@@ -152,7 +152,7 @@ export const HomePage: React.FC = () => {
             <p className="mt-4 text-sm leading-7 text-brand-charcoal/65">A simple scan keeps the memorial close, whether it appears on a service card, keepsake, plaque or family remembrance.</p>
           </div>
         </div>
-      </section>
+      </section>}
 
       <section className="relative overflow-hidden bg-brand-primary px-4 py-20 text-center text-brand-white sm:px-6 sm:py-24 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(237,211,154,.18),transparent_45%)]" />

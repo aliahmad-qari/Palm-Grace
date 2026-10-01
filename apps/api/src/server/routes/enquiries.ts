@@ -19,6 +19,8 @@ enquiriesRouter.post(
         to: config.enquiries.familyDestination,
         replyTo: data.email,
         subject: `Begin a Memorial enquiry - ${data.personName}`,
+        heading: 'A family would like to begin a memorial',
+        intro: 'A new private family enquiry has been received through the Palm & Grace website.',
         lines: [
           ['Your name', data.yourName],
           ['Email', data.email],
@@ -57,6 +59,8 @@ enquiriesRouter.post(
         to: config.enquiries.carePartnerDestination,
         replyTo: data.email,
         subject: `Care Partner enquiry - ${data.organisationName}`,
+        heading: 'A new Care Partner conversation',
+        intro: 'A funeral home or bereavement professional would like to explore working with Palm & Grace.',
         lines: [
           ['Organisation / funeral home', data.organisationName],
           ['Contact person', data.contactPerson],

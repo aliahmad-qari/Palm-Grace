@@ -189,7 +189,7 @@ memorialsRouter.get('/:slug/qr', async (req: Request, res: Response) => {
         type: 'svg',
         margin: 2,
         color: {
-          dark: '#1e293b', // Deep charcoal slate for clean contrast on bronze plaques and paper
+          dark: '#2B4333', // Approved Palm & Grace primary green
           light: '#ffffff',
         },
       });
@@ -207,7 +207,7 @@ memorialsRouter.get('/:slug/qr', async (req: Request, res: Response) => {
         width: 1200,
         margin: 3,
         color: {
-          dark: '#1e293b',
+          dark: '#2B4333',
           light: '#ffffff',
         },
       });

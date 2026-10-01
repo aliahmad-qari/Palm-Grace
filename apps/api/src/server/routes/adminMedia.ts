@@ -19,6 +19,23 @@ function generateCloudinarySignature(params: Record<string, string | number>, ap
   return crypto.createHash('sha1').update(serialized + apiSecret).digest('hex');
 }
 
+async function deleteCloudinaryAsset(publicId: string, mediaType: 'PHOTO' | 'VIDEO'): Promise<void> {
+  if (!config.cloudinary.apiSecret || !config.cloudinary.apiKey || config.cloudinary.cloudName === 'demo') return;
+  const timestamp = Math.round(Date.now() / 1000);
+  const signature = generateCloudinarySignature({ public_id: publicId, timestamp }, config.cloudinary.apiSecret);
+  const body = new URLSearchParams({ public_id: publicId, timestamp: String(timestamp), api_key: config.cloudinary.apiKey, signature });
+  const resourceType = mediaType === 'VIDEO' ? 'video' : 'image';
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(config.cloudinary.cloudName)}/${resourceType}/destroy`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) throw new Error(`Cloudinary returned ${response.status}`);
+  const result = await response.json() as { result?: string };
+  if (!['ok', 'not found'].includes(result.result || '')) throw new Error('Cloudinary did not confirm deletion');
+}
+
 /**
  * GET /api/admin/media/config
  * Returns client-safe Cloudinary parameters (never exposes API secret)
@@ -183,11 +200,14 @@ adminMediaRouter.patch(
 adminMediaRouter.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const media = await db.findMediaById(id);
+    if (!media) return res.status(404).json({ success: false, error: 'Media item not found' });
+    if (media.cloudinaryPublicId) await deleteCloudinaryAsset(media.cloudinaryPublicId, media.mediaType);
     await db.deleteMedia(id);
 
     return res.json({
       success: true,
-      message: 'Photo removed from gallery',
+      message: 'Media removed from gallery and storage',
     });
   } catch (error) {
     console.error('[Admin Media] Error deleting media:', error);

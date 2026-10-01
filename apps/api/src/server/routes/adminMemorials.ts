@@ -1,11 +1,41 @@
 import { Router, Response } from 'express';
+import QRCode from 'qrcode';
 import { db } from '../db.js';
+import { config } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
 import { createMemorialSchema, updateMemorialSchema } from '../validators/index.js';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { omitUndefined, resolveDateAliases, resolveServiceFields } from '../memorialPayload.js';
 
 export const adminMemorialsRouter = Router();
+
+/** Generates QR assets for any admin-visible memorial, including drafts/private previews. */
+adminMemorialsRouter.get('/:id/qr', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const memorial = await db.findMemorialByIdAdmin(req.params.id);
+    if (!memorial) return res.status(404).json({ success: false, error: 'Memorial not found' });
+
+    const publicUrl = `${config.publicSiteUrl}/memorial/${memorial.slug}`;
+    const format = req.query.format === 'png' ? 'png' : 'svg';
+    const isDownload = req.query.download === '1';
+    const filename = `${memorial.slug}-memorial-qr.${format}`;
+
+    if (format === 'png') {
+      const png = await QRCode.toBuffer(publicUrl, { type: 'png', width: 1200, margin: 3, color: { dark: '#2B4333', light: '#FFFFFF' } });
+      res.type('png').setHeader('Cache-Control', 'private, no-store');
+      if (isDownload) res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      return res.send(png);
+    }
+
+    const svg = await QRCode.toString(publicUrl, { type: 'svg', margin: 2, color: { dark: '#2B4333', light: '#FFFFFF' } });
+    res.type('svg').setHeader('Cache-Control', 'private, no-store');
+    if (isDownload) res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return res.send(svg);
+  } catch (error) {
+    console.error('[Admin API] Error generating QR code:', error);
+    return res.status(500).json({ success: false, error: 'Failed to generate QR code' });
+  }
+});
 
 /**
  * GET /api/admin/memorials

@@ -45,13 +45,16 @@ test('21. Family and Care Partner enquiries validate separately and route privat
   const previousConfig = { ...config.enquiries };
   const originalFetch = globalThis.fetch;
   const deliveries: Array<Record<string, any>> = [];
-  config.enquiries.resendApiKey = 'test-key';
-  config.enquiries.fromEmail = 'Palm & Grace <enquiries@example.test>';
+  config.enquiries.brevoApiKey = 'test-brevo-key';
+  config.enquiries.brevoSenderEmail = 'enquiries@example.test';
+  config.enquiries.brevoSenderName = 'Palm & Grace Memorials';
+  config.enquiries.logoUrl = 'https://palm-grace-web.vercel.app/email/palm-grace-logo.png';
   config.enquiries.familyDestination = 'family@example.test';
   config.enquiries.carePartnerDestination = 'partners@example.test';
 
   globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
-    if (String(input) === 'https://api.resend.com/emails') {
+    if (String(input) === 'https://api.brevo.com/v3/smtp/email') {
+      assert.equal((init?.headers as Record<string, string>)['api-key'], 'test-brevo-key');
       deliveries.push(JSON.parse(String(init?.body)));
       return new Response(JSON.stringify({ id: 'email-test' }), { status: 200 });
     }
@@ -82,13 +85,54 @@ test('21. Family and Care Partner enquiries validate separately and route privat
       }),
     });
     assert.equal(partnerResponse.status, 202);
-    assert.equal(deliveries[0].to[0], 'family@example.test');
-    assert.equal(deliveries[1].to[0], 'partners@example.test');
-    assert.notEqual(deliveries[0].to[0], deliveries[1].to[0]);
+    assert.equal(deliveries[0].to[0].email, 'family@example.test');
+    assert.equal(deliveries[1].to[0].email, 'partners@example.test');
+    assert.notEqual(deliveries[0].to[0].email, deliveries[1].to[0].email);
+    assert.equal(deliveries[0].replyTo.email, 'ava@example.test');
+    assert.match(deliveries[0].htmlContent, /palm-grace-logo\.png/);
+    assert.match(deliveries[0].htmlContent, /HONOURING LIVES\. PRESERVING LEGACIES\./);
+    assert.match(deliveries[0].htmlContent, /#2B4333/);
+    assert.equal(deliveries[0].sender.email, 'enquiries@example.test');
   } finally {
     globalThis.fetch = originalFetch;
     Object.assign(config.enquiries, previousConfig);
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  }
+});
+
+test('22. Admin QR endpoint supports private-preview memorials without publishing them', async () => {
+  const privateMemorial = await db.createMemorial({
+    slug: `qr-private-preview-${Date.now()}`,
+    fullName: 'QR Private Preview Test',
+    dateOfBirth: null,
+    dateOfPassing: null,
+    biography: 'A private preview created only for QR endpoint verification.',
+    lifeStory: null,
+    mainPhotograph: 'https://images.example.test/qr-private-preview.jpg',
+    serviceInformation: null,
+    familyAcknowledgement: null,
+    livestreamUrl: null,
+    recordingUrl: null,
+    templateType: 'MALE',
+    publicationStatus: 'PRIVATE_PREVIEW',
+  });
+
+  const app = express();
+  app.use('/api/admin/memorials', adminMemorialsRouter);
+  const server = app.listen(0, '127.0.0.1');
+
+  try {
+    await new Promise<void>(resolve => server.once('listening', resolve));
+    const address = server.address();
+    assert.ok(address && typeof address === 'object');
+    const response = await fetch(`http://127.0.0.1:${address.port}/api/admin/memorials/${privateMemorial.id}/qr?format=svg`);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type') || '', /image\/svg\+xml/);
+    assert.match(response.headers.get('cache-control') || '', /private/);
+    assert.match(await response.text(), /<svg/);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+    await db.deleteMemorial(privateMemorial.id);
   }
 });
 
@@ -956,4 +1000,3 @@ test('20. Public tribute POST stores private contact data but never returns it',
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
 });
-

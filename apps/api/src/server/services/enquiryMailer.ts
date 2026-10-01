@@ -70,21 +70,33 @@ export function renderEnquiryEmail(delivery: EnquiryDelivery): { text: string; h
 }
 
 async function sendWithBrevo(delivery: EnquiryDelivery, text: string, html: string): Promise<void> {
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'api-key': config.enquiries.brevoApiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      sender: { email: config.enquiries.brevoSenderEmail, name: config.enquiries.brevoSenderName },
-      to: [{ email: delivery.to }],
-      replyTo: { email: delivery.replyTo },
-      subject: delivery.subject,
-      textContent: text,
-      htmlContent: html,
-      tags: ['palm-grace', 'public-enquiry'],
-    }),
-    signal: AbortSignal.timeout(15_000),
+  const requestBody = JSON.stringify({
+    sender: { email: config.enquiries.brevoSenderEmail, name: config.enquiries.brevoSenderName },
+    to: [{ email: delivery.to }],
+    replyTo: { email: delivery.replyTo },
+    subject: delivery.subject,
+    textContent: text,
+    htmlContent: html,
+    tags: ['palm-grace', 'public-enquiry'],
   });
-  if (!response.ok) throw new EnquiryDeliveryError(`Brevo returned ${response.status}`);
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': config.enquiries.brevoApiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: requestBody,
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (response.ok) return;
+
+    const providerMessage = (await response.text()).slice(0, 500).replace(/\s+/g, ' ').trim();
+    const retryable = response.status === 429 || response.status >= 500;
+    if (retryable && attempt === 1) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      continue;
+    }
+    throw new EnquiryDeliveryError(`Brevo returned ${response.status}${providerMessage ? `: ${providerMessage}` : ''}`);
+  }
 }
 
 async function sendWithResend(delivery: EnquiryDelivery, text: string, html: string): Promise<void> {
@@ -106,8 +118,15 @@ export async function sendEnquiryEmail(delivery: EnquiryDelivery): Promise<void>
 
   if (config.enquiries.brevoApiKey) {
     if (!config.enquiries.brevoSenderEmail) throw new EnquiryDeliveryError('Brevo sender email is not configured');
-    await sendWithBrevo(delivery, text, html);
-    return;
+    try {
+      await sendWithBrevo(delivery, text, html);
+      return;
+    } catch (error) {
+      // If a legacy provider is deliberately configured, keep enquiries
+      // deliverable during a transient Brevo outage.
+      if (!config.enquiries.resendApiKey || !parseMailbox(config.enquiries.fromEmail)) throw error;
+      console.warn('[Enquiry email] Brevo failed; using configured fallback provider.');
+    }
   }
   await sendWithResend(delivery, text, html);
 }

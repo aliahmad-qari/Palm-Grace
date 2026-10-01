@@ -315,7 +315,7 @@ export const BeginAMemorialPage: React.FC = () => {
               <div className="p-4 rounded-lg bg-red-950 border border-red-700 flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
                 <div className="text-sm text-red-200">
-                  <strong className="block mb-1">Please review the form.</strong>
+                  <strong className="block mb-1">{errorMessage === 'Please fill in all required fields.' ? 'Please review the form.' : 'We could not send your enquiry.'}</strong>
                   <p>{errorMessage}</p>
                 </div>
               </div>

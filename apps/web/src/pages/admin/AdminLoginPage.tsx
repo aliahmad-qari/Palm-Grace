@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 import { BrandLogo } from '../../components/public/BrandLogo.js';
 
@@ -13,6 +13,7 @@ export const AdminLoginPage: React.FC = () => {
   const [password, setPassword] = useState(import.meta.env.DEV ? 'ChangeMeOnFirstLogin2026!' : '');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // If already authenticated, redirect
   React.useEffect(() => {
@@ -99,13 +100,23 @@ export const AdminLoginPage: React.FC = () => {
               <div className="relative">
                 <Lock className="w-4 h-4 text-stone-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-stone-900/80 border border-stone-700 rounded-lg text-sm text-stone-100 placeholder-stone-500 focus:outline-hidden focus:border-amber-400/80 focus:ring-1 focus:ring-amber-400/80 transition-colors"
+                  className="w-full pl-9 pr-11 py-2.5 bg-stone-900/80 border border-stone-700 rounded-lg text-sm text-stone-100 placeholder-stone-500 focus:outline-hidden focus:border-amber-400/80 focus:ring-1 focus:ring-amber-400/80 transition-colors"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((visible) => !visible)}
+                  className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-md text-stone-400 transition-colors hover:bg-stone-800 hover:text-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
 

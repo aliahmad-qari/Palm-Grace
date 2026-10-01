@@ -15,7 +15,8 @@ export const authRouter = Router();
  */
 authRouter.post('/login', validateBody(loginSchema), async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const email = req.body.email.trim().toLowerCase();
+    const { password } = req.body;
 
     const admin = await db.findAdminByEmail(email);
     if (!admin) {

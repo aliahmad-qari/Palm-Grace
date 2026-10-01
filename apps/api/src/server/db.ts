@@ -366,10 +366,13 @@ class MemorialDataStore {
 
   // Admin User operations
   async findAdminByEmail(email: string) {
+    const normalizedEmail = email.trim().toLowerCase();
     if (await this.checkConnection()) {
-      return prisma.adminUser.findUnique({ where: { email } });
+      return prisma.adminUser.findFirst({
+        where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
+      });
     }
-    return this.memoryAdmins.find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
+    return this.memoryAdmins.find(a => a.email.trim().toLowerCase() === normalizedEmail) || null;
   }
 
   async findAdminById(id: string) {
@@ -385,13 +388,27 @@ class MemorialDataStore {
     }
 
     const passwordHash = await bcrypt.hash(config.admin.password, 12);
-    return prisma.adminUser.upsert({
-      where: { email: config.admin.email },
-      update: { passwordHash, name: config.admin.name },
-      create: {
-        email: config.admin.email,
+    const normalizedEmail = config.admin.email.trim().toLowerCase();
+    const existingAdmin = await prisma.adminUser.findFirst({
+      where: { email: { equals: normalizedEmail, mode: 'insensitive' } },
+    });
+
+    if (existingAdmin) {
+      return prisma.adminUser.update({
+        where: { id: existingAdmin.id },
+        data: {
+          email: normalizedEmail,
+          passwordHash,
+          name: config.admin.name.trim(),
+        },
+      });
+    }
+
+    return prisma.adminUser.create({
+      data: {
+        email: normalizedEmail,
         passwordHash,
-        name: config.admin.name,
+        name: config.admin.name.trim(),
       },
     });
   }

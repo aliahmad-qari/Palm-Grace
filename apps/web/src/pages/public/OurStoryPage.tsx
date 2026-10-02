@@ -46,7 +46,9 @@ export const OurStoryPage: React.FC = () => {
             </article>
           </div>
 
-          <Link to="/our-care-partners" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-primary underline decoration-brand-gold underline-offset-4 hover:text-brand-secondary">Discover Our Care Partners <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
+          <div className="flex justify-center pt-2">
+            <Link to="/our-care-partners" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-gold bg-brand-primary px-7 text-sm font-semibold text-brand-white shadow-[0_12px_30px_rgba(43,67,51,.16)] transition-all hover:-translate-y-0.5 hover:bg-brand-secondary">Discover Our Care Partners <ArrowRight className="h-4 w-4 text-brand-gold-light" aria-hidden="true" /></Link>
+          </div>
         </div>
       </section>
 

@@ -229,13 +229,13 @@ export const PublicMemorialViewPage: React.FC = () => {
   const hasService = Boolean(serviceInfoObj || memorial.serviceInformation || memorial.viewingWakeInformation);
   const arrivalImage = photos[0]?.url || memorial.mainPhotograph;
   const storyParagraphs = memorial.lifeStory?.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean) || [];
-  const hasLongStory = (memorial.lifeStory?.length || 0) > 700;
-  const storyPreview = hasLongStory ? `${memorial.lifeStory!.slice(0, 700).replace(/\s+\S*$/, '')}…` : memorial.lifeStory;
-  const backgroundImage = memorial.templateType === 'MALE'
+  const hasLongStory = (memorial.lifeStory?.length || 0) > 600;
+  const storyPreview = hasLongStory ? `${memorial.lifeStory!.slice(0, 480).replace(/\s+\S*$/, '')}…` : memorial.lifeStory;
+  const backgroundImage = photos[0]?.url || (memorial.templateType === 'MALE'
     ? '/homepage image.png'
     : memorial.templateType === 'FEMALE'
       ? '/Golden Memories by the Lake.png'
-      : arrivalImage;
+      : arrivalImage);
 
   return (
     <PublicLayout>
@@ -277,7 +277,7 @@ export const PublicMemorialViewPage: React.FC = () => {
         {/* =============== EMOTIONAL JOURNEY: ARRIVAL =============== */}
         {/* 1. ARRIVAL SECTION - Portrait, Name, Dates, Memorial Line (Minimal Controls) */}
         <section className={`relative flex min-h-[100svh] items-center overflow-hidden px-4 pb-20 pt-28 text-center sm:pt-32 ${theme.heroGradient}`}>
-          <img src={backgroundImage} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" referrerPolicy="no-referrer" />
+          <img src={backgroundImage} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" referrerPolicy="no-referrer" fetchPriority="high" />
           <div className={`absolute inset-0 ${memorial.templateType === 'FEMALE' ? 'bg-gradient-to-b from-[#554a40]/35 via-[#554a40]/60 to-[#453a33]/85' : 'bg-gradient-to-b from-stone-950/45 via-stone-950/65 to-stone-950/95'}`} />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(198,165,101,.16),transparent_48%)]" />
           {/* Subtle Motif Ornamentation based on template */}
@@ -292,6 +292,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                   alt={memorial.fullName}
                   className="w-full h-full object-cover object-center"
                   referrerPolicy="no-referrer"
+                  fetchPriority="high"
                 />
               </div>
               <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-brand-gold/60 bg-brand-primary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[.16em] text-brand-gold-light shadow-lg">In Loving Memory</span>
@@ -311,7 +312,7 @@ export const PublicMemorialViewPage: React.FC = () => {
             </div>
 
             {/* Opening Biography Inscription */}
-            {(memorial.memorialLine || memorial.biography) && <div className="mx-auto mt-4 max-w-2xl px-3"><p className="line-clamp-2 font-serif text-sm italic leading-relaxed text-white sm:text-xl">“{memorial.memorialLine || memorial.biography}”</p></div>}
+            {memorial.memorialLine && <div className="mx-auto mt-4 max-w-2xl px-3"><p className="line-clamp-2 font-serif text-sm italic leading-relaxed text-white sm:text-xl">“{memorial.memorialLine}”</p></div>}
             {memorial.biography && <div className="mx-auto mt-4 max-w-2xl border-t border-brand-gold/45 pt-3"><p className="mb-1 text-[10px] font-semibold uppercase tracking-[.22em] text-brand-gold-light">Who They Were</p><p className="line-clamp-2 text-xs leading-relaxed text-white/85 sm:line-clamp-4 sm:text-sm">{memorial.biography}</p></div>}
           </div>
           <a href={memorial.lifeStory ? '#life-story' : '#tributes'} className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[.22em] text-white/90 sm:right-10" aria-label="Scroll to remember"><ArrowDown className="h-5 w-5 motion-safe:animate-bounce" /><span>Scroll to remember</span></a>

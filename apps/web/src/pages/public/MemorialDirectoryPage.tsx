@@ -266,6 +266,8 @@ export const MemorialDirectoryPage: React.FC = () => {
                             alt={m.fullName}
                             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                             referrerPolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </div>
 

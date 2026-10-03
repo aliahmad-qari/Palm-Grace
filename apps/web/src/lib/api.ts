@@ -10,6 +10,8 @@ import {
 import { buildMemorialUrl } from './memorialUrl.js';
 
 const TOKEN_KEY = 'palm_grace_admin_token';
+let publicMemorialsCache: Promise<{ success: boolean; data?: Memorial[]; error?: string; [key: string]: any }> | null = null;
+let publicMemorialsCacheExpiresAt = 0;
 
 /**
  * Get the API base URL
@@ -333,7 +335,15 @@ export const api = {
   // Public Memorials
   async getPublicMemorials(search?: string) {
     const query = search ? `?search=${encodeURIComponent(search)}` : '';
-    return apiRequest<Memorial[]>(`/api/memorials${query}`);
+    if (search) return apiRequest<Memorial[]>(`/api/memorials${query}`);
+    if (!publicMemorialsCache || Date.now() >= publicMemorialsCacheExpiresAt) {
+      publicMemorialsCache = apiRequest<Memorial[]>('/api/memorials');
+      publicMemorialsCacheExpiresAt = Date.now() + 15_000;
+      publicMemorialsCache.then(result => {
+        if (!result.success) publicMemorialsCache = null;
+      });
+    }
+    return publicMemorialsCache;
   },
 
   async getPublicMemorial(slug: string) {

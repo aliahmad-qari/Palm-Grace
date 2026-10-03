@@ -94,15 +94,15 @@ export const TEMPLATE_DESIGNS: Record<TemplateType, MemorialTemplateDesign> = {
     tagline: 'Flowing composition, generous spacing, and warm restraint.',
     badgeText: 'Grace & Botanical',
 
-    rootBg: 'bg-stone-950',
-    heroGradient: 'bg-radial from-stone-950 via-stone-900 to-stone-950',
-    cardBg: 'bg-stone-900/85',
-    cardBorder: 'border-stone-800/90',
+    rootBg: 'bg-[#f4efe7]',
+    heroGradient: 'bg-[#746c62]',
+    cardBg: 'bg-brand-primary/95',
+    cardBorder: 'border-brand-gold/35',
     cardHoverBorder: 'hover:border-brand-gold/50',
 
-    headingColor: 'text-stone-100',
-    bodyTextColor: 'text-stone-300',
-    mutedTextColor: 'text-stone-400',
+    headingColor: 'text-brand-primary',
+    bodyTextColor: 'text-brand-charcoal',
+    mutedTextColor: 'text-brand-secondary',
 
     accentColor: 'text-brand-gold-light',
     accentBorder: 'border-brand-gold/50',
@@ -116,9 +116,9 @@ export const TEMPLATE_DESIGNS: Record<TemplateType, MemorialTemplateDesign> = {
     storyMeasure: 'max-w-2xl',
     headingStyle: 'tracking-normal italic',
 
-    dividerColor: 'border-stone-800/80',
-    subtleBoxBg: 'bg-stone-900/60',
-    subtleBoxBorder: 'border-stone-800/80',
+    dividerColor: 'border-brand-gold/40',
+    subtleBoxBg: 'bg-brand-gold-light/20',
+    subtleBoxBorder: 'border-brand-gold/35',
 
     inputBg: 'bg-stone-900',
     inputBorder: 'border-stone-700 focus:border-brand-gold focus:ring-brand-gold',

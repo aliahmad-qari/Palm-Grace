@@ -28,11 +28,11 @@ export const MemorialDirectoryPage: React.FC = () => {
   const [isDirectoryDisabled, setIsDirectoryDisabled] = useState(false);
   const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
 
-  const fetchMemorials = async (searchTerm = '') => {
+  const fetchMemorials = async () => {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const res = await api.getPublicMemorials(searchTerm);
+      const res = await api.getPublicMemorials();
       if (res.directoryDisabled) {
         setIsDirectoryDisabled(true);
         setPrivacyMessage(res.message || 'Public discovery directory is currently restricted for family privacy.');
@@ -52,11 +52,8 @@ export const MemorialDirectoryPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchMemorials(search);
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [search]);
+    fetchMemorials();
+  }, []);
 
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
@@ -69,8 +66,9 @@ export const MemorialDirectoryPage: React.FC = () => {
   };
 
   const filteredMemorials = memorials.filter((m) => {
-    if (selectedTemplate === 'ALL') return true;
-    return m.templateType === selectedTemplate;
+    if (selectedTemplate !== 'ALL' && m.templateType !== selectedTemplate) return false;
+    const term = search.trim().toLocaleLowerCase();
+    return !term || [m.fullName, m.preferredDisplayName, m.biography].some(value => value?.toLocaleLowerCase().includes(term));
   });
 
   return (
@@ -199,7 +197,7 @@ export const MemorialDirectoryPage: React.FC = () => {
               <h3 className="font-serif text-lg text-white">Unable to Load Memorials</h3>
               <p className="text-xs text-rose-300">{errorMsg}</p>
               <button
-                onClick={() => fetchMemorials(search)}
+                onClick={() => fetchMemorials()}
                 className="mt-2 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs rounded-lg transition-colors"
               >
                 Retry

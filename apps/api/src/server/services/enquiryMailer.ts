@@ -1,5 +1,6 @@
 import { config } from '../config.js';
-import { isSmtpSelected, safeSmtpError, sendSmtpEmail } from './smtpMailer.js';
+import { isZohoSelected, safeZohoError, sendZohoMail } from './zohoMailer.js';
+import { z } from 'zod';
 
 export type WebsiteEmailContent = {
   heading: string;
@@ -32,17 +33,20 @@ function parseMailbox(value: string): { email: string; name?: string } | null {
 
 export function renderEnquiryEmail(delivery: WebsiteEmailContent): { text: string; html: string } {
   const visibleLines = delivery.lines.filter(([, value]) => value != null && String(value).trim() !== '');
+  const visitorEmail = delivery.replyTo?.trim();
+  const replyAddress = visitorEmail && z.string().email().safeParse(visitorEmail).success ? visitorEmail : null;
   const category = delivery.kind === 'tribute' ? 'Private tribute notification' : delivery.kind === 'test' ? 'Email integration test' : 'Private enquiry';
   const footerNote = delivery.kind === 'tribute'
     ? 'Review this tribute in the Palm & Grace admin portal. This notification does not publish it.'
     : delivery.kind === 'test'
       ? 'This is a delivery test from the Palm & Grace website.'
-      : 'This email contains information submitted privately to Palm & Grace. Please do not forward or publish it. Replying to this email will respond directly to the enquirer.';
+      : 'This email contains information submitted privately to Palm & Grace. Please do not forward or publish it. Use the Reply to enquirer link to respond directly.';
   const text = [
     delivery.heading,
     delivery.intro,
     '',
     ...visibleLines.map(([label, value]) => `${label}: ${value}`),
+    ...(replyAddress ? [`Reply to enquirer: ${replyAddress}`] : []),
     '',
     footerNote,
   ].join('\n');
@@ -70,6 +74,7 @@ export function renderEnquiryEmail(delivery: WebsiteEmailContent): { text: strin
             <p style="margin:14px 0 0;color:#FFFFFF;font:400 15px/1.7 Arial,sans-serif;opacity:.88;">${escapeHtml(delivery.intro)}</p>
           </td></tr>
           <tr><td style="padding:26px 24px 12px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #E7E1D6;background:#FFFEFB;">${rows}</table></td></tr>
+          ${replyAddress ? `<tr><td style="padding:4px 32px 12px;"><a href="mailto:${escapeHtml(replyAddress)}" style="display:inline-block;background:#2B4333;color:#FFFFFF;padding:12px 18px;text-decoration:none;font:600 14px Arial,sans-serif;">Reply to enquirer</a></td></tr>` : ''}
           <tr><td style="padding:16px 32px 30px;color:#6B6B66;font:400 12px/1.6 Arial,sans-serif;">${escapeHtml(footerNote)}</td></tr>
           <tr><td style="background:#2B4333;padding:18px 24px;text-align:center;color:#EDD39A;font:500 11px/1.5 Arial,sans-serif;letter-spacing:.08em;">HONOURING LIVES. PRESERVING LEGACIES.</td></tr>
         </table>
@@ -126,11 +131,11 @@ async function sendWithResend(delivery: EnquiryDelivery, text: string, html: str
 
 export async function sendEnquiryEmail(delivery: EnquiryDelivery): Promise<void> {
   const { text, html } = renderEnquiryEmail(delivery);
-  if (isSmtpSelected()) {
+  if (isZohoSelected()) {
     try {
-      await sendSmtpEmail({ subject: delivery.subject, replyTo: delivery.replyTo, text, html });
+      await sendZohoMail({ subject: delivery.subject, text, html });
     } catch (error) {
-      throw new EnquiryDeliveryError(safeSmtpError(error));
+      throw new EnquiryDeliveryError(safeZohoError(error));
     }
     return;
   }

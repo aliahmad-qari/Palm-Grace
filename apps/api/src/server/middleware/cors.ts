@@ -13,15 +13,8 @@ export function configureCors() {
       const normalizedOrigin = origin.replace(/\/$/, '');
       const isAllowed =
         allowedOrigins.has(normalizedOrigin) ||
-        allowedOrigins.has('*') ||
-        // Vercel production deployments
-        normalizedOrigin.endsWith('.vercel.app') ||
-        // Google Cloud Run & AI Studio
-        normalizedOrigin.endsWith('.run.app') ||
-        normalizedOrigin.endsWith('.google.com') ||
-        normalizedOrigin.endsWith('.aistudio.google.com') ||
-        // Local development
-        /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/.test(normalizedOrigin);
+        // Local development only; production credentials require explicit origins.
+        (!config.isProduction && /^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$/.test(normalizedOrigin));
 
       if (isAllowed) {
         callback(null, true);

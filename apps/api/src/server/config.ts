@@ -80,6 +80,7 @@ export const config = {
       .map(o => o.trim().replace(/\/$/, ''))
       .filter(Boolean),
     ...(process.env.APP_URL ? [process.env.APP_URL.trim().replace(/\/$/, '')] : []),
+    'https://palm-grace-web.vercel.app',
     'https://palmandgrace.org',
     'https://www.palmandgrace.org',
   ],
@@ -107,5 +108,15 @@ export const config = {
     password: process.env.SMTP_PASSWORD || '',
     from: process.env.MAIL_FROM?.trim() || '',
     to: process.env.MAIL_TO?.trim() || '',
+  },
+  zoho: {
+    clientId: process.env.ZOHO_CLIENT_ID?.trim() || '',
+    clientSecret: process.env.ZOHO_CLIENT_SECRET || '',
+    refreshToken: process.env.ZOHO_REFRESH_TOKEN || '',
+    accountId: process.env.ZOHO_ACCOUNT_ID?.trim() || '',
+    accountsUrl: process.env.ZOHO_ACCOUNTS_URL?.trim() || '',
+    mailApiUrl: process.env.ZOHO_MAIL_API_URL?.trim() || '',
+    from: process.env.ZOHO_FROM_EMAIL?.trim() || '',
+    to: process.env.ZOHO_TO_EMAIL?.trim() || '',
   },
 };

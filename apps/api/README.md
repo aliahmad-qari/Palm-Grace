@@ -46,32 +46,36 @@ Key variables:
 - `CORS_ORIGIN` - Comma-separated list of allowed origins
 - `CLOUDINARY_*` - Media storage credentials
 
-### Website notification email (Zoho SMTP)
+### Website notification email (Zoho Mail REST API)
 
-Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`,
-`MAIL_FROM`, and `MAIL_TO` in the **Render backend environment only**. For the
-current Palm & Grace mailbox use `smtppro.zoho.com`, port `465`, `true` for
-`SMTP_SECURE`, `shamario@palmandgrace.org` for `SMTP_USER`, and
-`care@palmandgrace.org` for both `MAIL_FROM` and `MAIL_TO`. Set the password
-from the existing Zoho credential in Render; never commit it or configure it
-in Vercel. `MAIL_FROM` must be authorised as a Zoho send-as address.
+Configure `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`,
+`ZOHO_ACCOUNT_ID`, `ZOHO_ACCOUNTS_URL`, `ZOHO_MAIL_API_URL`, `ZOHO_FROM_EMAIL`,
+and `ZOHO_TO_EMAIL` in Render only. Current non-secret settings are account ID
+`7651386000000008002`, accounts URL `https://accounts.zoho.com`, mail API URL
+`https://mail.zoho.com`, and `care@palmandgrace.org` for both sender and recipient.
+The backend refreshes and caches OAuth access tokens; no secrets or tokens are
+sent to Vercel. This uses HTTPS and works on Render Free, subject to valid Zoho
+credentials and permission. A partial Zoho configuration fails explicitly.
 
-When any SMTP setting is supplied, website enquiries use Zoho. Incomplete SMTP
-configuration fails explicitly instead of silently falling back to Brevo.
-Brevo and its configuration remain available for rollback until SMTP delivery
-has been confirmed in production. Tribute submissions remain pending review;
-notification failures are logged safely and do not change moderation state.
+Zoho's published send-message API does not document a per-message Reply-To
+field. Enquiry notifications therefore include a prominent "Reply to enquirer"
+mailto link and the submitted address; verify any desired native Reply-To header
+separately with Zoho before relying on the email client's Reply button.
 
-From a Render shell with the production environment loaded:
+The old Brevo and SMTP implementations remain in the repository until all three
+notification workflows are confirmed in production. SMTP is not used by the
+active website routes.
 
-```bash
-npm run smtp:verify --workspace apps/api
-npm run smtp:test --workspace apps/api
-```
+After configuring Render and deploying the backend, use its shell to run
+`npm run zoho:test --workspace apps/api`; confirm the test message arrives in
+the configured inbox. Then test the two enquiry forms and one sample tribute.
 
-The first command checks SMTP connectivity/authentication without sending.
-The second sends a Palm & Grace integration test to the configured `MAIL_TO`
-address; confirm receipt in the inbox before removing Brevo configuration.
+### Legacy SMTP configuration (inactive)
+
+`SMTP_*` and `MAIL_*` configuration, the SMTP service, and its test scripts are
+retained temporarily for migration history only. Do not use them on Render Free;
+that platform blocks outbound SMTP ports. Tribute submissions remain pending
+review even if an email notification fails.
 
 ### Database
 

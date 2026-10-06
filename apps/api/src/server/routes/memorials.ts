@@ -6,7 +6,7 @@ import { validateBody } from '../middleware/validate.js';
 import { rateLimitTributes } from '../middleware/rateLimit.js';
 import { createTributeSchema } from '../validators/index.js';
 import { renderEnquiryEmail } from '../services/enquiryMailer.js';
-import { isSmtpSelected, safeSmtpError, sendSmtpEmail } from '../services/smtpMailer.js';
+import { isZohoSelected, safeZohoError, sendZohoMail } from '../services/zohoMailer.js';
 
 export const memorialsRouter = Router();
 
@@ -145,7 +145,7 @@ memorialsRouter.post(
       );
 
       // Notification is best-effort: a mail outage must not lose or publish a tribute.
-      if (isSmtpSelected()) {
+      if (isZohoSelected()) {
         const memorialName = memorial.preferredDisplayName || memorial.fullName;
         const notification = renderEnquiryEmail({
           kind: 'tribute',
@@ -161,13 +161,13 @@ memorialsRouter.post(
           ],
         });
         try {
-          await sendSmtpEmail({
+          await sendZohoMail({
             subject: `New Tribute awaiting review — ${memorialName}`,
             text: notification.text,
             html: notification.html,
           });
         } catch (error) {
-          console.error('[Tribute notification] Delivery failed:', safeSmtpError(error));
+          console.error('[Tribute notification] Delivery failed:', safeZohoError(error));
         }
       }
 

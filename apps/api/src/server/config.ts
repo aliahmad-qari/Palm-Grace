@@ -80,6 +80,8 @@ export const config = {
       .map(o => o.trim().replace(/\/$/, ''))
       .filter(Boolean),
     ...(process.env.APP_URL ? [process.env.APP_URL.trim().replace(/\/$/, '')] : []),
+    'https://palmandgrace.org',
+    'https://www.palmandgrace.org',
   ],
   enablePublicDirectory: process.env.ENABLE_PUBLIC_DIRECTORY !== 'false',
   cloudinary: {

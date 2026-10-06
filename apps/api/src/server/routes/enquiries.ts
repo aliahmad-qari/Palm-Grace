@@ -18,7 +18,7 @@ enquiriesRouter.post(
       await sendEnquiryEmail({
         to: config.enquiries.familyDestination,
         replyTo: data.email,
-        subject: `Begin a Memorial enquiry - ${data.personName}`,
+        subject: `Begin a Memorial enquiry — ${data.personName}`,
         heading: 'A family would like to begin a memorial',
         intro: 'A new private family enquiry has been received through the Palm & Grace website.',
         lines: [
@@ -58,7 +58,7 @@ enquiriesRouter.post(
       await sendEnquiryEmail({
         to: config.enquiries.carePartnerDestination,
         replyTo: data.email,
-        subject: `Care Partner enquiry - ${data.organisationName}`,
+        subject: `Care Partner enquiry — ${data.organisationName}`,
         heading: 'A new Care Partner conversation',
         intro: 'A funeral home or bereavement professional would like to explore working with Palm & Grace.',
         lines: [

@@ -46,6 +46,33 @@ Key variables:
 - `CORS_ORIGIN` - Comma-separated list of allowed origins
 - `CLOUDINARY_*` - Media storage credentials
 
+### Website notification email (Zoho SMTP)
+
+Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`,
+`MAIL_FROM`, and `MAIL_TO` in the **Render backend environment only**. For the
+current Palm & Grace mailbox use `smtppro.zoho.com`, port `465`, `true` for
+`SMTP_SECURE`, `shamario@palmandgrace.org` for `SMTP_USER`, and
+`care@palmandgrace.org` for both `MAIL_FROM` and `MAIL_TO`. Set the password
+from the existing Zoho credential in Render; never commit it or configure it
+in Vercel. `MAIL_FROM` must be authorised as a Zoho send-as address.
+
+When any SMTP setting is supplied, website enquiries use Zoho. Incomplete SMTP
+configuration fails explicitly instead of silently falling back to Brevo.
+Brevo and its configuration remain available for rollback until SMTP delivery
+has been confirmed in production. Tribute submissions remain pending review;
+notification failures are logged safely and do not change moderation state.
+
+From a Render shell with the production environment loaded:
+
+```bash
+npm run smtp:verify --workspace apps/api
+npm run smtp:test --workspace apps/api
+```
+
+The first command checks SMTP connectivity/authentication without sending.
+The second sends a Palm & Grace integration test to the configured `MAIL_TO`
+address; confirm receipt in the inbox before removing Brevo configuration.
+
 ### Database
 
 #### Prisma Commands

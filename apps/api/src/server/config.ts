@@ -97,4 +97,13 @@ export const config = {
     familyDestination: process.env.FAMILY_ENQUIRY_TO_EMAIL || '',
     carePartnerDestination: process.env.CARE_PARTNER_ENQUIRY_TO_EMAIL || '',
   },
+  smtp: {
+    host: process.env.SMTP_HOST?.trim() || '',
+    port: process.env.SMTP_PORT?.trim() || '',
+    secure: process.env.SMTP_SECURE?.trim() || '',
+    user: process.env.SMTP_USER?.trim() || '',
+    password: process.env.SMTP_PASSWORD || '',
+    from: process.env.MAIL_FROM?.trim() || '',
+    to: process.env.MAIL_TO?.trim() || '',
+  },
 };

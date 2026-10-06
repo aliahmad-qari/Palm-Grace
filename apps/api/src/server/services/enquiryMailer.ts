@@ -1,12 +1,18 @@
 import { config } from '../config.js';
+import { isSmtpSelected, safeSmtpError, sendSmtpEmail } from './smtpMailer.js';
 
-type EnquiryDelivery = {
-  to: string;
-  subject: string;
-  replyTo: string;
+export type WebsiteEmailContent = {
   heading: string;
   intro: string;
   lines: Array<[string, string | null | undefined]>;
+  kind?: 'enquiry' | 'tribute' | 'test';
+  replyTo?: string | null;
+};
+
+type EnquiryDelivery = WebsiteEmailContent & {
+  to: string;
+  subject: string;
+  replyTo: string;
 };
 
 export class EnquiryDeliveryError extends Error {}
@@ -24,15 +30,21 @@ function parseMailbox(value: string): { email: string; name?: string } | null {
   return { email: match[2], ...(name ? { name } : {}) };
 }
 
-export function renderEnquiryEmail(delivery: EnquiryDelivery): { text: string; html: string } {
+export function renderEnquiryEmail(delivery: WebsiteEmailContent): { text: string; html: string } {
   const visibleLines = delivery.lines.filter(([, value]) => value != null && String(value).trim() !== '');
+  const category = delivery.kind === 'tribute' ? 'Private tribute notification' : delivery.kind === 'test' ? 'Email integration test' : 'Private enquiry';
+  const footerNote = delivery.kind === 'tribute'
+    ? 'Review this tribute in the Palm & Grace admin portal. This notification does not publish it.'
+    : delivery.kind === 'test'
+      ? 'This is a delivery test from the Palm & Grace website.'
+      : 'This email contains information submitted privately to Palm & Grace. Please do not forward or publish it. Replying to this email will respond directly to the enquirer.';
   const text = [
     delivery.heading,
     delivery.intro,
     '',
     ...visibleLines.map(([label, value]) => `${label}: ${value}`),
     '',
-    'This message contains personal information submitted privately to Palm & Grace. Please handle it with care.',
+    footerNote,
   ].join('\n');
 
   const rows = visibleLines.map(([label, value], index) => `
@@ -53,12 +65,12 @@ export function renderEnquiryEmail(delivery: EnquiryDelivery): { text: string; h
             <img src="${escapeHtml(config.enquiries.logoUrl)}" width="250" alt="Palm &amp; Grace Memorials" style="display:block;width:100%;max-width:250px;height:auto;border:0;">
           </td></tr>
           <tr><td style="padding:34px 32px 20px;background:#2B4333;color:#FFFFFF;">
-            <div style="margin-bottom:9px;color:#EDD39A;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;">Private enquiry</div>
+            <div style="margin-bottom:9px;color:#EDD39A;font:600 11px/1.4 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;">${escapeHtml(category)}</div>
             <h1 style="margin:0;font:400 32px/1.15 Georgia,serif;color:#FFFFFF;">${escapeHtml(delivery.heading)}</h1>
             <p style="margin:14px 0 0;color:#FFFFFF;font:400 15px/1.7 Arial,sans-serif;opacity:.88;">${escapeHtml(delivery.intro)}</p>
           </td></tr>
           <tr><td style="padding:26px 24px 12px;"><table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #E7E1D6;background:#FFFEFB;">${rows}</table></td></tr>
-          <tr><td style="padding:16px 32px 30px;color:#6B6B66;font:400 12px/1.6 Arial,sans-serif;">This email contains information submitted privately to Palm & Grace. Please do not forward or publish it. Replying to this email will respond directly to the enquirer.</td></tr>
+          <tr><td style="padding:16px 32px 30px;color:#6B6B66;font:400 12px/1.6 Arial,sans-serif;">${escapeHtml(footerNote)}</td></tr>
           <tr><td style="background:#2B4333;padding:18px 24px;text-align:center;color:#EDD39A;font:500 11px/1.5 Arial,sans-serif;letter-spacing:.08em;">HONOURING LIVES. PRESERVING LEGACIES.</td></tr>
         </table>
       </td></tr>
@@ -113,8 +125,16 @@ async function sendWithResend(delivery: EnquiryDelivery, text: string, html: str
 }
 
 export async function sendEnquiryEmail(delivery: EnquiryDelivery): Promise<void> {
-  if (!delivery.to) throw new EnquiryDeliveryError('Enquiry destination is not configured');
   const { text, html } = renderEnquiryEmail(delivery);
+  if (isSmtpSelected()) {
+    try {
+      await sendSmtpEmail({ subject: delivery.subject, replyTo: delivery.replyTo, text, html });
+    } catch (error) {
+      throw new EnquiryDeliveryError(safeSmtpError(error));
+    }
+    return;
+  }
+  if (!delivery.to) throw new EnquiryDeliveryError('Enquiry destination is not configured');
 
   if (config.enquiries.brevoApiKey) {
     if (!config.enquiries.brevoSenderEmail) throw new EnquiryDeliveryError('Brevo sender email is not configured');

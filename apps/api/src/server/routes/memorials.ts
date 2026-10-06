@@ -5,6 +5,8 @@ import { config } from '../config.js';
 import { validateBody } from '../middleware/validate.js';
 import { rateLimitTributes } from '../middleware/rateLimit.js';
 import { createTributeSchema } from '../validators/index.js';
+import { renderEnquiryEmail } from '../services/enquiryMailer.js';
+import { isSmtpSelected, safeSmtpError, sendSmtpEmail } from '../services/smtpMailer.js';
 
 export const memorialsRouter = Router();
 
@@ -141,6 +143,33 @@ memorialsRouter.post(
         relationship || null,
         contributorEmail || null
       );
+
+      // Notification is best-effort: a mail outage must not lose or publish a tribute.
+      if (isSmtpSelected()) {
+        const memorialName = memorial.preferredDisplayName || memorial.fullName;
+        const notification = renderEnquiryEmail({
+          kind: 'tribute',
+          heading: 'A new tribute awaits review',
+          intro: 'A memory has been submitted through the Palm & Grace website. It remains pending until an administrator approves it.',
+          lines: [
+            ['Memorial', memorialName],
+            ['Contributor', sanitizedName],
+            ['Relationship', relationship || null],
+            ['Private contributor email', contributorEmail || null],
+            ['Memory', sanitizedMessage],
+            ['Moderation status', 'Pending Review'],
+          ],
+        });
+        try {
+          await sendSmtpEmail({
+            subject: `New Tribute awaiting review — ${memorialName}`,
+            text: notification.text,
+            html: notification.html,
+          });
+        } catch (error) {
+          console.error('[Tribute notification] Delivery failed:', safeSmtpError(error));
+        }
+      }
 
       return res.status(201).json({
         success: true,

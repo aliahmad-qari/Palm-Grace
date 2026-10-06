@@ -43,6 +43,7 @@ test('21. Family and Care Partner enquiries validate separately and route privat
   }).success, false, 'Honeypot must reject automated submissions');
 
   const previousConfig = { ...config.enquiries };
+  const previousSmtp = { ...config.smtp };
   const originalFetch = globalThis.fetch;
   const deliveries: Array<Record<string, any>> = [];
   config.enquiries.brevoApiKey = 'test-brevo-key';
@@ -51,6 +52,7 @@ test('21. Family and Care Partner enquiries validate separately and route privat
   config.enquiries.logoUrl = 'https://palm-grace-web.vercel.app/email/palm-grace-logo.png';
   config.enquiries.familyDestination = 'family@example.test';
   config.enquiries.carePartnerDestination = 'partners@example.test';
+  Object.assign(config.smtp, { host: '', port: '', secure: '', user: '', password: '', from: '', to: '' });
 
   globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
     if (String(input) === 'https://api.brevo.com/v3/smtp/email') {
@@ -96,6 +98,7 @@ test('21. Family and Care Partner enquiries validate separately and route privat
   } finally {
     globalThis.fetch = originalFetch;
     Object.assign(config.enquiries, previousConfig);
+    Object.assign(config.smtp, previousSmtp);
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
 });

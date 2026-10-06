@@ -28,8 +28,8 @@ export const HomePage: React.FC = () => {
             <h1 className="max-w-4xl font-serif text-[clamp(2.8rem,6.2vw,6.25rem)] font-light leading-[.92] tracking-[-.03em] text-brand-white">Honouring Lives.<br />Preserving Legacies.</h1>
             <p className="mt-7 max-w-xl text-sm leading-7 text-brand-white/88 sm:text-base sm:leading-8">A beautifully considered digital memorial space where photographs, stories, voices and memories can remain together—with dignity, warmth and care.</p>
             <div className="mt-8 flex flex-col gap-3 min-[390px]:flex-row sm:mt-10">
-              <Link to="/memorials" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-[#334936] px-7 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(0,0,0,.2)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-gold">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
-              <Link to="/our-story" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm border border-brand-white/65 bg-brand-white/92 px-7 text-sm font-semibold text-brand-primary backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-white">Discover Palm &amp; Grace</Link>
+              <Link to="/memorials" className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-sm bg-[#334936] px-8 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(0,0,0,.2)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-gold">Explore a Memorial <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/our-story" className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-sm border border-brand-white/65 bg-brand-white/92 px-8 text-sm font-semibold text-brand-primary backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-brand-white">Discover Palm &amp; Grace</Link>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ export const HomePage: React.FC = () => {
           <Heart className="mx-auto mb-6 h-7 w-7 text-brand-gold" />
           <h2 className="font-serif text-4xl font-light sm:text-6xl">Begin with a conversation.</h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-brand-white/78">Every person, family and story is different. You do not need to have everything prepared. This is simply the beginning.</p>
-          <Link to="/begin-a-memorial" className="mt-8 inline-flex rounded min-h-12 items-center justify-center gap-2 bg-brand-gold-light px-7 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/begin-a-memorial" className="mt-8 inline-flex min-h-[52px] items-center justify-center gap-2 rounded bg-brand-gold-light px-8 text-sm font-semibold text-brand-primary shadow-[0_10px_30px_rgba(255,185,0,.18)] transition-colors hover:bg-brand-gold-light">Begin a Memorial <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
     </PublicLayout>

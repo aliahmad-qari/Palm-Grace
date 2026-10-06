@@ -57,6 +57,9 @@ model Memorial {
   memorialLine          String?           @db.Text
   lifeStory             String?           @db.Text
   mainPhotograph        String            @db.Text
+  heroBackgroundUrl     String?           @db.Text
+  portraitPositionX     Int               @default(50)
+  portraitPositionY     Int               @default(50)
   serviceTitle          String?
   serviceDate           DateTime?
   serviceTime           String?

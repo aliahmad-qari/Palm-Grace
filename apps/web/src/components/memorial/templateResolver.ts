@@ -90,9 +90,9 @@ export const TEMPLATE_DESIGNS: Record<TemplateType, MemorialTemplateDesign> = {
 
   FEMALE: {
     id: 'FEMALE',
-    label: 'Grace & Botanical',
+    label: 'Grace & Warmth',
     tagline: 'Flowing composition, generous spacing, and warm restraint.',
-    badgeText: 'Grace & Botanical',
+    badgeText: 'Grace & Warmth',
 
     rootBg: 'bg-[#f4efe7]',
     heroGradient: 'bg-[#746c62]',
@@ -130,9 +130,9 @@ export const TEMPLATE_DESIGNS: Record<TemplateType, MemorialTemplateDesign> = {
 
   CHILD: {
     id: 'CHILD',
-    label: 'Gentle Remembrance',
+    label: 'Gentle Wonder',
     tagline: 'Restrained composition centred on personality, family photographs, and the love that remains.',
-    badgeText: 'Gentle Remembrance',
+    badgeText: 'Gentle Wonder',
 
     rootBg: 'bg-brand-primary',
     heroGradient: 'bg-gradient-to-b from-brand-secondary via-brand-primary to-brand-primary',

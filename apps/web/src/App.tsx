@@ -11,6 +11,8 @@ const PublicMemorialViewPage = lazy(() => import('./pages/public/PublicMemorialV
 const OurStoryPage = lazy(() => import('./pages/public/OurStoryPage.js').then(m => ({ default: m.OurStoryPage })));
 const BeginAMemorialPage = lazy(() => import('./pages/public/BeginAMemorialPage.js').then(m => ({ default: m.BeginAMemorialPage })));
 const OurCarePartnersPage = lazy(() => import('./pages/public/OurCarePartnersPage.js').then(m => ({ default: m.OurCarePartnersPage })));
+const PrivacyNoticePage = lazy(() => import('./pages/public/PolicyPages.js').then(m => ({ default: m.PrivacyNoticePage })));
+const TermsOfUsePage = lazy(() => import('./pages/public/PolicyPages.js').then(m => ({ default: m.TermsOfUsePage })));
 const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage.js').then(m => ({ default: m.AdminLoginPage })));
 const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage.js').then(m => ({ default: m.AdminDashboardPage })));
 const AdminMemorialsListPage = lazy(() => import('./pages/admin/AdminMemorialsListPage.js').then(m => ({ default: m.AdminMemorialsListPage })));
@@ -61,6 +63,8 @@ export default function App() {
           <Route path="/our-story" element={<OurStoryPage />} />
           <Route path="/begin-a-memorial" element={<BeginAMemorialPage />} />
           <Route path="/our-care-partners" element={<OurCarePartnersPage />} />
+          <Route path="/privacy" element={<PrivacyNoticePage />} />
+          <Route path="/terms" element={<TermsOfUsePage />} />
 
           {/* Admin Authentication */}
           <Route path="/admin/login" element={<AdminLoginPage />} />

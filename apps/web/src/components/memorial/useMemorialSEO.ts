@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { Memorial } from '../../types/index.js';
+import { calendarYear } from '../../lib/calendarDate.js';
 
 export function useMemorialSEO(memorial: Memorial | null) {
   useEffect(() => {
     if (!memorial) return;
 
     const previousTitle = document.title;
-    const birthYear = memorial.dateOfBirth ? new Date(memorial.dateOfBirth).getFullYear() : '';
-    const passYear = memorial.dateOfPassing ? new Date(memorial.dateOfPassing).getFullYear() : '';
+    const birthYear = calendarYear(memorial.birthDate || memorial.dateOfBirth);
+    const passYear = calendarYear(memorial.deathDate || memorial.dateOfPassing);
     const lifespanText = birthYear && passYear ? ` (${birthYear} – ${passYear})` : '';
 
     const pageTitle = `In Loving Memory of ${memorial.fullName}${lifespanText} | Palm & Grace`;
@@ -25,7 +26,7 @@ export function useMemorialSEO(memorial: Memorial | null) {
       return element;
     };
 
-    const cleanDescription = (memorial.biography || `Digital memorial sanctuary celebrating the life, memories, and legacy of ${memorial.fullName}.`)
+    const cleanDescription = (memorial.biography || memorial.memorialLine || `Remembering the life, memories and legacy of ${memorial.fullName}.`)
       .replace(/\s+/g, ' ')
       .slice(0, 160);
 
@@ -59,8 +60,8 @@ export function useMemorialSEO(memorial: Memorial | null) {
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: memorial.fullName,
-      birthDate: memorial.dateOfBirth ? memorial.dateOfBirth.slice(0, 10) : undefined,
-      deathDate: memorial.dateOfPassing ? memorial.dateOfPassing.slice(0, 10) : undefined,
+      birthDate: memorial.showBirthDate !== false ? (memorial.birthDate || memorial.dateOfBirth)?.slice(0, 10) : undefined,
+      deathDate: memorial.showDeathDate !== false ? (memorial.deathDate || memorial.dateOfPassing)?.slice(0, 10) : undefined,
       description: cleanDescription,
       image: memorial.mainPhotograph,
       url: currentUrl,

@@ -337,7 +337,7 @@ export const api = {
     const query = search ? `?search=${encodeURIComponent(search)}` : '';
     if (search) return apiRequest<Memorial[]>(`/api/memorials${query}`);
     if (!publicMemorialsCache || Date.now() >= publicMemorialsCacheExpiresAt) {
-      publicMemorialsCache = apiRequest<Memorial[]>('/api/memorials');
+      publicMemorialsCache = apiRequest<Memorial[]>('/api/memorials?summary=1');
       publicMemorialsCacheExpiresAt = Date.now() + 15_000;
       publicMemorialsCache.then(result => {
         if (!result.success) publicMemorialsCache = null;
@@ -350,7 +350,7 @@ export const api = {
     return apiRequest<Memorial>(`/api/memorials/${slug}`);
   },
 
-  async submitTribute(slug: string, payload: { visitorName: string; message: string }) {
+  async submitTribute(slug: string, payload: { visitorName: string; message: string; relationship?: string | null; contributorEmail?: string | null }) {
     return apiRequest<{ id: string; status: string; message: string }>(`/api/memorials/${slug}/tributes`, {
       method: 'POST',
       body: JSON.stringify(payload),

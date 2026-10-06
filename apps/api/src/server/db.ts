@@ -93,6 +93,9 @@ export interface InMemoryMemorial {
   memorialLine?: string | null;
   lifeStory: string | null;
   mainPhotograph: string;
+  heroBackgroundUrl?: string | null;
+  portraitPositionX?: number;
+  portraitPositionY?: number;
   serviceTitle?: string | null;
   serviceDate?: Date | null;
   serviceTime?: string | null;
@@ -144,6 +147,9 @@ function normalizeServiceFields<T extends Record<string, any>>(memorial: T): T {
     serviceAddress: memorial.serviceAddress ?? (typeof legacyService.address === 'string' ? legacyService.address : null),
     viewingWakeInformation: memorial.viewingWakeInformation ?? null,
     memorialLine: memorial.memorialLine ?? null,
+    heroBackgroundUrl: memorial.heroBackgroundUrl ?? null,
+    portraitPositionX: memorial.portraitPositionX ?? 50,
+    portraitPositionY: memorial.portraitPositionY ?? 50,
     closingWords: memorial.closingWords ?? null,
   } as T;
 }
@@ -414,8 +420,30 @@ class MemorialDataStore {
   }
 
   // Memorial operations
-  async findPublicMemorials(search?: string) {
+  async findPublicMemorials(search?: string, summary = false) {
     if (await this.checkConnection()) {
+      if (summary) {
+        const memorials = await prisma.memorial.findMany({
+          where: {
+            publicationStatus: 'PUBLISHED',
+            ...(search ? { OR: [
+              { fullName: { contains: search, mode: 'insensitive' as const } },
+              { preferredDisplayName: { contains: search, mode: 'insensitive' as const } },
+              { biography: { contains: search, mode: 'insensitive' as const } },
+            ] } : {}),
+          },
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true, slug: true, fullName: true, preferredDisplayName: true,
+            birthDate: true, showBirthDate: true, deathDate: true, showDeathDate: true,
+            dateOfBirth: true, dateOfPassing: true, biography: true, memorialLine: true,
+            mainPhotograph: true, portraitPositionX: true, portraitPositionY: true, livestreamUrl: true, templateType: true,
+            publicationStatus: true, createdAt: true,
+            _count: { select: { media: true, tributes: { where: { status: 'APPROVED' } } } },
+          },
+        });
+        return memorials.map(memorial => toPublicMemorial(memorial as unknown as Record<string, any>));
+      }
       const memorials = await prisma.memorial.findMany({
         where: {
           publicationStatus: 'PUBLISHED',
@@ -445,9 +473,19 @@ class MemorialDataStore {
       })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map(m => toPublicMemorial({
-        ...m,
-        media: this.memoryMedia.filter(med => med.memorialId === m.id).sort((a, b) => a.sortOrder - b.sortOrder),
+        ...(summary ? {
+          id: m.id, slug: m.slug, fullName: m.fullName, preferredDisplayName: m.preferredDisplayName,
+          birthDate: m.birthDate, showBirthDate: m.showBirthDate,
+          deathDate: m.deathDate, showDeathDate: m.showDeathDate,
+          dateOfBirth: m.dateOfBirth, dateOfPassing: m.dateOfPassing,
+          biography: m.biography, memorialLine: m.memorialLine,
+          mainPhotograph: m.mainPhotograph, portraitPositionX: m.portraitPositionX,
+          portraitPositionY: m.portraitPositionY, livestreamUrl: m.livestreamUrl,
+          templateType: m.templateType, publicationStatus: m.publicationStatus, createdAt: m.createdAt,
+        } : m),
+        ...(!summary ? { media: this.memoryMedia.filter(med => med.memorialId === m.id).sort((a, b) => a.sortOrder - b.sortOrder) } : {}),
         _count: {
+          media: this.memoryMedia.filter(med => med.memorialId === m.id).length,
           tributes: this.memoryTributes.filter(t => t.memorialId === m.id && t.status === 'APPROVED').length
         }
       }));

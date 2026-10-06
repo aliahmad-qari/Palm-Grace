@@ -350,7 +350,7 @@ export const BeginAMemorialPage: React.FC = () => {
 
           <div className="mt-12 pt-8 border-t border-stone-800 text-center text-xs text-stone-400">
             <p>
-              We respect your privacy. Your information will never be shared or used for marketing purposes. See our care principles for how we handle your data.
+              Your enquiry is sent privately to Palm &amp; Grace so we can respond. It is not published on the website. Read our <Link to="/privacy" className="text-brand-gold-light underline underline-offset-4">Privacy Notice</Link> and <Link to="/terms" className="text-brand-gold-light underline underline-offset-4">Terms of Use</Link>.
             </p>
           </div>
         </div>

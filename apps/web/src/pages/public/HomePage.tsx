@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowDown, ArrowRight, BookOpen, Heart, Images, MessageCircleHeart, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 import { api, apiUrl } from '../../lib/api.js';
+import { calendarYear } from '../../lib/calendarDate.js';
 import { Memorial } from '../../types/index.js';
 
 export const HomePage: React.FC = () => {
@@ -14,7 +15,7 @@ export const HomePage: React.FC = () => {
     }).catch(() => undefined);
   }, []);
 
-  const year = (value?: string | null) => value ? new Date(value).getFullYear() : null;
+  const year = calendarYear;
 
   return (
     <PublicLayout>
@@ -101,7 +102,7 @@ export const HomePage: React.FC = () => {
             <div className="grid gap-6 md:grid-cols-3">
               {featuredMemorials.map((memorial) => (
                 <Link key={memorial.id} to={`/memorial/${memorial.slug}`} className="group overflow-hidden rounded-2xl border border-brand-gold/35 bg-brand-gold-light/20 p-3 shadow-[0_14px_35px_rgba(43,67,51,.08)] transition-transform duration-300 hover:-translate-y-1">
-                  <img src={memorial.mainPhotograph} alt={memorial.preferredDisplayName || memorial.fullName} className="h-72 w-full rounded-xl object-cover" referrerPolicy="no-referrer" />
+                  <img src={memorial.mainPhotograph} alt={memorial.preferredDisplayName || memorial.fullName} className="h-72 w-full rounded-xl object-cover" style={{ objectPosition: `${memorial.portraitPositionX ?? 50}% ${memorial.portraitPositionY ?? 50}%` }} referrerPolicy="no-referrer" />
                   <div className="p-5"><p className="mb-2 text-xs uppercase tracking-[0.16em] text-brand-secondary">{year(memorial.dateOfBirth)}{year(memorial.dateOfBirth) && year(memorial.dateOfPassing) ? ' — ' : ''}{year(memorial.dateOfPassing)}</p><h3 className="font-serif text-2xl text-brand-primary group-hover:text-brand-secondary">{memorial.preferredDisplayName || memorial.fullName}</h3><p className="mt-3 line-clamp-2 text-sm leading-6 text-brand-charcoal/65">{memorial.memorialLine || memorial.biography}</p></div>
                 </Link>
               ))}
@@ -117,7 +118,7 @@ export const HomePage: React.FC = () => {
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-light">Our Care Partners</p>
             <h2 className="font-serif text-3xl font-light sm:text-4xl">Remembering well is often a shared act of care.</h2>
             <p className="mt-5 text-sm leading-7 text-brand-white/75">Palm &amp; Grace works alongside selected funeral homes and bereavement professionals who share our commitment to serving families with dignity, compassion and attention to detail.</p>
-            <Link to="/our-care-partners" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-light">Discover Our Care Partners <ArrowRight className="h-4 w-4" /></Link>
+            <div className="mt-7 flex justify-center"><Link to="/our-care-partners" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand-gold-light/65 px-6 text-sm font-semibold text-brand-gold-light transition-colors hover:bg-brand-white/10">Discover Our Care Partners <ArrowRight className="h-4 w-4" /></Link></div>
           </article>
           <article className="rounded-2xl border border-brand-gold/40 bg-brand-gold-light/20 p-8 text-brand-charcoal shadow-[0_18px_50px_rgba(43,67,51,.08)] sm:p-10">
             <ShieldCheck className="mb-6 h-7 w-7 text-brand-secondary" />

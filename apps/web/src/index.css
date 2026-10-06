@@ -207,4 +207,79 @@
       line-height: 1.12;
     }
   }
+
+}
+
+@layer utilities {
+  @media (max-height: 820px) {
+    .memorial-hero-portrait {
+      max-height: 13rem;
+      max-width: 10.5rem;
+    }
+
+    .memorial-hero {
+      padding-top: 6rem;
+      padding-bottom: 5.25rem;
+    }
+
+    .memorial-hero-identity {
+      margin-top: 1.25rem;
+    }
+
+    .memorial-hero-name {
+      font-size: clamp(2.1rem, 4vw, 3.25rem);
+      line-height: 1.02;
+    }
+  }
+
+  @media (max-height: 700px) {
+    .memorial-hero {
+      padding-top: 5.75rem;
+      padding-bottom: 5rem;
+    }
+
+    .memorial-hero-portrait {
+      max-height: 10rem;
+      max-width: 8.5rem;
+    }
+
+    .memorial-hero-identity {
+      margin-top: 1.1rem;
+    }
+
+    .memorial-hero-name {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1;
+    }
+
+    .memorial-hero-line,
+    .memorial-hero-bio {
+      margin-top: 0.6rem;
+    }
+
+    .memorial-hero-bio {
+      padding-top: 0.5rem;
+    }
+  }
+
+  @media (max-height: 700px) and (max-width: 639px) {
+    .memorial-hero {
+      padding-top: 5rem;
+      padding-bottom: 5.25rem;
+    }
+
+    .memorial-hero-portrait {
+      height: 7.75rem;
+      width: 6.5rem;
+    }
+
+    .memorial-hero-name {
+      font-size: clamp(1.8rem, 8vw, 2.5rem);
+    }
+
+    .memorial-hero-identity {
+      margin-top: 0.9rem;
+      row-gap: 0.4rem;
+    }
+  }
 }

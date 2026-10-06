@@ -40,13 +40,13 @@ export const PublicHeader: React.FC = () => {
           </nav>
 
           <div className="ms-auto flex items-center gap-2 lg:justify-end">
-            <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="hidden h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold hover:bg-brand-gold/10 sm:grid">
+            <Link to="/memorials" aria-label="Search memorials" title="Search memorials" className="hidden h-11 w-11 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold hover:bg-brand-gold/10 sm:grid">
               <Search className="h-4 w-4" />
             </Link>
             <Link to="/begin-a-memorial" className="hidden h-11 items-center justify-center gap-2 rounded-[11px] bg-[#334936] px-5 text-xs font-semibold uppercase tracking-[0.1em] text-white shadow-[0_10px_30px_-14px_rgba(198,165,101,.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-gold sm:inline-flex">
               Begin a Memorial <ArrowRight className="h-4 w-4" />
             </Link>
-            <button type="button" aria-label={isMobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={isMobileOpen} onClick={() => setIsMobileOpen((open) => !open)} className="grid h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold lg:hidden">
+            <button type="button" aria-label={isMobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={isMobileOpen} onClick={() => setIsMobileOpen((open) => !open)} className="grid h-11 w-11 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary transition-colors hover:border-brand-gold lg:hidden">
               {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -58,7 +58,7 @@ export const PublicHeader: React.FC = () => {
           <div className="overflow-hidden rounded-[20px] border border-brand-primary/10 bg-white shadow-[0_24px_60px_-30px_rgba(0,0,0,.5)]" onClick={(event) => event.stopPropagation()}>
             <div className="flex h-[72px] items-center justify-between border-b border-brand-primary/10 px-4">
               <BrandLogo variant="horizontal" size="small" className="w-[150px] max-w-[calc(100%-52px)] min-[360px]:w-[174px] [&_img]:w-full [&_img]:min-w-0 [&_img]:rounded-none" />
-              <button type="button" aria-label="Close navigation menu" onClick={() => setIsMobileOpen(false)} className="grid h-10 w-10 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary"><X className="h-5 w-5" /></button>
+              <button type="button" aria-label="Close navigation menu" onClick={() => setIsMobileOpen(false)} className="grid h-11 w-11 place-items-center rounded-xl border border-brand-primary/15 text-brand-primary"><X className="h-5 w-5" /></button>
             </div>
             <nav className="px-4 py-3" aria-label="Mobile navigation">
               {navLinks.map((link) => <Link key={link.href} to={link.href} onClick={() => setIsMobileOpen(false)} className={`flex items-center justify-between border-b border-brand-primary/10 py-3.5 text-[.95rem] font-medium ${isActive(link.href) ? 'text-brand-gold' : 'text-brand-primary/85'}`}>{link.label}<ArrowRight className={`h-4 w-4 ${isActive(link.href) ? 'opacity-100' : 'opacity-30'}`} /></Link>)}

@@ -348,6 +348,7 @@ export const OurCarePartnersPage: React.FC = () => {
               </div>
             )}
 
+            <p className="text-xs leading-6 text-stone-300">Your enquiry is sent privately to Palm &amp; Grace and is not published. Read our <Link to="/privacy" className="text-brand-gold-light underline underline-offset-4">Privacy Notice</Link>.</p>
             {/* Submit Button */}
             <div className="pt-4">
               <button

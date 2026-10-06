@@ -25,7 +25,7 @@ memorialsRouter.get('/', async (req: Request, res: Response) => {
     }
 
     const search = req.query.search ? String(req.query.search).trim() : undefined;
-    const memorials = await db.findPublicMemorials(search);
+    const memorials = await db.findPublicMemorials(search, req.query.summary === '1');
 
     return res.json({
       success: true,

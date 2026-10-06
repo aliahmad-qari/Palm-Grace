@@ -18,6 +18,7 @@ import {
 import { PublicLayout } from '../../components/public/PublicLayout.js';
 import { api } from '../../lib/api.js';
 import { Memorial, TemplateType } from '../../types/index.js';
+import { calendarYear } from '../../lib/calendarDate.js';
 
 export const MemorialDirectoryPage: React.FC = () => {
   const [memorials, setMemorials] = useState<Memorial[]>([]);
@@ -42,7 +43,7 @@ export const MemorialDirectoryPage: React.FC = () => {
         // Guarantee only published memorials are shown
         setMemorials(res.data.filter((m: Memorial) => m.publicationStatus === 'PUBLISHED'));
       } else {
-        setErrorMsg(res.error || 'Failed to retrieve memorials from the sanctuary registry.');
+        setErrorMsg(res.error || 'Unable to load memorials.');
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'Error connecting to the memorial service.');
@@ -55,15 +56,7 @@ export const MemorialDirectoryPage: React.FC = () => {
     fetchMemorials();
   }, []);
 
-  const formatDate = (dateStr?: string | null) => {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { year: 'numeric' });
-    } catch {
-      return dateStr;
-    }
-  };
+  const formatDate = calendarYear;
 
   const filteredMemorials = memorials.filter((m) => {
     if (selectedTemplate !== 'ALL' && m.templateType !== selectedTemplate) return false;
@@ -73,35 +66,36 @@ export const MemorialDirectoryPage: React.FC = () => {
 
   return (
     <PublicLayout>
-      <div className="bg-stone-900 text-stone-100 min-h-screen font-sans pb-24">
+      <div className="min-h-screen bg-brand-white pb-24 font-sans text-brand-charcoal">
         {/* Directory Header Banner */}
-        <section className="pt-16 pb-12 px-4 sm:px-6 lg:px-8 border-b border-stone-800 bg-gradient-to-b from-stone-950 via-stone-900 to-stone-900">
+        <section className="border-b border-brand-gold/30 bg-brand-gold-light/20 px-4 pb-12 pt-32 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center space-y-4">
-            <span className="text-xs uppercase tracking-widest text-amber-300 font-semibold block">
-              Public Sanctuary Registry
+            <span className="block text-xs font-semibold uppercase tracking-widest text-brand-secondary">
+              Lives Remembered
             </span>
-            <h1 className="font-serif text-3xl sm:text-5xl tracking-tight text-white">
-              The Memorial Directory
+            <h1 className="font-serif text-4xl tracking-tight text-brand-primary sm:text-6xl">
+              Memorials
             </h1>
-            <p className="text-sm sm:text-base text-stone-400 font-serif italic max-w-2xl mx-auto leading-relaxed">
-              "To live in hearts we leave behind is not to die. Discover and honor the lives commemorated across our digital sanctuary."
+            <p className="mx-auto max-w-2xl font-serif text-base leading-relaxed text-brand-charcoal/75 sm:text-lg">
+              Every life holds a story worth remembering. Find someone you love and spend time with their memories.
             </p>
 
             {/* Search Input Bar */}
             <div className="pt-6 max-w-xl mx-auto">
               <div className="relative">
-                <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-secondary" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search memorials by full name..."
-                  className="w-full pl-11 pr-10 py-3.5 bg-stone-800/90 border border-stone-700 rounded-xl text-sm sm:text-base text-white placeholder-stone-500 focus:outline-hidden focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-md transition-colors"
+                  aria-label="Search memorials by name"
+                  className="w-full rounded-2xl border border-brand-gold/60 bg-white py-3.5 pl-11 pr-10 text-sm text-brand-primary shadow-sm transition-colors placeholder:text-brand-charcoal/50 focus:border-brand-secondary focus:outline-hidden focus:ring-2 focus:ring-brand-gold/40 sm:text-base"
                 />
                 {search && (
                   <button
                     onClick={() => setSearch('')}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white p-1"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-brand-secondary hover:text-brand-primary"
                     title="Clear search"
                   >
                     <X className="w-4 h-4" />
@@ -110,49 +104,52 @@ export const MemorialDirectoryPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Template Filters */}
-            <div className="flex items-center justify-center gap-2 pt-3 flex-wrap text-xs">
+            {/* Keep the person, not the template, at the centre of browsing. */}
+            <details className="mx-auto max-w-xl pt-3 text-center text-xs text-brand-secondary">
+              <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 py-2 font-medium hover:text-brand-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-primary">Filter by memorial style{selectedTemplate !== 'ALL' ? ' (active)' : ''}</summary>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
               <button
                 onClick={() => setSelectedTemplate('ALL')}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
+                className={`min-h-11 px-3.5 py-2 rounded-lg font-medium transition-colors ${
                   selectedTemplate === 'ALL'
-                    ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
-                    : 'bg-stone-800 text-stone-300 hover:text-white'
+                    ? 'bg-brand-primary text-white font-bold shadow-xs'
+                    : 'border border-brand-gold/50 bg-white text-brand-secondary hover:bg-brand-gold-light/30'
                 }`}
               >
-                All Sanctuaries
+                All Memorials
               </button>
               <button
                 onClick={() => setSelectedTemplate('MALE')}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
+                className={`min-h-11 px-3.5 py-2 rounded-lg font-medium transition-colors ${
                   selectedTemplate === 'MALE'
-                    ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
-                    : 'bg-stone-800 text-stone-300 hover:text-white'
+                    ? 'bg-brand-primary text-white font-bold shadow-xs'
+                    : 'border border-brand-gold/50 bg-white text-brand-secondary hover:bg-brand-gold-light/30'
                 }`}
               >
                 Classic Dignity
               </button>
               <button
                 onClick={() => setSelectedTemplate('FEMALE')}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
+                className={`min-h-11 px-3.5 py-2 rounded-lg font-medium transition-colors ${
                   selectedTemplate === 'FEMALE'
-                    ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
-                    : 'bg-stone-800 text-stone-300 hover:text-white'
+                    ? 'bg-brand-primary text-white font-bold shadow-xs'
+                    : 'border border-brand-gold/50 bg-white text-brand-secondary hover:bg-brand-gold-light/30'
                 }`}
               >
-                Grace &amp; Botanical
+                Grace &amp; Warmth
               </button>
               <button
                 onClick={() => setSelectedTemplate('CHILD')}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors ${
+                className={`min-h-11 px-3.5 py-2 rounded-lg font-medium transition-colors ${
                   selectedTemplate === 'CHILD'
-                    ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
-                    : 'bg-stone-800 text-stone-300 hover:text-white'
+                    ? 'bg-brand-primary text-white font-bold shadow-xs'
+                    : 'border border-brand-gold/50 bg-white text-brand-secondary hover:bg-brand-gold-light/30'
                 }`}
               >
-                Gentle Celestial
+                Gentle Wonder
               </button>
-            </div>
+              </div>
+            </details>
           </div>
         </section>
 
@@ -160,17 +157,17 @@ export const MemorialDirectoryPage: React.FC = () => {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
           {/* Privacy Disabled Notice (Architected to disable directory without rebuilding memorial system) */}
           {isDirectoryDisabled && (
-            <div className="p-8 sm:p-12 rounded-2xl bg-stone-800/80 border border-stone-700 text-center max-w-2xl mx-auto space-y-4 shadow-xl">
-              <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center justify-center mx-auto">
+            <div className="mx-auto max-w-2xl space-y-4 rounded-2xl border border-brand-gold/40 bg-brand-gold-light/20 p-8 text-center shadow-sm sm:p-12">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary text-brand-gold-light">
                 <Lock className="w-6 h-6" />
               </div>
-              <h2 className="font-serif text-2xl text-white">
-                Directory Restricted by Privacy Policy
+              <h2 className="font-serif text-2xl text-brand-primary">
+                Memorial browsing is unavailable
               </h2>
-              <p className="text-sm text-stone-400 leading-relaxed">
-                {privacyMessage || 'Public discovery of memorials is currently restricted to uphold family privacy preferences. Individual memorials remain fully active and accessible via direct private links and stationery QR codes.'}
+              <p className="text-sm leading-relaxed text-brand-charcoal/75">
+                {privacyMessage || 'Public browsing is currently unavailable. Published memorials remain accessible through their direct links and QR codes.'}
               </p>
-              <div className="pt-2 text-xs text-stone-500 font-mono">
+              <div className="pt-2 font-mono text-xs text-brand-secondary">
                 Direct URL Format: /memorial/[unique-slug]
               </div>
             </div>
@@ -178,13 +175,12 @@ export const MemorialDirectoryPage: React.FC = () => {
 
           {/* Loading Skeleton */}
           {isLoading && !isDirectoryDisabled && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 sm:gap-8">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="bg-stone-800/50 rounded-2xl p-6 border border-stone-800 space-y-4 animate-pulse">
-                  <div className="w-24 h-24 rounded-full bg-stone-700/60 mx-auto" />
-                  <div className="h-5 bg-stone-700/60 rounded-md w-3/4 mx-auto" />
-                  <div className="h-3 bg-stone-700/40 rounded-md w-1/2 mx-auto" />
-                  <div className="h-16 bg-stone-700/30 rounded-md w-full" />
+                <div key={n} className="motion-safe:animate-pulse space-y-4 rounded-2xl border border-brand-gold/25 bg-brand-gold-light/15 p-4">
+                  <div className="h-60 rounded-xl bg-brand-gold/20" />
+                  <div className="h-5 w-3/4 rounded-md bg-brand-gold/20" />
+                  <div className="h-3 w-1/2 rounded-md bg-brand-gold/15" />
                 </div>
               ))}
             </div>
@@ -208,11 +204,11 @@ export const MemorialDirectoryPage: React.FC = () => {
           {/* Empty Search State */}
           {!isLoading && !errorMsg && !isDirectoryDisabled && filteredMemorials.length === 0 && (
             <div className="py-16 text-center max-w-md mx-auto space-y-4">
-              <div className="w-12 h-12 rounded-full bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-gold-light/40 text-brand-primary">
                 <Search className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl text-white">No Memorials Found</h3>
-              <p className="text-xs text-stone-400 leading-relaxed">
+              <h3 className="font-serif text-xl text-brand-primary">No memorials found</h3>
+              <p className="text-xs leading-relaxed text-brand-charcoal/70">
                 {search
                   ? `No published memorial records match the search term "${search}". Please verify spelling or try another keyword.`
                   : 'No published memorials match the selected template filter.'}
@@ -220,7 +216,7 @@ export const MemorialDirectoryPage: React.FC = () => {
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-semibold rounded-lg transition-colors shadow-xs"
+                  className="rounded-lg bg-brand-primary px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-brand-secondary"
                 >
                   Clear Search
                 </button>
@@ -239,75 +235,14 @@ export const MemorialDirectoryPage: React.FC = () => {
                   <Link
                     key={m.id}
                     to={`/memorial/${m.slug}`}
-                    className="group bg-stone-800/70 hover:bg-stone-800 border border-stone-700/70 hover:border-amber-400/60 rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-brand-gold/35 bg-brand-gold-light/15 shadow-[0_14px_35px_rgba(43,67,51,.08)] motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:-translate-y-1 hover:border-brand-gold hover:shadow-[0_20px_45px_rgba(43,67,51,.14)]"
                   >
-                    <div>
-                      {/* Top Badges */}
-                      <div className="flex items-center justify-between gap-2 mb-5">
-                        <span className="text-[11px] font-mono tracking-wider text-amber-300 uppercase px-2.5 py-0.5 rounded-full bg-stone-900/80 border border-stone-700">
-                          {m.templateType === 'MALE' && 'Classic Dignity'}
-                          {m.templateType === 'FEMALE' && 'Grace & Botanical'}
-                          {m.templateType === 'CHILD' && 'Gentle Celestial'}
-                        </span>
-
-                        {m.livestreamUrl && (
-                          <span className="flex items-center gap-1 text-[11px] text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-800/60">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                            <span>Livestream</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Portrait & Identity */}
-                      <div className="text-center space-y-3">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-stone-600 group-hover:border-amber-300 transition-colors mx-auto bg-stone-900 shadow-md">
-                          <img
-                            src={m.mainPhotograph}
-                            alt={m.fullName}
-                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                            referrerPolicy="no-referrer"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </div>
-
-                        <div>
-                          <h2 className="font-serif text-xl sm:text-2xl text-white group-hover:text-amber-200 transition-colors line-clamp-1">
-                            {m.fullName}
-                          </h2>
-                          <p className="text-xs text-stone-400 tracking-wider font-light mt-0.5">
-                            {birthYear} — {passYear}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Life Story excerpt */}
-                      {m.biography && (
-                        <p className="mt-4 text-xs sm:text-sm text-stone-300 line-clamp-3 italic font-serif leading-relaxed text-center px-2">
-                          "{m.biography}"
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Bottom Metadata & Enter Button */}
-                    <div className="mt-6 pt-4 border-t border-stone-700/60 flex items-center justify-between text-xs text-stone-400">
-                      <div className="flex items-center gap-3">
-                        {m.media && m.media.length > 0 && (
-                          <span className="flex items-center gap-1">
-                            <Images className="w-3.5 h-3.5 text-stone-400" />
-                            <span>{m.media.length}</span>
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <Heart className="w-3.5 h-3.5 text-rose-400" />
-                          <span>{m._count?.tributes ?? m.tributes?.length ?? 0}</span>
-                        </span>
-                      </div>
-
-                      <span className="inline-flex items-center gap-1 font-semibold text-amber-300 group-hover:translate-x-0.5 transition-transform">
-                        <span>Enter Sanctuary</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
+                    <img src={m.mainPhotograph} alt={m.preferredDisplayName || m.fullName} className="h-64 w-full object-cover sm:h-72" style={{ objectPosition: `${m.portraitPositionX ?? 50}% ${m.portraitPositionY ?? 50}%` }} referrerPolicy="no-referrer" loading="lazy" decoding="async" />
+                    <div className="flex flex-1 flex-col p-6">
+                      {(birthYear || passYear) && <p className="text-xs font-semibold tracking-[0.16em] text-brand-secondary">{birthYear}{birthYear && passYear ? ' — ' : ''}{passYear}</p>}
+                      <h2 className="mt-2 font-serif text-2xl text-brand-primary group-hover:text-brand-secondary sm:text-3xl">{m.preferredDisplayName || m.fullName}</h2>
+                      {(m.memorialLine || m.biography) && <p className="mt-3 line-clamp-3 text-sm leading-6 text-brand-charcoal/70">{m.memorialLine || m.biography}</p>}
+                      <span className="mt-auto inline-flex items-center gap-2 border-t border-brand-gold/35 pt-5 text-sm font-semibold text-brand-primary">View Memorial <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
                     </div>
                   </Link>
                 );

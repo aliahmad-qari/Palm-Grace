@@ -365,6 +365,15 @@ test('8. Public Directory & Privacy Filter: Excludes drafts and supports search'
     assert.equal(m.publicationStatus, 'PUBLISHED', 'Every record in public directory must be published');
   });
 
+  const summaries = await db.findPublicMemorials(undefined, true);
+  assert.equal(summaries.length, allPublic.length, 'Summary directory must preserve the published memorial count');
+  summaries.forEach(m => {
+    assert.equal(m.publicationStatus, 'PUBLISHED');
+    assert.ok(m._count && typeof m._count.media === 'number', 'Summary includes media count without loading gallery records');
+    assert.equal('lifeStory' in m, false, 'Summary must omit lengthy Life Story content');
+    assert.equal(m.media, undefined, 'Summary must omit gallery records');
+  });
+
   // 2. Search query by name
   const searched = await db.findPublicMemorials('Arthur');
   assert.ok(searched.length >= 1, 'Search for Arthur should return Arthur Pendleton');

@@ -20,6 +20,7 @@ import { api } from '../../lib/api.js';
 import { Memorial, PublicationStatus, TemplateType } from '../../types/index.js';
 import { MemorialPreviewModal } from '../../components/admin/MemorialPreviewModal.js';
 import { AdminMemorialQrModal } from '../../components/admin/AdminMemorialQrModal.js';
+import { formatCalendarDate } from '../../lib/calendarDate.js';
 
 export const AdminMemorialsListPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -105,7 +106,7 @@ export const AdminMemorialsListPage: React.FC = () => {
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
     try {
-      return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return formatCalendarDate(dateStr, { day: 'numeric', month: 'short', year: 'numeric' });
     } catch {
       return dateStr;
     }
@@ -323,15 +324,15 @@ export const AdminMemorialsListPage: React.FC = () => {
                           <Eye className="w-4 h-4" />
                         </button>
 
-                        {m.publicationStatus === 'PUBLISHED' && (
-                          <button
-                            onClick={() => setQrMemorial(m)}
-                            className="p-1.5 text-amber-700 hover:text-amber-900 rounded-md hover:bg-amber-50 transition-colors"
-                            title="View & Download Physical QR Code"
-                          >
-                            <QrCode className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setQrMemorial(m)}
+                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-brand-gold/60 bg-brand-gold-light/25 px-2.5 text-xs font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light/50"
+                          title="Copy memorial link and access QR code"
+                          aria-label={`Share link and QR code for ${m.fullName}`}
+                        >
+                          <QrCode className="h-4 w-4" />
+                          <span>Share / QR</span>
+                        </button>
 
                         {m.publicationStatus === 'PUBLISHED' && (
                           <a

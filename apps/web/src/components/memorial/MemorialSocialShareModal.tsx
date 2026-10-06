@@ -31,7 +31,7 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
 
   const currentUrl = typeof window !== 'undefined' ? getCanonicalMemorialUrl(memorial.slug) : '';
   const shareTitle = `In Loving Memory of ${memorial.fullName}`;
-  const shareText = `Please join us in honoring and remembering ${memorial.fullName} on Palm & Grace Digital Sanctuary.`;
+  const shareText = `Please join us in honouring and remembering ${memorial.fullName} with Palm & Grace.`;
 
   const handleCopyLink = async () => {
     try {
@@ -69,7 +69,7 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
   const encodedText = encodeURIComponent(`${shareText}\n\n${currentUrl}`);
   const encodedSubject = encodeURIComponent(shareTitle);
   const encodedBody = encodeURIComponent(
-    `Dear friends and family,\n\nA digital memorial sanctuary has been established to honor and remember ${memorial.fullName}.\n\nYou are warmly invited to visit, view photographs, read the story of their life, and leave a heartfelt tribute:\n\n${currentUrl}\n\nWith warmth,\nPalm & Grace Sanctuary`
+    `Dear friends and family,\n\nA memorial has been created to honour and remember ${memorial.fullName}.\n\nYou are warmly invited to visit, view photographs, read the story of their life, and share a memory:\n\n${currentUrl}\n\nWith warmth,\nPalm & Grace`
   );
 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
@@ -91,7 +91,7 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
           <div className="flex items-center gap-2 text-amber-300">
             <Share2 className="w-5 h-5" />
             <h3 className="font-serif text-xl text-white font-semibold">
-              Share Memorial Sanctuary
+              Share Memorial
             </h3>
           </div>
           <button
@@ -103,13 +103,13 @@ export const MemorialSocialShareModal: React.FC<MemorialSocialShareModalProps> =
         </div>
 
         <p className="text-xs text-stone-400 leading-relaxed font-sans">
-          Share this sanctuary link with family, friends, and community members so they can commemorate {memorial.fullName}, view ceremony streams, and leave words of comfort.
+          Share this memorial link with family and friends to remember {memorial.fullName} together.
         </p>
 
         {/* Copy Link Input Bar */}
         <div className="space-y-1.5">
           <label className="text-[11px] uppercase tracking-wider text-stone-400 font-semibold block">
-            Direct Sanctuary Link
+            Memorial Link
           </label>
           <div className="flex items-center gap-2 bg-stone-950 border border-stone-700/80 rounded-xl p-1.5 pr-2">
             <input

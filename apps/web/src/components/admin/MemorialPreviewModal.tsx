@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatCalendarDate } from '../../lib/calendarDate.js';
 import { X, Calendar, MapPin, Video, Eye, Heart, Share2, Sparkles, ExternalLink } from 'lucide-react';
 import { Memorial } from '../../types/index.js';
 
@@ -37,7 +38,7 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
       accentColor: 'text-rose-200',
       tagBg: 'bg-stone-800 text-rose-200 border-stone-700',
       fontHeading: 'font-serif',
-      badge: 'Grace & Botanical (Female)',
+      badge: 'Grace & Warmth (Female)',
     },
     CHILD: {
       bg: 'bg-sky-950',
@@ -47,19 +48,15 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
       accentColor: 'text-amber-200',
       tagBg: 'bg-sky-900 text-amber-200 border-sky-800',
       fontHeading: 'font-serif',
-      badge: 'Gentle Celestial (Child)',
+      badge: 'Gentle Wonder (Child)',
     },
   }[template];
 
-  const formatDate = (dateStr?: string | null) => {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    } catch {
-      return dateStr;
-    }
-  };
+  const formatDate = formatCalendarDate;
+  const displayName = memorial.preferredDisplayName || memorial.fullName || 'Full Name';
+  const birthDate = memorial.showBirthDate === false ? null : memorial.birthDate || memorial.dateOfBirth;
+  const deathDate = memorial.showDeathDate === false ? null : memorial.deathDate || memorial.dateOfPassing;
+  const showBiography = Boolean(memorial.biography?.trim() && memorial.biography.trim().replace(/[“”"'\s.]/g, '').toLowerCase() !== memorial.memorialLine?.trim().replace(/[“”"'\s.]/g, '').toLowerCase());
 
   let serviceInfoObj: { venue?: string; date?: string; address?: string; reception?: string } | null = null;
   if (memorial.serviceInformation) {
@@ -85,7 +82,7 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
             <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
               memorial.publicationStatus === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
             }`}>
-              {memorial.publicationStatus === 'PUBLISHED' ? 'Published' : 'Draft Mode'}
+              {memorial.publicationStatus === 'PUBLISHED' ? 'Published' : memorial.publicationStatus === 'PRIVATE_PREVIEW' ? 'Private Preview' : memorial.publicationStatus === 'ARCHIVED' ? 'Archived' : 'Draft'}
             </span>
           </div>
 
@@ -100,13 +97,16 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
         {/* Modal Scrollable Memorial Body */}
         <div className={`overflow-y-auto p-6 md:p-10 ${templateStyles.bg} ${templateStyles.textPrimary}`}>
           {/* Hero Section */}
-          <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
+          <div className="relative isolate flex flex-col items-center overflow-hidden rounded-xl p-5 text-center max-w-2xl mx-auto space-y-4 sm:p-8">
+            {memorial.heroBackgroundUrl && <img src={memorial.heroBackgroundUrl} alt="" aria-hidden="true" className="absolute inset-0 -z-20 h-full w-full object-cover" referrerPolicy="no-referrer" />}
+            {memorial.heroBackgroundUrl && <div className="absolute inset-0 -z-10 bg-brand-primary/75" />}
             <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-4 border-white/20 shadow-xl bg-stone-800">
               {memorial.mainPhotograph ? (
                 <img
                   src={memorial.mainPhotograph}
                   alt={memorial.fullName}
                   className="w-full h-full object-cover"
+                  style={{ objectPosition: `${memorial.portraitPositionX ?? 50}% ${memorial.portraitPositionY ?? 50}%` }}
                   referrerPolicy="no-referrer"
                 />
               ) : (
@@ -118,16 +118,17 @@ export const MemorialPreviewModal: React.FC<MemorialPreviewModalProps> = ({
 
             <div className="space-y-1">
               <h1 className={`text-3xl sm:text-4xl ${templateStyles.fontHeading} tracking-tight`}>
-                {memorial.fullName || 'Deceased Name'}
+                {displayName}
               </h1>
-              <p className={`text-sm ${templateStyles.textSecondary} tracking-wide`}>
-                {formatDate(memorial.dateOfBirth)} — {formatDate(memorial.dateOfPassing)}
-              </p>
+              {(birthDate || deathDate) && <p className={`text-sm ${templateStyles.textSecondary} tracking-wide`}>
+                {birthDate && formatDate(birthDate)}{birthDate && deathDate ? ' — ' : ''}{deathDate && formatDate(deathDate)}
+              </p>}
             </div>
 
-            {memorial.biography && (
+            {memorial.memorialLine && <p className="font-serif text-base italic leading-relaxed text-brand-gold-light sm:text-lg">“{memorial.memorialLine}”</p>}
+            {showBiography && (
               <p className={`text-base sm:text-lg italic leading-relaxed ${templateStyles.textSecondary} pt-2`}>
-                "{memorial.biography}"
+                {memorial.biography}
               </p>
             )}
           </div>

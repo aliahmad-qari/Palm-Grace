@@ -29,6 +29,7 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
   if (!isOpen || !memorial) return null;
 
   const publicUrl = getCanonicalMemorialUrl(memorial.slug);
+  const isPublished = memorial.publicationStatus === 'PUBLISHED';
   const qrSvgUrl = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=svg&download=1`);
   const qrPngUrl = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=png&download=1`);
   const qrPreviewSrc = apiUrl(`/api/admin/memorials/${memorial.id}/qr?format=png`);
@@ -110,14 +111,14 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
           </style>
         </head>
         <body>
-          <div class="brand">PALM &amp; GRACE — DIGITAL SANCTUARY</div>
+          <div class="brand">PALM &amp; GRACE — MEMORIAL</div>
           <h1 class="name">${escapedName}</h1>
           <div class="lifespan">IN LOVING MEMORY</div>
           <div class="qr-frame">
             <img src="${qrPreviewSrc}" class="qr-img" alt="QR Code" />
           </div>
           <div class="instructions">
-            Scan with any smartphone camera to visit the digital memorial sanctuary, read eulogies, view photographs, and leave a tribute.
+            Scan with any smartphone camera to visit the memorial, read their story, view photographs and share a memory.
           </div>
           <div class="slug">${publicUrl}</div>
           <script>
@@ -184,7 +185,7 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
                 </span>
               </div>
             </div>
-            <a
+            {isPublished && <a
               href={publicUrl}
               target="_blank"
               rel="noreferrer"
@@ -192,8 +193,10 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
               title="Open public memorial page"
             >
               <ExternalLink className="w-4 h-4" />
-            </a>
+            </a>}
           </div>
+
+          {!isPublished && <p className="rounded-lg border border-brand-gold/50 bg-brand-gold-light/25 px-4 py-3 text-xs leading-5 text-brand-primary">This memorial is {memorial.publicationStatus.toLowerCase().replace('_', ' ')}. Its QR and link can be prepared now; the public page will open after publication.</p>}
 
           {/* QR Code Presentation Box */}
           <div className="text-center space-y-2">

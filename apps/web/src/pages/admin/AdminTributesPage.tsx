@@ -127,7 +127,7 @@ export const AdminTributesPage: React.FC = () => {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
     try {
-      return new Date(dateStr).toLocaleDateString('en-US', {
+      return new Date(dateStr).toLocaleDateString('en-GB', {
         month: 'short',
         day: 'numeric',
         year: 'numeric',

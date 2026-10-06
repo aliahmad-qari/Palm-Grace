@@ -17,13 +17,15 @@ import {
   Loader2,
   Globe,
   Lock,
-  Plus
+  Plus,
+  QrCode
 } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout.js';
 import { api } from '../../lib/api.js';
 import { Memorial, MemorialMedia, TemplateType, PublicationStatus } from '../../types/index.js';
 import { CloudinaryUploader } from '../../components/admin/CloudinaryUploader.js';
 import { MemorialPreviewModal } from '../../components/admin/MemorialPreviewModal.js';
+import { AdminMemorialQrModal } from '../../components/admin/AdminMemorialQrModal.js';
 
 export const AdminMemorialEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,6 +44,9 @@ export const AdminMemorialEditorPage: React.FC = () => {
   const [memorialLine, setMemorialLine] = useState('');
   const [lifeStory, setLifeStory] = useState('');
   const [mainPhotograph, setMainPhotograph] = useState('');
+  const [heroBackgroundUrl, setHeroBackgroundUrl] = useState('');
+  const [portraitPositionX, setPortraitPositionX] = useState(50);
+  const [portraitPositionY, setPortraitPositionY] = useState(50);
   const [templateType, setTemplateType] = useState<TemplateType>('MALE');
   const [publicationStatus, setPublicationStatus] = useState<PublicationStatus>('DRAFT');
 
@@ -72,6 +77,8 @@ export const AdminMemorialEditorPage: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [savedMemorial, setSavedMemorial] = useState<Memorial | null>(null);
 
   // Load existing memorial if editing
   useEffect(() => {
@@ -86,6 +93,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
       const res = await api.getAdminMemorial(memorialId);
       if (res.success && res.data) {
         const m = res.data;
+        setSavedMemorial(m);
         setFullName(m.fullName);
         setPreferredDisplayName(m.preferredDisplayName || '');
         setSlug(m.slug);
@@ -93,10 +101,13 @@ export const AdminMemorialEditorPage: React.FC = () => {
         setDateOfPassing((m.deathDate || m.dateOfPassing) ? (m.deathDate || m.dateOfPassing)!.slice(0, 10) : '');
         setShowBirthDate(m.showBirthDate ?? true);
         setShowDeathDate(m.showDeathDate ?? true);
-        setBiography(m.biography);
+        setBiography(m.biography || '');
         setMemorialLine(m.memorialLine || '');
         setLifeStory(m.lifeStory || '');
         setMainPhotograph(m.mainPhotograph);
+        setHeroBackgroundUrl(m.heroBackgroundUrl || '');
+        setPortraitPositionX(m.portraitPositionX ?? 50);
+        setPortraitPositionY(m.portraitPositionY ?? 50);
         setTemplateType(m.templateType);
         setPublicationStatus(m.publicationStatus);
         setFamilyAcknowledgement(m.familyAcknowledgement || '');
@@ -164,6 +175,9 @@ export const AdminMemorialEditorPage: React.FC = () => {
       memorialLine: memorialLine.trim() || null,
       lifeStory: lifeStory.trim() || null,
       mainPhotograph: mainPhotograph.trim(),
+      heroBackgroundUrl: heroBackgroundUrl.trim() || null,
+      portraitPositionX,
+      portraitPositionY,
       templateType,
       publicationStatus,
       familyAcknowledgement: familyAcknowledgement.trim() || null,
@@ -185,6 +199,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
         if (res.success && res.data) {
           setSuccessMsg('Memorial updated successfully');
           setSlug(res.data.slug);
+          setSavedMemorial(res.data);
         } else {
           setErrorMsg(res.error || 'Failed to update memorial');
         }
@@ -265,6 +280,9 @@ export const AdminMemorialEditorPage: React.FC = () => {
     memorialLine: memorialLine || null,
     lifeStory,
     mainPhotograph,
+    heroBackgroundUrl: heroBackgroundUrl || null,
+    portraitPositionX,
+    portraitPositionY,
     templateType,
     publicationStatus,
     familyAcknowledgement,
@@ -290,7 +308,15 @@ export const AdminMemorialEditorPage: React.FC = () => {
         { label: isEditing ? (fullName || 'Edit') : 'New Memorial' },
       ]}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {savedMemorial && <button
+            type="button"
+            onClick={() => setIsShareOpen(true)}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-brand-gold/60 bg-brand-gold-light/25 px-3 text-xs font-semibold text-brand-primary transition-colors hover:bg-brand-gold-light/50"
+          >
+            <QrCode className="h-4 w-4" />
+            <span>Share / QR</span>
+          </button>}
           <button
             type="button"
             onClick={() => setIsPreviewOpen(true)}
@@ -340,7 +366,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
               1. Memorial Design Template
             </h3>
             <p className="text-xs text-stone-500">
-              Choose the visual character and atmosphere appropriate for honoring their life.
+              Choose the visual character and atmosphere appropriate for honouring their life.
             </p>
           </div>
 
@@ -377,7 +403,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
                 <span className="text-xs font-semibold uppercase tracking-wider">Template 2</span>
                 {templateType === 'FEMALE' && <CheckCircle className="w-4 h-4 text-rose-300" />}
               </div>
-              <h4 className="font-serif text-lg font-bold">Grace &amp; Botanical</h4>
+              <h4 className="font-serif text-lg font-bold">Grace &amp; Warmth</h4>
               <p className={`text-xs mt-1 leading-relaxed ${templateType === 'FEMALE' ? 'text-stone-300' : 'text-stone-500'}`}>
                 Warm champagne, delicate floral serif elegance, and tender grace. (Female)
               </p>
@@ -396,7 +422,7 @@ export const AdminMemorialEditorPage: React.FC = () => {
                 <span className="text-xs font-semibold uppercase tracking-wider">Template 3</span>
                 {templateType === 'CHILD' && <CheckCircle className="w-4 h-4 text-amber-200" />}
               </div>
-              <h4 className="font-serif text-lg font-bold">Gentle Celestial</h4>
+              <h4 className="font-serif text-lg font-bold">Gentle Wonder</h4>
               <p className={`text-xs mt-1 leading-relaxed ${templateType === 'CHILD' ? 'text-sky-200' : 'text-stone-500'}`}>
                 Softer starlight tones, gentle rounded warmth, and age-appropriate reverence. (Child)
               </p>
@@ -490,6 +516,18 @@ export const AdminMemorialEditorPage: React.FC = () => {
               onUploadSuccess={({ url }) => setMainPhotograph(url)}
             />
           </div>
+          <div className="grid gap-4 rounded-xl border border-stone-200 bg-stone-50 p-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <CloudinaryUploader label="Memorial Background (Optional)" hint="Choose a separate, meaningful background. If left blank, the template uses its restrained default." currentImageUrl={heroBackgroundUrl} onUploadSuccess={({ url }) => setHeroBackgroundUrl(url)} />
+            </div>
+            <label className="text-xs font-semibold text-stone-700">Portrait horizontal focus: {portraitPositionX}%
+              <input type="range" min="0" max="100" value={portraitPositionX} onChange={(event) => setPortraitPositionX(Number(event.target.value))} className="mt-2 w-full accent-brand-primary" />
+            </label>
+            <label className="text-xs font-semibold text-stone-700">Portrait vertical focus: {portraitPositionY}%
+              <input type="range" min="0" max="100" value={portraitPositionY} onChange={(event) => setPortraitPositionY(Number(event.target.value))} className="mt-2 w-full accent-brand-primary" />
+            </label>
+            {mainPhotograph && <div className="md:col-span-2"><p className="mb-2 text-xs text-stone-600">Portrait crop preview</p><img src={mainPhotograph} alt="Portrait crop preview" className="h-48 w-40 rounded-lg object-cover" style={{ objectPosition: `${portraitPositionX}% ${portraitPositionY}%` }} /></div>}
+          </div>
         </div>
 
         {/* Section 3: Biography & Life Story */}
@@ -503,21 +541,20 @@ export const AdminMemorialEditorPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">
-              Short Biography / Memorial Inscription *
+              Short Biography (Optional)
             </label>
             <textarea
-              required
               rows={3}
               value={biography}
               onChange={(e) => setBiography(e.target.value)}
-              placeholder="A heartfelt summary or opening inscription commemorating their spirit..."
+              placeholder="A short introduction to who they were, separate from the memorial line..."
               className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm text-stone-900 focus:outline-hidden focus:ring-1 focus:ring-stone-800 focus:border-stone-800 leading-relaxed"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Memorial Line</label>
-            <textarea rows={2} value={memorialLine} onChange={(e) => setMemorialLine(e.target.value)} placeholder="A short line of remembrance" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
+            <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700 mb-1.5">Memorial Line *</label>
+            <textarea required maxLength={500} rows={2} value={memorialLine} onChange={(e) => setMemorialLine(e.target.value)} placeholder="A short line of remembrance, shown once in the opening" className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm" />
           </div>
 
           <div>
@@ -813,6 +850,11 @@ export const AdminMemorialEditorPage: React.FC = () => {
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
         memorial={currentPreviewState}
+      />
+      <AdminMemorialQrModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        memorial={savedMemorial}
       />
     </AdminLayout>
   );

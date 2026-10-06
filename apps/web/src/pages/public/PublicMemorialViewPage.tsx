@@ -6,7 +6,6 @@ import {
   Video,
   Play,
   Heart,
-  Share2,
   QrCode,
   Download,
   X,
@@ -31,6 +30,8 @@ import { resolveMemorialTemplate } from '../../components/memorial/templateResol
 import { useMemorialSEO } from '../../components/memorial/useMemorialSEO.js';
 import { MemorialGalleryLightbox } from '../../components/memorial/MemorialGalleryLightbox.js';
 import { MemorialSocialShareModal } from '../../components/memorial/MemorialSocialShareModal.js';
+import { formatCalendarDate, formatServiceTime, isPastCalendarDate } from '../../lib/calendarDate.js';
+import { EmbeddedRecording } from '../../components/memorial/EmbeddedRecording.js';
 
 export const PublicMemorialViewPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -40,6 +41,8 @@ export const PublicMemorialViewPage: React.FC = () => {
 
   // Tribute Form State
   const [visitorName, setVisitorName] = useState('');
+  const [relationship, setRelationship] = useState('');
+  const [contributorEmail, setContributorEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmittingTribute, setIsSubmittingTribute] = useState(false);
   const [tributeFeedback, setTributeFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -70,7 +73,7 @@ export const PublicMemorialViewPage: React.FC = () => {
       if (res.success && res.data) {
         // Enforce: only PUBLISHED memorials may render publicly
         if (res.data.publicationStatus !== 'PUBLISHED') {
-          setErrorMsg('This memorial is currently private and being prepared by family administrators.');
+          setErrorMsg('This memorial is currently private and being prepared by Palm & Grace administrators.');
           setMemorial(null);
         } else {
           setMemorial(res.data);
@@ -80,7 +83,7 @@ export const PublicMemorialViewPage: React.FC = () => {
         setMemorial(null);
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Error connecting to the sanctuary.');
+      setErrorMsg(err.message || 'Unable to load the memorial.');
       setMemorial(null);
     } finally {
       setIsLoading(false);
@@ -97,15 +100,19 @@ export const PublicMemorialViewPage: React.FC = () => {
     try {
       const res = await api.submitTribute(slug, {
         visitorName: visitorName.trim(),
+        relationship: relationship.trim() || null,
+        contributorEmail: contributorEmail.trim() || null,
         message: message.trim(),
       });
 
       if (res.success) {
         setTributeFeedback({
           type: 'success',
-          text: 'Your words of remembrance have been received with gratitude. To preserve the sanctuary’s reverence, your memory will appear publicly following family moderation.',
+          text: 'Thank you for sharing a memory. Palm & Grace administrators will review it before it appears publicly.',
         });
         setVisitorName('');
+        setRelationship('');
+        setContributorEmail('');
         setMessage('');
       } else {
         setTributeFeedback({
@@ -129,15 +136,7 @@ export const PublicMemorialViewPage: React.FC = () => {
     setTimeout(() => setCopiedAddress(false), 2500);
   };
 
-  const formatDate = (dateStr?: string | null) => {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    } catch {
-      return dateStr;
-    }
-  };
+  const formatDate = formatCalendarDate;
 
   // Structured Service Info parsing
   let serviceInfoObj: { title?: string; venue?: string; date?: string; time?: string; address?: string; reception?: string } | null = null;
@@ -171,10 +170,10 @@ export const PublicMemorialViewPage: React.FC = () => {
         <div className="min-h-[75vh] flex flex-col items-center justify-center p-6 text-stone-400">
           <Loader2 className="w-8 h-8 text-amber-300 animate-spin mb-3" />
           <span className="font-serif text-lg tracking-wider text-stone-200 uppercase">
-            Entering The Sanctuary
+            Loading the memorial…
           </span>
           <span className="text-xs text-stone-500 font-sans mt-1">
-            Loading memorial records with reverent care...
+            Please wait a moment.
           </span>
         </div>
       </PublicLayout>
@@ -190,7 +189,7 @@ export const PublicMemorialViewPage: React.FC = () => {
             <Sparkles className="w-6 h-6 opacity-60" />
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl text-stone-100 mb-2">
-            Sanctuary Not Available
+            Memorial Not Available
           </h2>
           <p className="text-sm text-stone-400 leading-relaxed mb-6 font-sans">
             {errorMsg || 'This memorial is either unlisted, in private preparation, or does not exist.'}
@@ -231,66 +230,37 @@ export const PublicMemorialViewPage: React.FC = () => {
   const storyParagraphs = memorial.lifeStory?.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean) || [];
   const hasLongStory = (memorial.lifeStory?.length || 0) > 600;
   const storyPreview = hasLongStory ? `${memorial.lifeStory!.slice(0, 480).replace(/\s+\S*$/, '')}…` : memorial.lifeStory;
-  const backgroundImage = photos[0]?.url || (memorial.templateType === 'MALE'
-    ? '/homepage image.png'
-    : memorial.templateType === 'FEMALE'
-      ? '/Golden Memories by the Lake.png'
-      : arrivalImage);
+  const separateBackground = memorial.heroBackgroundUrl && memorial.heroBackgroundUrl !== memorial.mainPhotograph ? memorial.heroBackgroundUrl : null;
+  const backgroundImage = separateBackground || (memorial.templateType === 'CHILD'
+    ? '/child-memorial-garden.webp'
+    : photos[0]?.url || (memorial.templateType === 'MALE'
+      ? '/homepage image.png'
+      : '/Golden Memories by the Lake.png'));
+  const showBiography = Boolean(memorial.biography?.trim() && memorial.biography.trim().replace(/[“”"'\s.]/g, '').toLowerCase() !== memorial.memorialLine?.trim().replace(/[“”"'\s.]/g, '').toLowerCase());
+  const portraitPosition = `${memorial.portraitPositionX ?? 50}% ${memorial.portraitPositionY ?? 50}%`;
 
   return (
     <PublicLayout>
       <div className={`min-h-screen ${theme.rootBg} ${theme.bodyTextColor} transition-colors duration-300 font-sans`}>
-        {/* Navigation Bar - Minimal, persistent */}
-        <div className="sticky top-0 z-40 border-b border-white/5 py-3 px-4 sm:px-8 bg-stone-950/50 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto flex items-center justify-between text-xs">
-            <Link
-              to="/memorials"
-              className="inline-flex items-center gap-1.5 text-stone-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Back to Directory</span>
-              <span className="sm:hidden">Back</span>
-            </Link>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsQrModalOpen(true)}
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
-                title="View &amp; Print Stationery QR Code"
-                aria-label="Download QR code"
-              >
-                <QrCode className="w-4 h-4 text-amber-300" />
-              </button>
-
-              <button
-                onClick={() => setIsShareModalOpen(true)}
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors border border-white/5"
-                title="Share Sanctuary Link"
-                aria-label="Share memorial"
-              >
-                <Share2 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* =============== EMOTIONAL JOURNEY: ARRIVAL =============== */}
         {/* 1. ARRIVAL SECTION - Portrait, Name, Dates, Memorial Line (Minimal Controls) */}
-        <section className={`relative flex min-h-[100svh] items-center overflow-hidden px-4 pb-20 pt-28 text-center sm:pt-32 ${theme.heroGradient}`}>
+        <section className={`memorial-hero relative flex min-h-[100svh] items-center overflow-hidden px-4 pb-16 pt-28 text-center sm:pt-32 ${theme.heroGradient}`}>
           <img src={backgroundImage} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" referrerPolicy="no-referrer" fetchPriority="high" />
           <div className={`absolute inset-0 ${memorial.templateType === 'FEMALE' ? 'bg-gradient-to-b from-[#554a40]/35 via-[#554a40]/60 to-[#453a33]/85' : 'bg-gradient-to-b from-stone-950/45 via-stone-950/65 to-stone-950/95'}`} />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(198,165,101,.16),transparent_48%)]" />
           {/* Subtle Motif Ornamentation based on template */}
-          <div className="relative z-10 mx-auto w-full max-w-3xl px-2 py-5 sm:px-8">
+          <div className="memorial-hero-content relative z-10 mx-auto w-full max-w-3xl px-2 py-1 sm:px-8">
             {/* Focal Portrait Frame with Responsive Wrap & High-Fidelity Glow */}
             <div className="relative mx-auto inline-block">
               <div
-                className={`h-36 w-28 overflow-hidden border-4 sm:h-56 sm:w-44 lg:h-64 lg:w-52 ${theme.portraitShape} ${theme.portraitBorder} ${theme.portraitGlow} bg-stone-900 mx-auto shadow-[0_24px_65px_rgba(0,0,0,.45)]`}
+                className={`memorial-hero-portrait h-44 w-36 overflow-hidden border-4 sm:h-64 sm:w-52 lg:h-[22rem] lg:w-[18rem] ${theme.portraitShape} ${theme.portraitBorder} ${theme.portraitGlow} bg-stone-900 mx-auto shadow-[0_24px_65px_rgba(0,0,0,.45)]`}
               >
                 <img
                   src={memorial.mainPhotograph}
                   alt={memorial.fullName}
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: portraitPosition }}
                   referrerPolicy="no-referrer"
                   fetchPriority="high"
                 />
@@ -300,9 +270,9 @@ export const PublicMemorialViewPage: React.FC = () => {
             </div>
 
             {/* Deceased Full Name (Handles Long Names with Balanced Scaling & Line-Heights) */}
-            <div className="mt-8 space-y-3">
+            <div className="memorial-hero-identity mt-8 space-y-3">
               <h1
-                className={`font-serif text-3xl sm:text-5xl lg:text-6xl font-light ${theme.headingStyle} break-words max-w-3xl mx-auto leading-tight text-white`}
+                className={`memorial-hero-name font-serif text-3xl sm:text-5xl lg:text-6xl font-light ${theme.headingStyle} break-words max-w-3xl mx-auto leading-tight text-white`}
               >
                 {displayName}
               </h1>
@@ -312,11 +282,17 @@ export const PublicMemorialViewPage: React.FC = () => {
             </div>
 
             {/* Opening Biography Inscription */}
-            {memorial.memorialLine && <div className="mx-auto mt-4 max-w-2xl px-3"><p className="line-clamp-2 font-serif text-sm italic leading-relaxed text-white sm:text-xl">“{memorial.memorialLine}”</p></div>}
-            {memorial.biography && <div className="mx-auto mt-4 max-w-2xl border-t border-brand-gold/45 pt-3"><p className="mb-1 text-[10px] font-semibold uppercase tracking-[.22em] text-brand-gold-light">Who They Were</p><p className="line-clamp-2 text-xs leading-relaxed text-white/85 sm:line-clamp-4 sm:text-sm">{memorial.biography}</p></div>}
+            {memorial.memorialLine && <div className="memorial-hero-line mx-auto mt-4 max-w-2xl px-3"><p className="line-clamp-2 font-serif text-sm italic leading-relaxed text-white sm:text-xl">“{memorial.memorialLine}”</p></div>}
+            {showBiography && <div className="memorial-hero-bio mx-auto mt-4 max-w-2xl border-t border-brand-gold/45 pt-3"><p className="mb-1 text-[10px] font-semibold uppercase tracking-[.22em] text-brand-gold-light">Who They Were</p><p className="line-clamp-2 text-xs leading-relaxed text-white/85 sm:line-clamp-3 sm:text-sm">{memorial.biography}</p></div>}
           </div>
-          <a href={memorial.lifeStory ? '#life-story' : '#tributes'} className="absolute bottom-5 right-5 z-10 flex flex-col items-center gap-2 text-[10px] font-semibold uppercase tracking-[.22em] text-white/90 sm:right-10" aria-label="Scroll to remember"><ArrowDown className="h-5 w-5 motion-safe:animate-bounce" /><span>Scroll to remember</span></a>
+          <a href={memorial.lifeStory ? '#life-story' : '#tributes'} className="absolute bottom-6 right-5 z-10 flex flex-col items-center gap-2 text-[.55rem] font-semibold uppercase tracking-[.26em] text-brand-white/78 transition-colors hover:text-brand-gold-light sm:right-8 lg:right-12" aria-label="Scroll to remember"><span className="grid h-9 w-6 place-items-center rounded-full border border-brand-white/55"><ArrowDown className="h-3.5 w-3.5 motion-safe:animate-bounce" /></span><span>Scroll to remember</span></a>
         </section>
+        <nav aria-label="Memorial sections" className="flex flex-wrap justify-center gap-2 bg-brand-gold-light/90 px-4 py-5 text-xs font-semibold text-brand-primary">
+          {memorial.lifeStory && <a href="#life-story" className="rounded-full border border-brand-gold/50 bg-brand-gold-light/20 px-4 py-2 hover:bg-brand-gold-light/40">Life Story</a>}
+          {hasGallery && <a href="#remembrance-gallery" className="rounded-full border border-brand-gold/50 bg-brand-gold-light/20 px-4 py-2 hover:bg-brand-gold-light/40">Photo Memories</a>}
+          {hasService && <a href="#service-details" className="rounded-full border border-brand-gold/50 bg-brand-gold-light/20 px-4 py-2 hover:bg-brand-gold-light/40">Service Details</a>}
+          <a href="#tributes" className="rounded-full border border-brand-gold/50 bg-brand-gold-light/20 px-4 py-2 hover:bg-brand-gold-light/40">Shared Memories</a>
+        </nav>
 
         {/* 2. CONDITIONAL CEREMONY BROADCASTS (Rule #18: Disappears completely if no livestream and no recording exist) */}
         {false && hasBroadcasts && (
@@ -396,10 +372,10 @@ export const PublicMemorialViewPage: React.FC = () => {
             <div className="space-y-8 rounded-[1.75rem] border border-brand-gold/35 bg-[#f4efe4] px-6 py-9 text-brand-charcoal shadow-[0_24px_70px_rgba(0,0,0,.28)] sm:px-10 sm:py-12">
             <div className="text-center space-y-2 sm:text-left">
               <span className="block text-[11px] font-semibold uppercase tracking-widest text-brand-secondary">
-                The Chronicle
+                Remembering a life
               </span>
               <h2 className="font-serif text-3xl text-brand-primary sm:text-5xl">
-                The Life &amp; Journey
+                Life Story
               </h2>
               <div className="h-px w-16 bg-brand-gold sm:mx-0" />
             </div>
@@ -436,7 +412,7 @@ export const PublicMemorialViewPage: React.FC = () => {
               Memories & Words of Remembrance
             </h2>
             <p className="text-xs text-stone-400 font-sans tracking-wide max-w-md mx-auto">
-              Share a memory or heartfelt words of remembrance. To preserve the sanctuary's integrity, all submissions are reviewed with care before appearing publicly.
+              Share a memory or words of remembrance. Palm &amp; Grace administrators review submissions before they appear publicly.
             </p>
           </div>
 
@@ -476,10 +452,11 @@ export const PublicMemorialViewPage: React.FC = () => {
               />
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">
+                <label htmlFor="memory-visitor-name" className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">
                   Your Full Name *
                 </label>
                 <input
+                  id="memory-visitor-name"
                   type="text"
                   required
                   value={visitorName}
@@ -490,10 +467,21 @@ export const PublicMemorialViewPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">
+                <label htmlFor="memory-relationship" className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">Your relationship (optional)</label>
+                <input id="memory-relationship" type="text" maxLength={100} value={relationship} onChange={(e) => setRelationship(e.target.value)} placeholder="For example, friend or colleague" className={`w-full px-3.5 py-2.5 rounded-lg ${theme.inputBg} border ${theme.inputBorder} text-white text-sm placeholder-stone-500 focus:outline-hidden`} />
+              </div>
+
+              <div>
+                <label htmlFor="memory-email" className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">Email (optional and private)</label>
+                <input id="memory-email" type="email" maxLength={320} value={contributorEmail} onChange={(e) => setContributorEmail(e.target.value)} autoComplete="email" placeholder="Only Palm & Grace administrators can see this" className={`w-full px-3.5 py-2.5 rounded-lg ${theme.inputBg} border ${theme.inputBorder} text-white text-sm placeholder-stone-500 focus:outline-hidden`} />
+              </div>
+
+              <div>
+                <label htmlFor="memory-message" className="block text-xs uppercase tracking-wider text-stone-300 font-semibold mb-1.5">
                   Your Memory or Words *
                 </label>
                 <textarea
+                  id="memory-message"
                   required
                   rows={4}
                   value={message}
@@ -505,7 +493,7 @@ export const PublicMemorialViewPage: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
                 <span className="text-[11px] text-stone-400">
-                  Submissions are reviewed respectfully by family caretakers.
+                  Memories are reviewed by Palm &amp; Grace administrators before appearing publicly.
                 </span>
                 <button
                   type="submit"
@@ -535,14 +523,14 @@ export const PublicMemorialViewPage: React.FC = () => {
                 Shared Memories ({memorial.tributes?.length || 0})
               </h3>
               <span className="text-[11px] text-amber-800 font-sans">
-                Approved by Caretakers
+                Reviewed by Palm &amp; Grace
               </span>
             </div>
 
             {(!memorial.tributes || memorial.tributes.length === 0) ? (
               <div className="text-center py-10 bg-white/80 rounded-xl border border-amber-200">
                 <p className="text-sm font-serif italic text-stone-600">
-                  Be the first to share a memory in honor of {memorial.fullName}.
+                  Be the first to share a memory in honour of {memorial.fullName}.
                 </p>
               </div>
             ) : (
@@ -576,12 +564,12 @@ export const PublicMemorialViewPage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-stone-200">
                   <MapPin className="w-4 h-4 text-amber-300" />
-                  <span>Ceremonial Service Gathering</span>
+                  <span>Service Details</span>
                 </div>
                 {serviceInfoObj?.address && (
                   <button
                     onClick={() => handleCopyAddress(serviceInfoObj!.address!)}
-                    className="flex items-center gap-1 text-[11px] text-stone-400 hover:text-white transition-colors"
+                    className="flex min-h-11 items-center gap-1 px-2 text-xs text-stone-300 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-gold"
                     title="Copy full venue address"
                   >
                     {copiedAddress ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -592,25 +580,18 @@ export const PublicMemorialViewPage: React.FC = () => {
 
               {serviceInfoObj ? (
                 <div className="space-y-4">
-                  {(serviceInfoObj.title || serviceInfoObj.venue) && (
-                    <div>
-                      <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
-                        Sanctuary / Venue
-                      </span>
-                      {serviceInfoObj.title && <h4 className="font-serif text-xl sm:text-2xl text-white mt-0.5">{serviceInfoObj.title}</h4>}
-                      {serviceInfoObj.venue && <p className="mt-1 text-sm text-stone-300">{serviceInfoObj.venue}</p>}
-                    </div>
-                  )}
+                  {serviceInfoObj.title && <h4 className="font-serif text-xl text-white sm:text-2xl">{serviceInfoObj.title}</h4>}
+                  {serviceInfoObj.venue && <div><span className="block text-[11px] font-semibold uppercase tracking-wider text-stone-400">Venue</span><p className="mt-1 text-sm text-stone-300">{serviceInfoObj.venue}</p></div>}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                    {serviceInfoObj.date && (
+                    {(serviceInfoObj.date || serviceInfoObj.time) && (
                       <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
                         <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
                           Date &amp; Time
                         </span>
                         <div className="flex items-center gap-2 text-stone-200 text-sm">
                           <Clock className="w-4 h-4 text-amber-300 shrink-0" />
-                          <span>{formatDate(serviceInfoObj.date)}{serviceInfoObj.time ? ` at ${serviceInfoObj.time}` : ''}</span>
+                          <span>{serviceInfoObj.date ? formatDate(serviceInfoObj.date) : ''}{serviceInfoObj.time ? `${serviceInfoObj.date ? ' at ' : ''}${formatServiceTime(serviceInfoObj.time)}` : ''}{isPastCalendarDate(serviceInfoObj.date) ? ' (service held)' : ''}</span>
                         </div>
                       </div>
                     )}
@@ -618,7 +599,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                     {serviceInfoObj.address && (
                       <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1">
                         <span className="text-[11px] uppercase tracking-wider text-stone-500 font-semibold block">
-                          Sanctuary Address
+                          Address
                         </span>
                         <div className="flex items-start gap-2 text-stone-200 text-sm">
                           <MapPin className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
@@ -670,11 +651,12 @@ export const PublicMemorialViewPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {photos.map((img, idx) => (
-                <div
+                <button
+                  type="button"
                   key={img.id}
                   onClick={() => setLightboxIndex(idx)}
-                  className={`group relative aspect-4/3 rounded-xl overflow-hidden bg-stone-900 border border-white/10 cursor-pointer shadow-md transition-all duration-300 hover:scale-[1.02] ${theme.cardHoverBorder}`}
-                  title="Click to view full photograph"
+                  className={`group relative aspect-4/3 rounded-xl overflow-hidden bg-stone-900 border border-white/10 cursor-pointer shadow-md transition-all duration-300 motion-safe:hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold ${theme.cardHoverBorder}`}
+                  aria-label={`View ${img.caption || `remembrance photo ${idx + 1}`} in full screen`}
                 >
                   <img
                     src={img.url}
@@ -688,7 +670,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                       {img.caption}
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
             {videos.length > 0 && (
@@ -705,7 +687,7 @@ export const PublicMemorialViewPage: React.FC = () => {
               <div className="flex items-center gap-2 border-b border-white/10 pb-3 text-xs uppercase tracking-widest text-stone-200"><Video className="h-4 w-4 text-brand-gold" /><span>Livestream &amp; Recording</span></div>
               <div className={`grid gap-4 ${hasLivestream && hasRecording ? 'sm:grid-cols-2' : ''}`}>
                 {hasLivestream && <a href={memorial.livestreamUrl!} target="_blank" rel="noreferrer" className={`flex min-h-12 items-center justify-center gap-2 px-4 text-sm ${theme.buttonPrimary}`}><Video className="h-4 w-4" /> Join the Livestream</a>}
-                {hasRecording && <a href={memorial.recordingUrl!} target="_blank" rel="noreferrer" className={`flex min-h-12 items-center justify-center gap-2 px-4 text-sm ${theme.buttonSecondary}`}><Play className="h-4 w-4" /> Watch the Recording</a>}
+                {hasRecording && <EmbeddedRecording url={memorial.recordingUrl!} />}
               </div>
             </div>
           </section>
@@ -732,7 +714,7 @@ export const PublicMemorialViewPage: React.FC = () => {
 
         <section className="mx-auto max-w-3xl px-4 pb-20 pt-10 text-center">
           <div className={`border-t ${theme.dividerColor} pt-12`}>
-            <img src={memorial.mainPhotograph} alt="" className={`mx-auto h-24 w-24 object-cover ${theme.portraitShape} ${theme.portraitGlow}`} referrerPolicy="no-referrer" />
+            <img src={memorial.mainPhotograph} alt="" className={`mx-auto h-24 w-24 object-cover ${theme.portraitShape} ${theme.portraitGlow}`} style={{ objectPosition: portraitPosition }} referrerPolicy="no-referrer" />
             {memorial.closingWords && <p className={`mx-auto mt-7 max-w-xl font-serif text-2xl italic leading-relaxed ${theme.headingColor}`}>“{memorial.closingWords}”</p>}
             <h2 className={`mt-6 font-serif text-2xl ${theme.headingColor}`}>{displayName}</h2>
             {hasDates && <p className={`mt-2 text-xs tracking-widest ${theme.mutedTextColor}`}>{visibleBirthDate && formatDate(visibleBirthDate)}{visibleBirthDate && visibleDeathDate ? ' — ' : ''}{visibleDeathDate && formatDate(visibleDeathDate)}</p>}
@@ -803,7 +785,7 @@ export const PublicMemorialViewPage: React.FC = () => {
                   /{memorial.slug}
                 </span>
                 <p className="text-[11px] text-stone-400 font-mono">
-                  Scan with any smartphone camera to access this sanctuary.
+                  Scan with a smartphone camera to visit this memorial.
                 </p>
               </div>
 

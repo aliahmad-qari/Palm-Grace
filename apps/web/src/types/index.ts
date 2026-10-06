@@ -52,6 +52,9 @@ export interface Memorial {
   memorialLine: string | null;
   lifeStory: string | null;
   mainPhotograph: string;
+  heroBackgroundUrl?: string | null;
+  portraitPositionX?: number;
+  portraitPositionY?: number;
   serviceInformation: string | null;
   serviceTitle: string | null;
   serviceDate: string | null;
@@ -71,6 +74,7 @@ export interface Memorial {
   tributes?: Tribute[];
   _count?: {
     tributes: number;
+    media?: number;
   };
 }
 

@@ -382,15 +382,7 @@ export const PublicMemorialViewPage: React.FC = () => {
 
             <div className="space-y-7 text-base leading-8 text-brand-charcoal sm:text-lg">
               {(hasLongStory && !lifeStoryExpanded ? [storyPreview!] : storyParagraphs).map((paragraph, index) => (
-                <React.Fragment key={`${index}-${paragraph.slice(0, 20)}`}>
-                  <p className={index === 0 ? 'font-serif text-xl leading-9 sm:text-2xl' : ''}>{paragraph}</p>
-                  {index === 0 && photos[0] && (
-                    <figure className={`my-9 overflow-hidden border ${theme.subtleBoxBorder} ${memorial.templateType === 'MALE' ? 'aspect-[16/8]' : memorial.templateType === 'FEMALE' ? 'aspect-[4/3] max-w-xl mx-auto' : 'aspect-[3/2] max-w-lg mx-auto'}`}>
-                      <img src={photos[0].url} alt={photos[0].caption || `A memory of ${displayName}`} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
-                      {photos[0].caption && <figcaption className="sr-only">{photos[0].caption}</figcaption>}
-                    </figure>
-                  )}
-                </React.Fragment>
+                <p key={`${index}-${paragraph.slice(0, 20)}`} className={index === 0 ? 'font-serif text-xl leading-9 sm:text-2xl' : ''}>{paragraph}</p>
               ))}
             </div>
             {hasLongStory && <div className="text-center"><button type="button" onClick={() => setLifeStoryExpanded(value => !value)} aria-expanded={lifeStoryExpanded} className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-gold bg-brand-primary px-7 text-sm font-semibold text-white transition-colors hover:bg-brand-secondary">{lifeStoryExpanded ? 'Read Less' : 'Read More'}</button></div>}

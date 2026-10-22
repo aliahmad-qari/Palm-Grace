@@ -113,7 +113,7 @@ export const HomePage: React.FC = () => {
             </div>
             <div className="space-y-1">
               <span className="text-stone-200 font-semibold text-xs block">Vector Stationery QR</span>
-              <span className="text-[11px] text-stone-400">Print ready for funeral cards and plaques.</span>
+              <span className="text-[11px] text-stone-400">Print ready for funeral cards and plaque.</span>
             </div>
           </div>
         </div>

@@ -42,9 +42,17 @@ export function resolvePublicSiteUrl(
 ): string {
   const site = new URL(configuredUrl || (
     nodeEnv === 'production'
-      ? 'https://palm-grace-web.vercel.app'
+      ? 'https://palmandgrace.org'
       : appUrl || 'http://localhost:3000'
   ));
+
+  // Preserve existing deployments whose environment still names the old Vercel host.
+  if (nodeEnv === 'production' && [
+    'https://palm-grace-web.vercel.app',
+    'https://www.palmandgrace.org',
+  ].includes(site.origin)) {
+    return 'https://palmandgrace.org';
+  }
 
   if (
     !['http:', 'https:'].includes(site.protocol) ||

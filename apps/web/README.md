@@ -81,12 +81,12 @@ Runs TypeScript validation.
 
 ```env
 VITE_API_URL=https://palm-grace.onrender.com
-VITE_PUBLIC_SITE_URL=https://palm-grace-web.vercel.app
+VITE_PUBLIC_SITE_URL=https://palmandgrace.org
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 NODE_ENV=production
 ```
 
-Set `PUBLIC_SITE_URL=https://palm-grace-web.vercel.app` on Render as well. This is the stable canonical site origin used by print-ready memorial QR codes; do not set it to a preview deployment or localhost.
+Set `PUBLIC_SITE_URL=https://palmandgrace.org` on Render as well. This is the stable canonical site origin used by print-ready memorial QR codes; do not set it to a preview deployment or localhost.
 
 ## Architecture
 

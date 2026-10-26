@@ -609,12 +609,14 @@ test('13. Tribute Input Validation, Sanitization & Anti-Spam: Zod limits and hon
 test('14. Canonical Production QR & PUBLIC_SITE_URL: Generates print-ready vector/raster encoding production URL', async () => {
   const { config } = await import('../src/server/config.js');
   const slug = 'clara-rose-monroe';
-  const productionUrl = buildMemorialUrl(slug, 'https://palm-grace-web.vercel.app/', 'http://localhost:3000');
-  const targetCanonicalUrl = buildMemorialUrl(slug, config.publicSiteUrl, 'https://palm-grace-web.vercel.app');
+  const productionUrl = buildMemorialUrl(slug, 'https://palmandgrace.org/', 'http://localhost:3000');
+  const targetCanonicalUrl = buildMemorialUrl(slug, config.publicSiteUrl, 'https://palmandgrace.org');
 
-  assert.equal(productionUrl, 'https://palm-grace-web.vercel.app/memorial/clara-rose-monroe');
-  assert.equal(new URL(productionUrl).hostname, 'palm-grace-web.vercel.app');
-  assert.equal(resolvePublicSiteUrl('production'), 'https://palm-grace-web.vercel.app');
+  assert.equal(productionUrl, 'https://palmandgrace.org/memorial/clara-rose-monroe');
+  assert.equal(new URL(productionUrl).hostname, 'palmandgrace.org');
+  assert.equal(resolvePublicSiteUrl('production'), 'https://palmandgrace.org');
+  assert.equal(resolvePublicSiteUrl('production', 'https://palm-grace-web.vercel.app'), 'https://palmandgrace.org');
+  assert.equal(resolvePublicSiteUrl('production', 'https://www.palmandgrace.org'), 'https://palmandgrace.org');
   assert.equal(resolvePublicSiteUrl('production', 'https://memorial.example/path?preview=1'), 'https://memorial.example');
   assert.throws(() => resolvePublicSiteUrl('production', 'http://localhost:3000'));
   assert.ok(targetCanonicalUrl.startsWith('http'), 'Canonical URL must have valid http/https protocol');
@@ -645,7 +647,7 @@ test('15. Social Sharing Canonical URLs & Mobile Web Share compatibility', async
   const memorial = await db.findPublicMemorialBySlug('leo-alexander-brooks');
   assert.ok(memorial, 'Memorial must exist');
 
-  const canonicalUrl = buildMemorialUrl(memorial.slug, config.publicSiteUrl, 'https://palm-grace-web.vercel.app');
+  const canonicalUrl = buildMemorialUrl(memorial.slug, config.publicSiteUrl, 'https://palmandgrace.org');
   const shareTitle = `In Loving Memory of ${memorial.fullName}`;
   const shareText = `Please join us in honoring and remembering ${memorial.fullName} on Palm & Grace Digital Sanctuary.`;
 

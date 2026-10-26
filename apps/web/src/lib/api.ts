@@ -42,11 +42,20 @@ export function apiUrl(endpoint: string): string {
 
 export function getCanonicalMemorialUrl(slug: string): string {
   const configuredSiteUrl = import.meta.env.VITE_PUBLIC_SITE_URL;
+  const legacySiteUrl = 'https://palm-grace-web.vercel.app';
+  const canonicalSiteUrl = 'https://palmandgrace.org';
+  const configuredOrigin = configuredSiteUrl?.replace(/\/+$/, '');
   const fallbackOrigin = import.meta.env.PROD
-    ? 'https://palm-grace-web.vercel.app'
+    ? canonicalSiteUrl
     : window.location.origin;
 
-  return buildMemorialUrl(slug, configuredSiteUrl, fallbackOrigin);
+  const siteUrl = import.meta.env.PROD && (
+    configuredOrigin === legacySiteUrl || configuredOrigin === 'https://www.palmandgrace.org'
+  )
+    ? canonicalSiteUrl
+    : configuredSiteUrl;
+
+  return buildMemorialUrl(slug, siteUrl, fallbackOrigin);
 }
 
 export const tokenStorage = {

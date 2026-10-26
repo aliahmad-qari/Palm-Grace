@@ -134,21 +134,24 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-stone-950/80 backdrop-blur-xs flex items-center justify-center p-4 font-sans select-none"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/80 p-2 font-sans backdrop-blur-xs sm:p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-stone-200"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="memorial-qr-title"
+        className="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-2xl sm:max-h-[calc(100dvh-2rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/60">
-          <div className="flex items-center gap-2 text-stone-900">
+        <div className="flex shrink-0 items-start justify-between gap-2 border-b border-stone-100 bg-stone-50/60 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-start gap-2 text-stone-900">
             <div className="p-1.5 rounded-lg bg-stone-900 text-amber-300">
               <QrCode className="w-4 h-4" />
             </div>
-            <div>
-              <h3 className="font-serif text-lg font-semibold text-stone-900">
+            <div className="min-w-0">
+              <h3 id="memorial-qr-title" className="font-serif text-base font-semibold leading-snug text-stone-900 sm:text-lg">
                 Memorial Physical QR Bridge
               </h3>
               <p className="text-[11px] text-stone-500 font-sans -mt-0.5">
@@ -158,14 +161,15 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100 transition-colors"
+            aria-label="Close QR code dialog"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-6">
+        <div className="min-h-0 space-y-5 overflow-y-auto overscroll-contain p-4 sm:space-y-6 sm:p-6">
           {/* Target Memorial Card Header */}
           <div className="flex items-center gap-3 p-3 rounded-xl bg-stone-50 border border-stone-200/80">
             <img
@@ -178,9 +182,9 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
               <h4 className="font-serif text-base font-semibold text-stone-900 truncate">
                 {memorial.fullName}
               </h4>
-              <div className="flex items-center gap-2 text-xs text-stone-500 font-mono">
-                <span>/{memorial.slug}</span>
-                <span className="text-[10px] uppercase font-sans font-medium px-2 py-0.5 rounded-md bg-stone-200 text-stone-700">
+              <div className="flex min-w-0 items-center gap-2 font-mono text-xs text-stone-500">
+                <span className="min-w-0 truncate">/{memorial.slug}</span>
+                <span className="shrink-0 rounded-md bg-stone-200 px-2 py-0.5 font-sans text-[10px] font-medium uppercase text-stone-700">
                   {memorial.publicationStatus}
                 </span>
               </div>
@@ -204,7 +208,7 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
               <img
                 src={qrPreviewSrc}
                 alt={`${memorial.fullName} QR Code`}
-                className="w-48 h-48 mx-auto"
+                className="mx-auto h-40 w-40 sm:h-48 sm:w-48"
               />
             </div>
             <p className="text-xs text-stone-500">
@@ -222,11 +226,12 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
                 type="text"
                 readOnly
                 value={publicUrl}
-                className="flex-1 bg-transparent px-2.5 text-xs text-stone-700 font-mono focus:outline-hidden truncate"
+                aria-label="Memorial public URL"
+                className="min-w-0 flex-1 truncate bg-transparent px-2.5 font-mono text-xs text-stone-700 focus:outline-hidden"
               />
               <button
                 onClick={handleCopyLink}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                className={`flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                   copied
                     ? 'bg-emerald-600 text-white'
                     : 'bg-stone-800 hover:bg-stone-900 text-white'
@@ -256,19 +261,19 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
         </div>
 
         {/* Modal Action Buttons Footer */}
-        <div className="px-6 py-4 bg-stone-50 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
+        <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-stone-100 bg-stone-50 px-4 py-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:px-6 sm:py-4">
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 bg-white hover:bg-stone-100 text-stone-800 text-xs font-semibold rounded-lg border border-stone-200 flex items-center gap-1.5 transition-colors shadow-xs"
+            className="col-span-2 flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-stone-200 bg-white px-3.5 py-2 text-xs font-semibold text-stone-800 shadow-xs transition-colors hover:bg-stone-100 sm:col-span-1"
           >
             <Printer className="w-3.5 h-3.5 text-stone-600" />
             <span>Print Sheet</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="col-span-2 grid grid-cols-2 gap-2 sm:flex sm:items-center">
             <a
               href={qrSvgUrl}
-              className="px-3.5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold rounded-lg border border-stone-200 flex items-center gap-1.5 transition-colors"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-stone-200 bg-stone-100 px-2 py-2 text-xs font-semibold text-stone-800 transition-colors hover:bg-stone-200 sm:px-3.5"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Vector SVG</span>
@@ -276,7 +281,7 @@ export const AdminMemorialQrModal: React.FC<AdminMemorialQrModalProps> = ({
 
             <a
               href={qrPngUrl}
-              className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-lg bg-stone-900 px-2 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-stone-800 sm:px-4"
             >
               <Download className="w-3.5 h-3.5 text-amber-300" />
               <span>300 DPI PNG</span>

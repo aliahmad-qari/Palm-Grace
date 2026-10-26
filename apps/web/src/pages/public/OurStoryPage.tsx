@@ -22,7 +22,7 @@ export const OurStoryPage: React.FC = () => {
 
       <section className="bg-brand-white px-4 py-20 text-brand-charcoal sm:px-6 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-4xl space-y-12">
-          <div className="max-w-3xl space-y-6 text-base leading-8 text-brand-charcoal sm:text-lg">
+          <div className="max-w-3xl space-y-6 text-base leading-8 text-brand-charcoal sm:text-lg [&_p]:text-justify [&_p]:hyphens-auto">
             <span className="block text-xs font-bold uppercase tracking-[0.2em] text-brand-secondary">Why Palm &amp; Grace exists</span>
             <h2 className="font-serif text-3xl leading-tight text-brand-primary sm:text-5xl">Honouring Lives. Preserving Legacies.</h2>
             <p>When someone we love dies, we often find ourselves looking for the things that bring them close again. A photograph we had forgotten. A recording of their voice. A story someone shares that makes us smile and say, “That was just like them.”</p>
